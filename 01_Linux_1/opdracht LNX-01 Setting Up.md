@@ -23,8 +23,7 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AccessingInstancesLinux.html
 Open Windows Powershell. Dit doe je altijd als ***administrator***  
 ![Screenshot Windows Powershell](../00_includes/LNX-01%20Setting%20Up/PowerShell-StartScherm.jpg)
 
-Eerst kijken wij of er al een installatie is.  
-``` winget search Microsoft.PowerShell ``` 
+Eerst kijken wij of er al een installatie is.  ``` winget search Microsoft.PowerShell ```  
 ![screenshot Windows Powershell laatste versie](../00_includes/LNX-01%20Setting%20Up/PowerShell-Laatste-Versie.jpg) 
 
 Daarna gaan wij beide versies downloaden en updaten
