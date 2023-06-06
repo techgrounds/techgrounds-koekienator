@@ -21,10 +21,12 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AccessingInstancesLinux.html
 ## Heb ik de benodigtheden om te beginnen met een SSH connectie?  
 ### Is Windows PowerShell geinstalleerd en up-to-date?     
 Open Windows Powershell. Dit doe je altijd als ***administrator***  
+
 ![Screenshot Windows Powershell](../00_includes/LNX-01%20Setting%20Up/PowerShell-StartScherm.jpg)
 
 Eerst kijken wij of er al een installatie is.  
 ``` winget search Microsoft.PowerShell ```  
+
 ![screenshot Windows Powershell laatste versie](../00_includes/LNX-01%20Setting%20Up/PowerShell-Laatste-Versie.jpg) 
 
 Daarna gaan wij beide versies downloaden en updaten  
@@ -36,15 +38,18 @@ Zelf had ik de preview versie nog niet.
 ### Heb ik OpenSSH geinstalleerd en is het up-to-date?  
 Open Windows PowerShell en typ je de volgende command om te controleren of OpenSSH geinstalleerd is.  
 ``` Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH*' ```
+
 ![screenshot Is OpenSSH Geinstalleerd?](../00_includes/LNX-01%20Setting%20Up/OpenSSH-Geinstalleerd.jpg) 
 
 Als bij state *NotPresent* staat heb je OpenSSH niet geinstalleerd.  
 We kunnen de client en server instaleren en updaten.  
 ``` Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0 ```  
 ``` Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0 ```  
+
 ![screenshot Is OpenSSH Installeren](../00_includes/LNX-01%20Setting%20Up/OpenSSH-Installeren1.jpg)
 
 Als je onderstaande ziet is het succesvol geinstalleerd.  
+
 ![Screenshot OpenSSH Succesvol Geinstalleerd](../00_includes/LNX-01%20Setting%20Up/OpenSSH-Installeren-Succesvol.jpg)
 
 ## De SSH Connectie maken. 
