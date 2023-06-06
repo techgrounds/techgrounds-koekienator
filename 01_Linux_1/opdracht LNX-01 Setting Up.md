@@ -87,7 +87,7 @@ Nu ben je succesvol ingelogd in de VM.
 ## Problemen die ik tegen kwam.  
 Had in eerste instantie **Containernaam**@**Domein** gedaan.  
 Dan krijg je dus de volgende error.  
-![screenshot acces denied error](../00_includes/LNX-01%20Setting%20Up/SSH-Access-Denied.jpg)
+![screenshot acces denied error](../00_includes/LNX-01%20Setting%20Up/SSH-Access-Denied-Error.jpg)
 
 Toen voegde ik een trouble shoot command toe -vvv aan mijn SSH command.  
 Hier door werdt de verwarring als maar groter.  
