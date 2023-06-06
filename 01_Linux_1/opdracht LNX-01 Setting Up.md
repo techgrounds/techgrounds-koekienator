@@ -73,11 +73,11 @@ if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyCon
 
 ### Connectie maken met de VM in de cloud.  
 Via de volgende command kunnen wij inloggen met de VM.
-``` ssh -i /path/key-pair-name.pem instance-user-name@instance-public-dns-name -p port ```
+``` ssh -i '/path/key-pair-name.pem' instance-user-name@instance-public-dns-name -p port ```
 
-Bij -i vullen wij de locatie van jouw **key** in. Zelf heb ik dit tussen ' ' gezet omdat sommige mappen spaties hadden.
-Daarna volgd het domein. **Gebruikersnaam**@**Domein** 
-bij -p vul je de poort waarmee wij de VM kunnen bereiken.
+Bij -i vullen wij de locatie van jouw **key** in.  
+Daarna volgd het domein. **Gebruikersnaam**@**Domein**  
+bij -p vul je de poort waarmee wij de VM kunnen bereiken.  
 
 Nu ben je succesvol ingelogd in de VM.
 ![screenshot succesvol ingelogd](../00_includes/LNX-01%20Setting%20Up/SSH-Connected-Succesvol.jpg)
