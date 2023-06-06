@@ -43,8 +43,8 @@ Command: Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH*'
 
 Als bij state *NotPresent* staat heb je OpenSSH niet geinstalleerd.  
 Met de onderstaande commands kan je OpenSSH instaleren.   
-Command: Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0  
-Command: Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0  
+``` Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0 ```  
+``` Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0 ```  
 ![screenshot Is OpenSSH Installeren](../00_includes/LNX-01%20Setting%20Up/OpenSSH-Installeren1.jpg)
 
 Als je onderstaande ziet is het succesvol geinstalleerd.  
@@ -54,19 +54,17 @@ Als je onderstaande ziet is het succesvol geinstalleerd.
 ### Connectie maken met de VM in de cloud.   
 Controleer eerst of de **ssh-agent** aan staat dit is een **windows service**
 Voer de volgende commands in PowerShell.
-Start de Service. 
+Start de Service.  
 ``` Start-Service sshd ``` 
-Automatisch starten aanzetten. 
+Automatisch starten aanzetten.  
 ``` Set-Service -Name sshd -StartupType 'Automatic' ```
-Firewall instelling OpenSSH. 
-``` 
-if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyContinue | Select-Object Name, Enabled)) {
+Firewall instelling OpenSSH.  
+``` if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyContinue | Select-Object Name, Enabled)) {
     Write-Output "Firewall Rule 'OpenSSH-Server-In-TCP' does not exist, creating it..."
     New-NetFirewallRule -Name 'OpenSSH-Server-In-TCP' -DisplayName 'OpenSSH Server (sshd)' -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22
 } else {
     Write-Output "Firewall rule 'OpenSSH-Server-In-TCP' has been created and exists."
-} 
-```
+} ```
 
 
 
