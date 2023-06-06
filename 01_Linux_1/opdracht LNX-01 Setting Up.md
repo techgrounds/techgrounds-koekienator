@@ -10,7 +10,7 @@ Hoe kan ik een verbindinging maken met een VM in de cloud?
 - **Key File** is een geencrypte sleutel. 
 - **CLI** is command line interface om commandos te geven aan jouw OS. 
 - **GUI** is graphical user interface is de gebruiksvriendelijke versie van CLI. Windows is hier een goed voorbeeld van. Je kan met muis en toetsenbord alles bedienen i.p.v. alleen met commandos. 
-- **PowerShell** is een moderne opdrachtshell zoals DOS
+- **PowerShell** is een moderne opdrachtshell, vroeger had je bijvoorbeeld DOS op je computer. 
 
 
 
@@ -28,8 +28,8 @@ Open Windows Powershell. Dit doe je altijd als ***administrator***
 
 Eerst kijken wij of er al een installatie is.  
 ```
- winget search Microsoft.PowerShell 
- ```  
+winget search Microsoft.PowerShell 
+```  
 
 ![screenshot Windows Powershell laatste versie](../00_includes/LNX-01%20Setting%20Up/PowerShell-Laatste-Versie.jpg) 
 
