@@ -26,7 +26,7 @@ De connectie maken wel lang mee bezig geweest, gebruikte dus containernaam i.p.v
 ## Heb ik de benodigtheden om te beginnen met een SSH connectie?  
 ### Is Windows PowerShell geinstalleerd en up-to-date?     
 Open Windows Powershell. Dit doe je altijd als ***administrator***  
-![Screenshot Windows Powershell](../00_includes/LNX-01%20Setting%20Up/Powershell-StartScherm.jpg)
+![Screenshot Windows Powershell](../00_includes/LNX-01%20Setting%20Up/PowerShell-StartScherm.jpg)
 
 Wat is de laatste powershell versie? commmand: winget search Microsoft.PowerShell   
 ![screenshot Windows Powershell laatste versie](../00_includes/LNX-01%20Setting%20Up/PowerShell-Laatste-Versie.jpg) 
