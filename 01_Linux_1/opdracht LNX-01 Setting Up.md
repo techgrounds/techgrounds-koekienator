@@ -33,8 +33,8 @@ Update command voor preview versie: winget install --id Microsoft.Powershell.Pre
 Bij mij zijn deze nu up-to-date.   
 ![screenshot Windows Powershell update](../00_includes/LNX-01%20Setting%20Up/PowerShell-Update.jpg) 
 
-### Heb ik OpenSSH geinstalleerd (via PowerShell als administrator)?
-In Windows PowerShell typ je de volgende command om te controleren of OpenSSH geinstalleerd is.
+### Heb ik OpenSSH geinstalleerd?
+Open Windows PowerShell als administrator en typ je de volgende command om te controleren of OpenSSH geinstalleerd is.
 Command: Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH*'
 ![screenshot Is OpenSSH Geinstalleerd?](../00_includes/LNX-01%20Setting%20Up/OpenSSH-Geinstalleerd.jpg) 
 
@@ -44,7 +44,7 @@ Command: Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
 Command: Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
 ![screenshot Is OpenSSH Installeren](../00_includes/LNX-01%20Setting%20Up/OpenSSH-Installeren.jpg)
 
-Als je onderstaande zie is het succesvol geinstalleerd.
+Als je onderstaande ziet is het succesvol geinstalleerd.  
 ![Screenshot OpenSSH Succesvol Geinstalleerd](../00_includes/LNX-01%20Setting%20Up/OpenSSH-Installeren-Succesvol.jpg)
 
 ### Connectie maken met de VM in de cloud. 
