@@ -25,7 +25,7 @@ De connectie maken wel lang mee bezig geweest, gebruikte dus containernaam i.p.v
 # Resultaat
 ## Heb ik de benodigtheden om te beginnen met een SSH connectie?  
 ### Is Windows PowerShell geinstalleerd en up-to-date?     
-Open Windows Powershell (als administrator).   
+Open Windows Powershell. Dit doe je altijd als ***administrator***
 ![Screenshot Windows Powershell](../00_includes/LNX-01%20Setting%20Up/Powershell-StartScherm.jpg)
 
 Wat is de laatste powershell versie? commmand: winget search Microsoft.PowerShell   
@@ -37,7 +37,7 @@ Bij mij zijn deze nu up-to-date.
 ![screenshot Windows Powershell update](../00_includes/LNX-01%20Setting%20Up/PowerShell-Update.jpg) 
 
 ### Heb ik OpenSSH geinstalleerd en up-to-date?
-Open Windows PowerShell als **administrator** en typ je de volgende command om te controleren of OpenSSH geinstalleerd is.  
+Open Windows PowerShell en typ je de volgende command om te controleren of OpenSSH geinstalleerd is.  
 Command: Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH*'
 ![screenshot Is OpenSSH Geinstalleerd?](../00_includes/LNX-01%20Setting%20Up/OpenSSH-Geinstalleerd.jpg) 
 
@@ -51,7 +51,7 @@ Als je onderstaande ziet is het succesvol geinstalleerd.
 ![Screenshot OpenSSH Succesvol Geinstalleerd](../00_includes/LNX-01%20Setting%20Up/OpenSSH-Installeren-Succesvol.jpg)
 
 ## De SSH Connectie maken. 
-### Connectie maken met de VM in de cloud.   
+### Controleer of de SSH service aanstaat. 
 Controleer eerst of de **ssh-agent** aan staat dit is een **windows service**
 Voer de volgende commands in PowerShell.  
 
@@ -71,8 +71,20 @@ if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyCon
 } 
 ```
 
+### Connectie maken met de VM in de cloud.  
+Via de volgende command kunnen wij inloggen met de VM.
+``` ssh -i /path/key-pair-name.pem instance-user-name@instance-public-dns-name -p port ```
 
-Zet de ssh-agent service aan. 
-Command: Start-Service sshd
+Bij -i vullen wij de locatie van jouw **key** in. Zelf heb ik dit tussen ' ' gezet omdat sommige mappen spaties hadden.
+Daarna volgd het domein. **Gebruikersnaam**@**Domein** 
+bij -p vul je de poort waarmee wij de VM kunnen bereiken.
+
+Nu ben je succesvol ingelogd in de VM.
+![screenshot succesvol ingelogd](../00_includes/LNX-01%20Setting%20Up/SSH-Connected-Succesvol.jpg)
+
+### Problemen die ik tegen kwam.
+
+
+
 
 
