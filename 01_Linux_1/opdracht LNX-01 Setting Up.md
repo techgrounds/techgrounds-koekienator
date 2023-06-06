@@ -17,32 +17,29 @@ Hoe kan ik een verbindinging maken met een VM in de cloud?
 https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/openssh.html  
 https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AccessingInstancesLinux.html#AccessingInstancesLinuxSSHClient  
 
-
-### Ervaren problemen
-Het opzetten van de benodigdheden ging soepel, geen problemen ondervonden anders dan typfouten. 
-De connectie maken wel lang mee bezig geweest, gebruikte dus containernaam i.p.v. user. 
-
 # Resultaat
 ## Heb ik de benodigtheden om te beginnen met een SSH connectie?  
 ### Is Windows PowerShell geinstalleerd en up-to-date?     
 Open Windows Powershell. Dit doe je altijd als ***administrator***  
 ![Screenshot Windows Powershell](../00_includes/LNX-01%20Setting%20Up/PowerShell-StartScherm.jpg)
 
-Wat is de laatste powershell versie? commmand: winget search Microsoft.PowerShell   
+Eerst kijken wij of er al een installatie is.  
+``` winget search Microsoft.PowerShell ``` 
 ![screenshot Windows Powershell laatste versie](../00_includes/LNX-01%20Setting%20Up/PowerShell-Laatste-Versie.jpg) 
 
-Update command: winget install --id Microsoft.Powershell --source winget  
-Update command voor preview versie: winget install --id Microsoft.Powershell.Preview --source winget   
-Bij mij zijn deze nu up-to-date.     
+Daarna gaan wij beide versies downloaden en updaten
+``` winget install --id Microsoft.Powershell --source winget ```  
+``` winget install --id Microsoft.Powershell.Preview --source winget ```
+Zelf had ik de preview versie nog niet.        
 ![screenshot Windows Powershell update](../00_includes/LNX-01%20Setting%20Up/PowerShell-Update.jpg) 
 
 ### Heb ik OpenSSH geinstalleerd en up-to-date?
 Open Windows PowerShell en typ je de volgende command om te controleren of OpenSSH geinstalleerd is.  
-Command: Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH*'
+``` Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH*' ```
 ![screenshot Is OpenSSH Geinstalleerd?](../00_includes/LNX-01%20Setting%20Up/OpenSSH-Geinstalleerd.jpg) 
 
 Als bij state *NotPresent* staat heb je OpenSSH niet geinstalleerd.  
-Met de onderstaande commands kan je OpenSSH instaleren.   
+We kunnen de client en server instaleren en updaten.  
 ``` Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0 ```  
 ``` Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0 ```  
 ![screenshot Is OpenSSH Installeren](../00_includes/LNX-01%20Setting%20Up/OpenSSH-Installeren1.jpg)
@@ -55,13 +52,13 @@ Als je onderstaande ziet is het succesvol geinstalleerd.
 Controleer eerst of de **ssh-agent** aan staat dit is een **windows service**
 Voer de volgende commands in PowerShell.  
 
-Start de Service:  
+Start de Service.  
 ``` Start-Service sshd ``` 
 
-Automatisch starten aanzetten:  
+Automatisch starten aanzetten. Dit is optioneel maar misschien wel handig. 
 ``` Set-Service -Name sshd -StartupType 'Automatic' ```
 
-Firewall instelling OpenSSH:  
+Firewall instelling OpenSSH.  
 ``` 
 if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyContinue | Select-Object Name, Enabled)) {
     Write-Output "Firewall Rule 'OpenSSH-Server-In-TCP' does not exist, creating it..."
@@ -82,13 +79,14 @@ bij -p vul je de poort waarmee wij de VM kunnen bereiken.
 Nu ben je succesvol ingelogd in de VM.
 ![screenshot succesvol ingelogd](../00_includes/LNX-01%20Setting%20Up/SSH-Connected-Succesvol.jpg)
 
-### Problemen die ik tegen kwam.
+## Problemen die ik tegen kwam.
 Had in eerste instantie **Containernaam**@**Domein** gedaan.
 Dan krijg je dus de volgende error. 
 ![screenshot acces denied error](../00_includes/LNX-01%20Setting%20Up/SSH-Access-Denied.jpg)
 
 Toen voegde ik een trouble shoot command toe -vvv aan mijn SSH command.  
 Hier door werdt de verwarring als maar groter.
+Waren 40+ regels met errors, misschien handig voor later als ik dit goed snap. 
 ``` ssh -vvv -i '/path/key-pair-name.pem' instance-user-name@instance-public-dns-name -p port ```
 
 Uit eindelijk met overleg kwam ik er achter dat ik het excelsheet niet goed gelezen had.
