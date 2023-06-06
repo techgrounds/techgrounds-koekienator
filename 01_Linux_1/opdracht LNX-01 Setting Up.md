@@ -54,14 +54,16 @@ Als je onderstaande ziet is het succesvol geinstalleerd.
 ### Connectie maken met de VM in de cloud.   
 Controleer eerst of de **ssh-agent** aan staat dit is een **windows service**
 Voer de volgende commands in PowerShell.  
-Start de Service.  
+
+Start de Service:  
 ``` Start-Service sshd ``` 
 
-Automatisch starten aanzetten.  
+Automatisch starten aanzetten:  
 ``` Set-Service -Name sshd -StartupType 'Automatic' ```
 
-Firewall instelling OpenSSH.  
-``` if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyContinue | Select-Object Name, Enabled)) {
+Firewall instelling OpenSSH:  
+``` 
+if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyContinue | Select-Object Name, Enabled)) {
     Write-Output "Firewall Rule 'OpenSSH-Server-In-TCP' does not exist, creating it..."
     New-NetFirewallRule -Name 'OpenSSH-Server-In-TCP' -DisplayName 'OpenSSH Server (sshd)' -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22
 } else {
