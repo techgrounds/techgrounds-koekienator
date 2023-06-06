@@ -23,7 +23,8 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AccessingInstancesLinux.html
 Open Windows Powershell. Dit doe je altijd als ***administrator***  
 ![Screenshot Windows Powershell](../00_includes/LNX-01%20Setting%20Up/PowerShell-StartScherm.jpg)
 
-Eerst kijken wij of er al een installatie is.  ``` winget search Microsoft.PowerShell ```  
+Eerst kijken wij of er al een installatie is.  
+``` winget search Microsoft.PowerShell ```  
 ![screenshot Windows Powershell laatste versie](../00_includes/LNX-01%20Setting%20Up/PowerShell-Laatste-Versie.jpg) 
 
 Daarna gaan wij beide versies downloaden en updaten  
@@ -32,7 +33,7 @@ Daarna gaan wij beide versies downloaden en updaten
 Zelf had ik de preview versie nog niet.  
 ![screenshot Windows Powershell update](../00_includes/LNX-01%20Setting%20Up/PowerShell-Update.jpg) 
 
-### Heb ik OpenSSH geinstalleerd en is het up-to-date?
+### Heb ik OpenSSH geinstalleerd en is het up-to-date?  
 Open Windows PowerShell en typ je de volgende command om te controleren of OpenSSH geinstalleerd is.  
 ``` Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH*' ```
 ![screenshot Is OpenSSH Geinstalleerd?](../00_includes/LNX-01%20Setting%20Up/OpenSSH-Geinstalleerd.jpg) 
@@ -47,49 +48,49 @@ Als je onderstaande ziet is het succesvol geinstalleerd.
 ![Screenshot OpenSSH Succesvol Geinstalleerd](../00_includes/LNX-01%20Setting%20Up/OpenSSH-Installeren-Succesvol.jpg)
 
 ## De SSH Connectie maken. 
-### Controleer of de SSH service aanstaat. 
-Controleer eerst of de **ssh-agent** aan staat dit is een **windows service**
+### Controleer of de SSH service aanstaat.  
+Controleer eerst of de **ssh-agent** aan staat dit is een **windows service**  
 Voer de volgende commands in PowerShell.  
 
 Start de Service.  
-``` Start-Service sshd ``` 
+``` Start-Service sshd ```  
 
-Automatisch starten aanzetten. Dit is optioneel maar misschien wel handig. 
-``` Set-Service -Name sshd -StartupType 'Automatic' ```
+Automatisch starten aanzetten. Dit is optioneel maar misschien wel handig.  
+``` Set-Service -Name sshd -StartupType 'Automatic' ```  
 
 Firewall instelling OpenSSH.  
-``` 
+```
 if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyContinue | Select-Object Name, Enabled)) {
     Write-Output "Firewall Rule 'OpenSSH-Server-In-TCP' does not exist, creating it..."
     New-NetFirewallRule -Name 'OpenSSH-Server-In-TCP' -DisplayName 'OpenSSH Server (sshd)' -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22
 } else {
     Write-Output "Firewall rule 'OpenSSH-Server-In-TCP' has been created and exists."
-} 
-```
+}
+```  
 
 ### Connectie maken met de VM in de cloud.  
-Via de volgende command kunnen wij inloggen met de VM.
-``` ssh -i '/path/key-pair-name.pem' instance-user-name@instance-public-dns-name -p port ```
+Via de volgende command kunnen wij inloggen met de VM.  
+``` ssh -i '/path/key-pair-name.pem' instance-user-name@instance-public-dns-name -p port ```  
 
 Bij -i vullen wij de locatie van jouw **key** in.  
 Daarna volgd het domein. **Gebruikersnaam**@**Domein**  
 bij -p vul je de poort waarmee wij de VM kunnen bereiken.  
 
-Nu ben je succesvol ingelogd in de VM.
+Nu ben je succesvol ingelogd in de VM.  
 ![screenshot succesvol ingelogd](../00_includes/LNX-01%20Setting%20Up/SSH-Connected-Succesvol.jpg)
 
-## Problemen die ik tegen kwam.
-Had in eerste instantie **Containernaam**@**Domein** gedaan.
-Dan krijg je dus de volgende error. 
+## Problemen die ik tegen kwam.  
+Had in eerste instantie **Containernaam**@**Domein** gedaan.  
+Dan krijg je dus de volgende error.  
 ![screenshot acces denied error](../00_includes/LNX-01%20Setting%20Up/SSH-Access-Denied.jpg)
 
 Toen voegde ik een trouble shoot command toe -vvv aan mijn SSH command.  
-Hier door werdt de verwarring als maar groter.
-Waren 40+ regels met errors, misschien handig voor later als ik dit goed snap. 
-``` ssh -vvv -i '/path/key-pair-name.pem' instance-user-name@instance-public-dns-name -p port ```
+Hier door werdt de verwarring als maar groter.  
+Waren 40+ regels met errors, misschien handig voor later als ik dit goed snap.  
+``` ssh -vvv -i '/path/key-pair-name.pem' instance-user-name@instance-public-dns-name -p port ```  
 
-Uit eindelijk met overleg kwam ik er achter dat ik het excelsheet niet goed gelezen had.
-Er stond gewoon een colom Users tussen, toen was de connectie figuurlijk en letterlijk zo gemaakt.
+Uit eindelijk met overleg kwam ik er achter dat ik het excelsheet niet goed gelezen had.  
+Er stond gewoon een colom Users tussen, toen was de connectie figuurlijk en letterlijk zo gemaakt.  
 
 
 
