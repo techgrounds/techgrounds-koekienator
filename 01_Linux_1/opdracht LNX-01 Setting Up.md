@@ -25,7 +25,7 @@ De connectie maken wel lang mee bezig geweest, gebruikte dus containernaam i.p.v
 # Resultaat
 ## Heb ik de benodigtheden om te beginnen met een SSH connectie?  
 ### Is Windows PowerShell geinstalleerd en up-to-date?     
-Open Windows Powershell. Dit doe je altijd als ***administrator***
+Open Windows Powershell. Dit doe je altijd als ***administrator***  
 ![Screenshot Windows Powershell](../00_includes/LNX-01%20Setting%20Up/Powershell-StartScherm.jpg)
 
 Wat is de laatste powershell versie? commmand: winget search Microsoft.PowerShell   
@@ -83,6 +83,16 @@ Nu ben je succesvol ingelogd in de VM.
 ![screenshot succesvol ingelogd](../00_includes/LNX-01%20Setting%20Up/SSH-Connected-Succesvol.jpg)
 
 ### Problemen die ik tegen kwam.
+Had in eerste instantie **Containernaam**@**Domein** gedaan.
+Dan krijg je dus de volgende error. 
+![screenshot acces denied error](../00_includes/LNX-01%20Setting%20Up/SSH-Access-Denied.jpg)
+
+Toen voegde ik een trouble shoot command toe -vvv aan mijn SSH command.  
+Hier door werdt de verwarring als maar groter.
+``` ssh -vvv -i '/path/key-pair-name.pem' instance-user-name@instance-public-dns-name -p port ```
+
+Uit eindelijk met overleg kwam ik er achter dat ik het excelsheet niet goed gelezen had.
+Er stond gewoon een colom Users tussen, toen was de connectie figuurlijk en letterlijk zo gemaakt.
 
 
 
