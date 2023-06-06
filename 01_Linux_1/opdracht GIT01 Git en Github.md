@@ -42,6 +42,6 @@ Vervolgens heb ik een commit gedaan en daarna de push om alles te syncen met de 
 ![Screenshot commit](../00_includes/01GitEnGithub/commit.jpg)
 ![Screenshot push](../00_includes/01GitEnGithub/push.jpg)
 
-Je kan ook vrienden/collega's uitnodigen om jouw repository te bekijken.
+Je kan ook vrienden/collega's uitnodigen om jouw repository te bekijken/beheren/samenwerken.
 ![Screenshot adding people](../00_includes/01GitEnGithub/How%20to%20add%20people.jpg)
 
