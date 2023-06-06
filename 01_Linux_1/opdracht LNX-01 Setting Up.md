@@ -20,7 +20,7 @@ Hoe kan ik een verbindinging maken met een VM in de cloud?
 # Resultaat
 [Omschrijf hoe je weet dat je opdracht gelukt is (gebruik screenshots waar nodig).]
 
-## Stappen plan SSH connectie?
+## Heb ik de benodigtheden om te beginnen met een SSH connectie?
 ### Is Windows PowerShell geinstalleerd en up-to-date?
 Open Windows Powershell (als administrator).  
 ![Screenshot Windows Powershell](../00_includes/LNX-01%20Setting%20Up/Powershell-StartScherm.jpg)
@@ -42,9 +42,10 @@ Als bij state NotPresent staat heb je OpenSSH niet geinstalleerd.
 Met de onderstaande commands kan je OpenSSH instaleren. 
 Command: Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
 Command: Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
-![screenshot Is OpenSSH Installeren](../00_includes/LNX-01%20Setting%20Up/OpenSSH-Installeren.jpg)
+![screenshot Is OpenSSH Installeren](../00_includes/LNX-01%20Setting%20Up/OpenSSH-Installeren1.jpg)
 
 Als je onderstaande ziet is het succesvol geinstalleerd.  
 ![Screenshot OpenSSH Succesvol Geinstalleerd](../00_includes/LNX-01%20Setting%20Up/OpenSSH-Installeren-Succesvol.jpg)
 
+## De SSH Connectie maken. 
 ### Connectie maken met de VM in de cloud. 
