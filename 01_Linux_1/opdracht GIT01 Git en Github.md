@@ -1,4 +1,4 @@
-<span style="color:red"> # [Git en Github] </span>
+# [Git en Github]
 Basis principes voor Git en Github om mijn portfolio voor Cloud 11 te kunnen opbouwen.
 
 ## Key-terms
