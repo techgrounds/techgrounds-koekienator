@@ -26,13 +26,13 @@ Open Windows Powershell. Dit doe je altijd als ***administrator***
 Eerst kijken wij of er al een installatie is.  ``` winget search Microsoft.PowerShell ```  
 ![screenshot Windows Powershell laatste versie](../00_includes/LNX-01%20Setting%20Up/PowerShell-Laatste-Versie.jpg) 
 
-Daarna gaan wij beide versies downloaden en updaten
+Daarna gaan wij beide versies downloaden en updaten  
 ``` winget install --id Microsoft.Powershell --source winget ```  
-``` winget install --id Microsoft.Powershell.Preview --source winget ```
-Zelf had ik de preview versie nog niet.        
+``` winget install --id Microsoft.Powershell.Preview --source winget ```  
+Zelf had ik de preview versie nog niet.  
 ![screenshot Windows Powershell update](../00_includes/LNX-01%20Setting%20Up/PowerShell-Update.jpg) 
 
-### Heb ik OpenSSH geinstalleerd en up-to-date?
+### Heb ik OpenSSH geinstalleerd en is het up-to-date?
 Open Windows PowerShell en typ je de volgende command om te controleren of OpenSSH geinstalleerd is.  
 ``` Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH*' ```
 ![screenshot Is OpenSSH Geinstalleerd?](../00_includes/LNX-01%20Setting%20Up/OpenSSH-Geinstalleerd.jpg) 
