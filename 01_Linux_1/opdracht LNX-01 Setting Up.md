@@ -55,16 +55,18 @@ Als je onderstaande ziet is het succesvol geinstalleerd.
 Controleer eerst of de **ssh-agent** aan staat dit is een **windows service**
 Voer de volgende commands in PowerShell.
 Start de Service. 
-$ Start-Service sshd 
+``` Start-Service sshd ``` 
 Automatisch starten aanzetten. 
-$ Set-Service -Name sshd -StartupType 'Automatic' \
+``` Set-Service -Name sshd -StartupType 'Automatic' ```
 Firewall instelling OpenSSH. 
-$ if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyContinue | Select-Object Name, Enabled)) {
+``` 
+if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyContinue | Select-Object Name, Enabled)) {
     Write-Output "Firewall Rule 'OpenSSH-Server-In-TCP' does not exist, creating it..."
     New-NetFirewallRule -Name 'OpenSSH-Server-In-TCP' -DisplayName 'OpenSSH Server (sshd)' -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22
 } else {
     Write-Output "Firewall rule 'OpenSSH-Server-In-TCP' has been created and exists."
 } 
+```
 
 
 
