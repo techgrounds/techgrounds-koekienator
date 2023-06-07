@@ -50,37 +50,37 @@ Met **ls -a** kan je ook de verborgen mappen zien.
 
 ### Hoe kan ik een map maken
 We willen een nieuwe map maken en de nieuwe map ingaan.  
-'''
+```
 mkdir <naam van map>
-'''  
-'''
+```
+```
 cd <naam van map>
-'''  
+```
 ![screenshot linux nieuwe map](../00_includes/LNX-02%20Files%20and%20directories/Linux-Nieuwe-Map.jpg)
 
 
 ### Hoe kan ik een text bestand maken
 We willen een tekstbestand aanmaken.
 Dat kan op twee manieren met **ls** kan je er een aanmaken maar niet meteen inschrijven of via **echo** dan kan er ook direct ingeschreven worden.
-'''
+```
 ls > naam.extentie
-'''
-'''
+```
+```
 echo "plaats hier uw tekst" naam.extentie
-'''
+```
 ![screenshot linux new doc](../00_includes/LNX-02%20Files%20and%20directories/Linux-New-Doc.jpg)
 
 
 ### Relatief en absoluut paths
 Er zijn twee manieren om een path aan te geven.
 Relatief:  
-'''  
+```
 cd techgrounds
-'''  
+```
 Absoluut:  
-'''  
+```
 cd /home/username/techgrounds  
-'''  
+```
 ![Screenshot linux pathing](../00_includes/LNX-02%20Files%20and%20directories/Linux-Pathing.jpg)
 
 ## Ervaren problemen  
