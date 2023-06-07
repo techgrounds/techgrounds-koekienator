@@ -39,23 +39,37 @@ Dit is onze CLI, je begint automatisch in jouw home directory tenzei anders inge
 - **Pijltje omhoog/omlaag** zoek door je promt geschiedenis. 
 
 ## Hoe is mijn mappen structuur?
-Ik zit dus in de homefolder van mijn eigen account.     
+Met **pwd** kan je zien waar je nu bent in Linux.
+Met **ls** kan je de mappen zien als je **-a** toevoegd zie je ook verborgen mappen. 
 ![screenshot linux home list](../00_includes/LNX-02%20Files%20and%20directories/Linux-home-list.jpg)
 
 ## Hoe kan ik een map maken
-Nu heb ik de een map aangemaakt techgrounds en zit nu in die map.   
+We willen een nieuwe map aanmaken.
+Daarvoor is **mkdir <naam van map>** 
+Met **cd <naam van map>** kunnen wij deze map in.
 ![screenshot linux nieuwe map](../00_includes/LNX-02%20Files%20and%20directories/Linux-Nieuwe-Map.jpg)
 
 ## Hoe kan ik een text bestand maken
-In deze map heb ik een text bestand aangemaakt en er iets in geschreven.    
+We willen een text bestand aanmaken.
+Dat kan op twee manieren met **ls** kan je er een aanmaken maar niet meteen in schrijven of via **echo** dan kan er ook direct in gescreven worden.  
+''' 
+**ls > naam.extentie** 
+''' 
+''' 
+**echo "plaats hier uw text" naam.extentie**
+'''
 ![screenshot linux new doc](../00_includes/LNX-02%20Files%20and%20directories/Linux-New-Doc.jpg)
 
 ## Relatief en absolute paths
 Er zijn twee manieren om een path aan te geven.
 Relatief:
-''' cd techgrounds '''  
+''' 
+**cd techgrounds**
+'''  
 Absoluut:
-''' cd /home/username/techgrounds '''   
+'''
+**cd /home/username/techgrounds**
+'''   
 ![Screenshot linux pathing](../00_includes/LNX-02%20Files%20and%20directories/Linux-Pathing.jpg)
 
 ##
