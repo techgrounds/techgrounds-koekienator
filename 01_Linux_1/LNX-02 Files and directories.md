@@ -15,7 +15,7 @@ https://ubuntu.com/tutorials/command-line-for-beginners#1-overview
 # Resultaat  
 ## De Linux Terminal  
 Zo ziet een lege terminal er uit    
-![Screenshot empty terminal](../00_includes/LNX-02%20Files%20and%20directories/Linux-Terminal-Empty.jpg)
+![Screenshot empty terminal](../00_includes/LNX-02/Linux-Terminal-Empty.jpg)
 
 
 Dit is onze CLI, je begint automatisch in jouw home directory tenzij anders ingesteld.
@@ -45,7 +45,7 @@ Dit is onze CLI, je begint automatisch in jouw home directory tenzij anders inge
 Met **pwd** kan je zien waar je nu bent in Linux.
 Met **ls** kan je de mappen zien.
 Met **ls -a** kan je ook de verborgen mappen zien.
-![screenshot linux home list](../00_includes/LNX-02%20Files%20and%20directories/Linux-home-list.jpg)
+![screenshot linux home list](../00_includes/LNX-02/Linux-home-list.jpg)
 
 
 ### Hoe kan ik een map maken
@@ -56,7 +56,7 @@ mkdir <naam van map>
 ```
 cd <naam van map>
 ```
-![screenshot linux nieuwe map](../00_includes/LNX-02%20Files%20and%20directories/Linux-Nieuwe-Map.jpg)
+![screenshot linux nieuwe map](../00_includes/LNX-02/Linux-Nieuwe-Map.jpg)
 
 
 ### Hoe kan ik een text bestand maken
@@ -68,7 +68,7 @@ ls > naam.extentie
 ```
 echo "plaats hier uw tekst" naam.extentie
 ```
-![screenshot linux new doc](../00_includes/LNX-02%20Files%20and%20directories/Linux-New-Doc.jpg)
+![screenshot linux new doc](../00_includes/LNX-02/Linux-New-Doc.jpg)
 
 
 ### Relatief en absoluut paths
@@ -81,7 +81,7 @@ Absoluut:
 ```
 cd /home/username/techgrounds  
 ```
-![Screenshot linux pathing](../00_includes/LNX-02%20Files%20and%20directories/Linux-Pathing.jpg)
+![Screenshot linux pathing](../00_includes/LNX-02/Linux-Pathing.jpg)
 
 ## Ervaren problemen  
 Op typfouten na nergens tegen aangelopen.

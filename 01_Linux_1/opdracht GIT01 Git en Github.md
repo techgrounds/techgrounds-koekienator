@@ -25,23 +25,23 @@ Plaatjes kreeg ik niet werkend, goed lezen was de oplossing was de ! vergeten.
 
 ### Resultaat
 Heb een account aan gemaakt bij www.github.com via de sign-up knop rechts boven in op de website.
-![Screenshot sign-up github](../00_includes/01GitEnGithub/sign-up-button.jpg)
+![Screenshot sign-up github](../00_includes/GitHub01/sign-up-button.jpg)
 
 Vervolgens de windows app gedownload via https://desktop.github.com/ en geinstalleerd. 
 Na de installatie moet je inloggen met jouw Github account. 
 
 Als eerste heb ik een clone gemaakt van de classroom als basis voor mij portfolio.
-![Screenshot new-clone](../00_includes/01GitEnGithub/new-clone.jpg)
-![Screenshot new-clone2](../00_includes/01GitEnGithub/new-clone2.jpg)
+![Screenshot new-clone](../00_includes/GitHub01/new-clone.jpg)
+![Screenshot new-clone2](../00_includes/GitHub01/new-clone2.jpg)
 
 Daarna een nieuwe repository aangemaakt.  
-![Screenshot new-repository](../00_includes/01GitEnGithub/new-repository.jpg)
+![Screenshot new-repository](../00_includes/GitHub01/new-repository.jpg)
 
 Toen de hele mappen structuur van de clone gekopierd via file explorer en geplakt in mijn eigen repository. 
 Vervolgens heb ik een commit gedaan en daarna de push om alles te syncen met de remote repository op Github.  
-![Screenshot commit](../00_includes/01GitEnGithub/commit.jpg)
-![Screenshot push](../00_includes/01GitEnGithub/push.jpg)
+![Screenshot commit](../00_includes/GitHub01/commit.jpg)
+![Screenshot push](../00_includes/GitHub01/push.jpg)
 
 Je kan ook vrienden/collega's uitnodigen om jouw repository te bekijken/beheren/samenwerken.
-![Screenshot adding people](../00_includes/01GitEnGithub/How%20to%20add%20people.jpg)
+![Screenshot adding people](../00_includes/GitHub01/How%20to%20add%20people.jpg)
 

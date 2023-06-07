@@ -12,27 +12,24 @@ Hoe kan ik een verbinding maken met een VM in de cloud?
 - **GUI** De grafische gebruikersinterface is de gebruiksvriendelijke versie van CLI. Windows is hier een goed voorbeeld van. Je kan met muis en toetsenbord alles bedienen i.p.v. alleen met commando's.
 - **PowerShell** is een moderne opdracht shell, vroeger had je bijvoorbeeld DOS op je computer.
 
-
-
-# Opdracht
 ### Gebruikte bronnen
 https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/openssh.html  
 https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AccessingInstancesLinux.html#AccessingInstancesLinuxSSHClient  
 
-# Resultaat
-## Heb ik de benodigdheden om te beginnen met een SSH-connectie?
+## Resultaat
+### Heb ik de benodigdheden om te beginnen met een SSH-connectie?
 ### Is Windows PowerShell geïnstalleerd en up-to-date?
 Open Windows PowerShell. Dit doe je altijd als ***administrator***.  
 
 
-![Screenshot Windows Powershell](../00_includes/LNX-01%20Setting%20Up/PowerShell-StartScherm.jpg)
+![Screenshot Windows Powershell](../00_includes/LNX-01/PowerShell-StartScherm.jpg)
 
 Eerst kijken wij of er al een installatie is.
 ```
 winget search Microsoft.PowerShell
 ```
 
-![screenshot Windows Powershell laatste versie](../00_includes/LNX-01%20Setting%20Up/PowerShell-Laatste-Versie.jpg)
+![screenshot Windows Powershell laatste versie](../00_includes/LNX-01/PowerShell-Laatste-Versie.jpg)
 
 Daarna gaan wij beide versies downloaden en updaten
 ```
@@ -42,7 +39,7 @@ winget install --id Microsoft.Powershell --source winget
 winget install --id Microsoft.Powershell.Preview --source winget
 ```
 Zelf had ik de preview versie nog niet.
-![screenshot Windows Powershell update](../00_includes/LNX-01%20Setting%20Up/PowerShell-Update.jpg)
+![screenshot Windows Powershell update](../00_includes/LNX-01/PowerShell-Update.jpg)
 
 ### Heb ik OpenSSH geïnstalleerd en is het up-to-date?
 Open Windows PowerShell en typ je de volgende command om te controleren of OpenSSH geïnstalleerd is.
@@ -50,7 +47,7 @@ Open Windows PowerShell en typ je de volgende command om te controleren of OpenS
 Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH*'
 ```
 
-![screenshot Is OpenSSH Geinstalleerd?](../00_includes/LNX-01%20Setting%20Up/OpenSSH-Geinstalleerd.jpg)
+![screenshot Is OpenSSH Geinstalleerd?](../00_includes/LNX-01/OpenSSH-Geinstalleerd.jpg)
 
 Als bij state *NotPresent* staat heb je OpenSSH niet geinstalleerd.
 We kunnen de client en server instaleren en updaten.
@@ -61,14 +58,13 @@ Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
 Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
 ```
 
-![screenshot Is OpenSSH Installeren](../00_includes/LNX-01%20Setting%20Up/OpenSSH-Installeren1.jpg)
+![screenshot Is OpenSSH Installeren](../00_includes/LNX-01/OpenSSH-Installeren1.jpg)
 
 Als je onderstaande ziet is het succesvol geïnstalleerd.
 
-![Screenshot OpenSSH Succesvol Geinstalleerd](../00_includes/LNX-01%20Setting%20Up/OpenSSH-Installeren-Succesvol.jpg)
+![Screenshot OpenSSH Succesvol Geinstalleerd](../00_includes/LNX-01/OpenSSH-Installeren-Succesvol.jpg)
 
 
-## De SSH Connectie maken.
 ### Controleer of de SSH service aanstaat.
 Controleer eerst of de **ssh-agent** aan staat dit is een **windows service**
 Voer de volgende commands in PowerShell.
@@ -104,12 +100,12 @@ Daarna volgt het domein. **Gebruikersnaam**@**Domein**
 bij -p vul je de poort waarmee wij de VM kunnen bereiken.
 
 Nu ben je succesvol ingelogd in de VM.
-![screenshot succesvol ingelogd](../00_includes/LNX-01%20Setting%20Up/SSH-Connected-Succesvol.jpg)
+![screenshot succesvol ingelogd](../00_includes/LNX-01/SSH-Connected-Succesvol.jpg)
 
-## Problemen die ik tegenkwam.
+## Ervaren problemen.
 Had in eerste instantie **Containernaam**@**Domein** gedaan.
 Dan krijg je dus de volgende fout.  
-![screenshot access denied error](../00_includes/LNX-01%20Setting%20Up/SSH-Access-Denied-Error.jpg)
+![screenshot access denied error](../00_includes/LNX-01/SSH-Access-Denied-Error.jpg)
 
 Toen voegde ik een trouble shoot command toe -vvv aan mijn SSH command.
 Hierdoor werd de verwarring alsmaar groter.
