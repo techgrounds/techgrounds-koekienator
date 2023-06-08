@@ -4,7 +4,6 @@
 ### Key-terms   
 **Sudo** superuser, de admin van linux
 
-
 ### Gebruikte bronnen
 https://www.digitalocean.com/community/tutorials/how-to-create-a-new-sudo-enabled-user-on-ubuntu-22-04-quickstart   https://www.digitalocean.com/community/tutorials/how-to-view-system-users-in-linux-on-ubuntu#how-to-view-available-users    
 https://www.digitalocean.com/community/tutorials/how-to-use-passwd-and-adduser-to-manage-passwords-on-a-linux-vps   

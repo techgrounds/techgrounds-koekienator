@@ -14,9 +14,6 @@ Wie heeft er toegang tot wat?
 https://www.digitalocean.com/community/tutorials/an-introduction-to-linux-permissions   
 https://www.digitalocean.com/community/tutorials/linux-permissions-basics-and-how-to-use-umask-on-a-vps#types-of-permissions    
 
-### Ervaren problemen
-[Geef een korte beschrijving van de problemen waar je tegenaan bent gelopen met je gevonden oplossing.]
-
 ## Resultaat
 ### Hoe is een bestand opgebouwd?
 Met **ls -l** kan je uitgebreide infromatie zien over wat er in de folder staat. 
@@ -80,6 +77,9 @@ sudo chown techgrounds_user1 nieuwetekst.txt
 sudo chgrp techgrounds_user1 nieuwetekst.txt
 ```
 ![Screenshot permission chown chgrp](../00_includes/LNX-05/Linux-permission-chown-chgrp.jpg)
+
+## Ervaren problemen
+Ging allemaal prima, geen problemen.
 
 
 
