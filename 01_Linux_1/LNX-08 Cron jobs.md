@@ -49,6 +49,7 @@ In de crontab kunnen wij dan dit invoeren.
 ```
 * * * * * /home/marcel_/scripts/tijden.sh
 ```
+![Screenshot cron tijden script](../00_includes/LNX-08/cron-script-tijden.jpg)
 
 Het volgende script heb ik eerst mooi gebundeld zodat er minder tekst nodig is. Met ```{ }``` kan je een aantal lijnen wrappen om vervolgens een gezamelijk arugment er achter te plaatsen.We willen zometeen weekelijks een update hoeveel opslag er over is ```df -H /```. Omdat het bestand waar wij bij willen schrijven sudo rechten nodig heeft gebruiken wij ``` | sudo tee -a``` 
 
