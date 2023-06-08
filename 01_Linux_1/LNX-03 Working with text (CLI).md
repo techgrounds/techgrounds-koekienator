@@ -1,10 +1,10 @@
 # [Working with text (CLI)]
-Tekstbewerken in Linux.
+Tekst bewerken in Linux.
 
 ### Key-terms
 **stdin** standard input    
 **stdout** standard output  
-**pipe** tijdelijke connectie tussen twee of meerdere commands. 
+**pipe** tijdelijke connectie tussen twee of meerdere commands.
 **grep**  global regular expression print   
 
 ### Gebruikte bronnen
@@ -14,7 +14,7 @@ https://www.digitalocean.com/community/tutorials/an-introduction-to-linux-i-o-re
 
 
 ## Resultaat
-### Nieuw tekst document
+### Nieuw tekstdocument
 We maken eerst een nieuw bestand aan met 1 regel erin.
 Daarna voegen wij een tweede regel toe en lezen het bestand uit.  
 Met **>** vervang je alles en met **>>** voeg je een nieuwe regel toe.
@@ -27,13 +27,13 @@ echo "Techgrounds" >> nieuwetekst.txt
 ```
 ```
 cat nieuwetekst.txt
-``` 
+```
 ![Screenshot tekst bewereken](../00_includes/LNX-03/Linux-Tekst-Bewerken.jpg)
 
 ### De text filteren
 We kunnen ook texten filteren.met **grep**.  
-**grep** is hoofdletter gevoelig!
-De lijnen met het key woord komen dan naar voren maar de rest niet. 
+**grep** is hoofdlettergevoelig!
+De lijnen met het key woord komen dan naar voren maar de rest niet.
 ```
 grep "techgrounds" nieuwetekst.txt
 ```
@@ -41,4 +41,6 @@ grep "techgrounds" nieuwetekst.txt
 
 
 ## Ervaren problemen
-Het niet goed typen van commands blijft vrijwel het enige probleem tot nu toe. Het werken met een CLI is gewoon erg nieuw en merk dat ik te snel wil werken. 
+Het niet goed typen van commands blijft vrijwel het enige probleem tot nu toe. Het werken met een CLI is gewoon erg nieuw en merk dat ik te snel wil werken.
+
+

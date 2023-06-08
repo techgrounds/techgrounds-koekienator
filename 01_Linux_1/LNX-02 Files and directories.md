@@ -59,7 +59,7 @@ cd <naam van map>
 ![screenshot linux nieuwe map](../00_includes/LNX-02/Linux-Nieuwe-Map.jpg)
 
 
-### Hoe kan ik een text bestand maken
+### Hoe kan ik een tekst bestand maken
 We willen een tekstbestand aanmaken.
 Dat kan op twee manieren met **ls** kan je er een aanmaken maar niet meteen inschrijven of via **echo** dan kan er ook direct ingeschreven worden.
 ```
@@ -84,4 +84,7 @@ cd /home/username/techgrounds
 ![Screenshot linux pathing](../00_includes/LNX-02/Linux-Pathing.jpg)
 
 ## Ervaren problemen  
-Op typfouten na nergens tegen aangelopen.
+Op typfouten na nergens tegenaan gelopen.
+
+
+
