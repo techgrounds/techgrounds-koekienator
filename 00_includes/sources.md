@@ -16,13 +16,17 @@ https://swcarpentry.github.io/shell-novice/reference.html
 ### Basic commands Linux
 https://ubuntu.com/tutorials/command-line-for-beginners#1-overview
 
+### Linux Services
+https://www.digitalocean.com/community/tutorials/process-management-in-linux
+
 ### Telnet
 https://www.digitalocean.com/community/tutorials/memcached-telnet-commands-example
 https://www.digitalocean.com/community/tutorials/telnet-command-linux-unix
 
 ## Scrum
 https://aws.amazon.com/what-is/scrum/
-ca
+
+The number 2 in the output refers to the number of links to this file. In Linux, links provide a method to create shortcuts to help users navigate the filesystem. When you created this file, Linux did some background work to create an absolute link to the file, and a self-referential link to the file to allow for users to navigate along a relative path. We’ll discuss absolute and relative paths in the next section.
 
 
 ssh -i "C:/Users/marce/My Drive/Documenten/Koek/Techgrounds/Cloud11/Nest-ma-Koek.pem" marcel_@3.121.130.219 -p 52205 
