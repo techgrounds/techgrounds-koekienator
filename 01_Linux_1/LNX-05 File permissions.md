@@ -14,8 +14,15 @@ https://www.digitalocean.com/community/tutorials/linux-permissions-basics-and-ho
 ### Ervaren problemen
 [Geef een korte beschrijving van de problemen waar je tegenaan bent gelopen met je gevonden oplossing.]
 
-### Resultaat
-Hoe kan je permissions lezen?
+## Resultaat
+### Hoe is een bestand opgebouwd?
+Met **ls -l** kan je uitgebreide infromatie zien over wat er in de folder staat. 
+![Screenshot longlist](../00_includes/LNX-05/Linux-LongList2.jpg)
+
+Het is opgebouwd uit:  
+ ``` permission - files - group - file size - last modified - file name ```
+
+### Hoe kan je permissions lezen?
 Het is verdeeld over een aantal delen.
 - **Filetype**
 - **Permission classes**
@@ -34,9 +41,26 @@ Hier een aantal voorbeelden:
 ```-rw-------```: een bestand dat alleen toegankelijk is voor de gebruiker.  
 ```-rwxr-xr-x```: een bestand die uitvoerbaar is voor  iedere gebruiker maar alleen de gebruiker kan schrijven.  
 ```-rw-rw-rw-```: een bestand die iedereen kan lezen en schrijven.  
-```drwxr-wr-w```: een map waar iedereen in kan.  
+```drwxr-wr-x```: een map waar iedereen in kan.  
 ```drwxrwx---```: een map waar alleen gebruiken en groep in kan en ook kan aanpassen.  
 ```drwxr-x---```: een map waar de groep in kan.  
+
+### Hoe kan je permissions herschrijven. 
+Permissies gebruiken een base-8 taal of Octal. Dit gaat van 0 t/m 7, dus in totaal 8 cijfers. Wij gebruiken zelf base-10 en dat is van 0 t/m 9.
+
+Er zijn dus 3 type permissions. Read "4", Write "2", Execute "1".  
+- **0** geen permissions  
+- **4** alleen lezen  
+- **6** lezen en schrijven  
+- **7** lezen, schrijven en uitvoeren.  
+
+Als wij dan in gedachten houden dat er ook 3 permission groepen zijn is de volgende stap vrij logisch. Met **chmod** kan je permissies aanpassen. 
+```
+chmod 700 nieuwetekst.txt | ls -l nieuwetekst.txt
+```
+Nu kan de gebruiker bestanden lezen, schrijven en uitvoeren. De group en others kunnen het bestand niet zien, lezen of uitvoeren. Zie ook dat nieuwetekst.txt van kleur veranderd is omdat hij nu uitvoerbaar is.
+
+![Screenshot nieuwe rechten rwx](../00_includes/LNX-05/Linux-permission-uitvoeren-gebruiker.jpg)
 
 
 
