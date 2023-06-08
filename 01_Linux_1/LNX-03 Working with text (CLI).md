@@ -10,6 +10,7 @@ Tekstbewerken in Linux.
 ### Gebruikte bronnen
 https://ubuntu.com/tutorials/command-line-for-beginners  
 https://www.digitalocean.com/community/tutorials/grep-command-in-linux-unix#grep-command-in-linux  
+https://www.digitalocean.com/community/tutorials/an-introduction-to-linux-i-o-redirection
 
 
 ## Resultaat

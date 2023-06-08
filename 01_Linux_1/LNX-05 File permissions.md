@@ -5,6 +5,9 @@ Wie heeft er toegang tot wat?
 **read**   
 **write**   
 **execute**   
+**chmod** change mode
+**chown** change owner
+**chgrp** change group
 
 ## Opdracht
 ### Gebruikte bronnen
@@ -20,7 +23,7 @@ Met **ls -l** kan je uitgebreide infromatie zien over wat er in de folder staat.
 ![Screenshot longlist](../00_includes/LNX-05/Linux-LongList2.jpg)
 
 Het is opgebouwd uit:  
- ``` permission - files - group - file size - last modified - file name ```
+ ``` permission - owner - group - file size - last modified - file name ```
 
 ### Hoe kan je permissions lezen?
 Het is verdeeld over een aantal delen.
@@ -58,10 +61,25 @@ Als wij dan in gedachten houden dat er ook 3 permission groepen zijn is de volge
 ```
 chmod 700 nieuwetekst.txt | ls -l nieuwetekst.txt
 ```
-Nu kan de gebruiker bestanden lezen, schrijven en uitvoeren. De group en others kunnen het bestand niet zien, lezen of uitvoeren. Zie ook dat nieuwetekst.txt van kleur veranderd is omdat hij nu uitvoerbaar is.
+Nu kan de gebruiker het bestanden lezen, schrijven en uitvoeren. De group en others kunnen het bestand niet zien, lezen of uitvoeren. Zie ook dat nieuwetekst.txt van kleur veranderd is omdat hij nu uitvoerbaar is.
 
-![Screenshot nieuwe rechten rwx](../00_includes/LNX-05/Linux-permission-uitvoeren-gebruiker.jpg)
+![Screenshot nieuwe rechten rwx](../00_includes/LNX-05/Linux-permission-700.jpg)
 
+```
+chmod 066 nieuwetekst.txt | ls -l nieuwetekst.txt   
+cat nieuwetekst.txt
+```
+Nu heeft de gebruiker geen rechten maar de groep en andere gebruikers wel. Zoals je kan zien heb ik geen toegang meer tot het bestand nu. 
+![Screenshot nieuwe rechten 066](../00_includes/LNX-05/Linux-permissions-066.jpg)
+
+### Verander bestanden van eigenaar of groep. 
+Hiervoor hebben wij de **chown** en **chgrp** commands voor. Als ik een andere gebruiker en groep instel kunnen wij er niet meer bij met onze eigen account maar wel op het ingestelde account. 
+
+```
+sudo chown techgrounds_user1 nieuwetekst.txt
+sudo chgrp techgrounds_user1 nieuwetekst.txt
+```
+![Screenshot permission chown chgrp](../00_includes/LNX-05/Linux-permission-chown-chgrp.jpg)
 
 
 
