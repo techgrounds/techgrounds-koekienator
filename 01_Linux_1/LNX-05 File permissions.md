@@ -17,11 +17,11 @@ https://www.digitalocean.com/community/tutorials/linux-permissions-basics-and-ho
 ### Resultaat
 Hoe kan je permissions lezen?
 Het is verdeeld over een aantal delen.
-- Filetype
-- Permission classes
-    - User *** de gebruiker zelf ***
-    - Group *** de gehele gebruikers groep *** 
-    - Other *** iedereen die niet in User of Group zit ***    
+- **Filetype**
+- **Permission classes**
+    - **User**  de gebruiker zelf 
+    - **Group** de gehele gebruikers groep 
+    - **Other** iedereen die niet in User of Group zit     
 
 Er zijn maar 2 bestandstypen in linux. Dat zijn normal en special. Normale bestanden zijn data files waar iets in geschreven staat en worden aangegeven als **-**. Speciale bestanden worden aangegeven met letters, een map bijvoorbeeld is dan **d**.
 
@@ -30,8 +30,15 @@ Permissions zijn de rechten die iemand heeft. Lezen **r**, Schrijven **w**, Uitv
 In de screenshot is te zien dat de User en Groep mogen lezen en schrijven, Other mag alleen lezen bij deze txt bestanden. 
 ![Screenshot longlist](../00_includes/LNX-05/Linux-LongList.jpg)
 
-Hier een aantal voorbeelden:
-```-rw-------```: een bestand dat alleen toegankelijk is voor de gebruiker.     
-```-rwxr-xr-x```: een bestand die uitvoerbaar is voor iedere gebruiker.     
+Hier een aantal voorbeelden:  
+```-rw-------```: een bestand dat alleen toegankelijk is voor de gebruiker.  
+```-rwxr-xr-x```: een bestand die uitvoerbaar is voor  iedere gebruiker maar alleen de gebruiker kan schrijven.  
+```-rw-rw-rw-```: een bestand die iedereen kan lezen en schrijven.  
+```drwxr-wr-w```: een map waar iedereen in kan.  
+```drwxrwx---```: een map waar alleen gebruiken en groep in kan en ook kan aanpassen.  
+```drwxr-x---```: een map waar de groep in kan.  
+
+
+
 
 
