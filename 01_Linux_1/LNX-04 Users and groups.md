@@ -2,14 +2,7 @@
 [Geef een korte beschrijving van het onderwerp]
 
 ### Key-terms   
-**User**    
-**Admin**   
-**Sudo**    
-**adduser** add a user  
-**usermod** user modifier
-**su** switch user
-**Hidden files**    
-**Exit**
+**Sudo** superuser, de admin van linux
 
 
 ### Gebruikte bronnen
