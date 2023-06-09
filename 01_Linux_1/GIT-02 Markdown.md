@@ -8,22 +8,31 @@ Basis principes hoe Markdown werkt.
 - Bold tekst
 - Link 
 
+## Opdracht
 ### Gebruikte bronnen
 https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#section-links  
 
 
-# Resultaat
-[Omschrijf hoe je weet dat je opdracht gelukt is (gebruik screenshots waar nodig).]
+## Resultaat
+### Wat is Markdown?
+Markdown is een taal waarmee je tekst opmaak kan doen. De syntax is makkelijk te leren. 
 
-Markdown is een tekst opmaak syntax veel gebruikt op GitHub voor documentatie.  
-Net als bij bekendende tekts editors zoals bijvoorbeeld Word heb je verschillende opmaken.
+### Headers.
+Headers zijn als koppen in Word en GDocs. Hierin zit een hyrarchie waardoor je automatisch een ** table of contents ** maat in het bestand. Met ```#``` kan je headers maken.
 
-Hier zijn aan aantal voorbeelden:
-# \# Hoofdheader / Kop 1
-## \#\# Second Header / Kop 2
-### \#\#\# Third Header / Kop 3
+# \# Eerste level header 
+## \#\# Tweede level header
+### \#\#\# Derde level header
+#### \#\#\#\# Vierde level header
+
+
+
+
+
+
+
+
 
 ## Ervaren problemen
 Verkeerde symbolen gebruiken ' en ` lijken erg opelkaar maar toch een andere functie.
-
 
