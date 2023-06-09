@@ -33,7 +33,7 @@ Je kan een link naar een website maken, dan creëer je een hypertext. De code hi
 ```
 Nu hebben wij een hyperlink: ![Techgrounds](https://techgrounds.nl/).
 
-Er is ook mogelijkheid om te linken naar een sectie van jouw bestand. Dat is waar de Headers weer bij komen kijken. Dit kan ieder bestand zijn waar jij toegang tot hebt. Nu gebruik ik de eerste header van dit document als voorbeeld. ![Markdown](!https://github.com/techgrounds/techgrounds-koekienator/blob/main/01_Linux_1/GIT-02%20Markdown.md#markdown)
+Er is ook mogelijkheid om te linken naar een sectie van jouw bestand. Dat is waar de Headers weer bij komen kijken. Dit kan ieder bestand zijn waar jij toegang tot hebt. Nu gebruik ik de eerste header van dit document als voorbeeld. ![Markdown](!https://github.com/techgrounds/techgrounds-koekienator/blob/main/01_Linux_1/GIT-02%20Markdown.md#markdown) wel in een nieuwscherm.
 ```
 ![Markdown](!https://github.com/techgrounds/techgrounds-koekienator/blob/main/01_Linux_1/GIT-02%20Markdown.md#markdown)
 ```
@@ -50,8 +50,6 @@ Een relative link gaat naar een bestand op de repository. We gaan dan door ``../
 
 ```![Screenshot headers](../100_includes/GIT-01/foutelink.jpg)```
 ![Screenshot foute link headers](../00_includes/GIT-01/foutelink.jpg)
-
-
 
 ### Quotes
 Er zijn een paar manieren om te quoten met **>** en tussen **`** 
