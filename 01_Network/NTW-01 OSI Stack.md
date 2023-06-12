@@ -9,6 +9,8 @@ https://www.cloudflare.com/learning/ddos/glossary/open-systems-interconnection-m
 https://www.youtube.com/watch?v=0y6FtKsg6J4 (ByteByteGo)  
 https://www.youtube.com/watch?v=CRdL1PcherM (Network Chuck)  
 https://www.iso.org/about-us.html  
+https://www.comparitech.com/net-admin/ultimate-guide-tcp-ip/  
+
 
 
 
@@ -100,28 +102,12 @@ Example equipment (electrical, mechanical, radio):
 ![Screenshot OSI dataflow](../00_includes/NTW-01/osi_data_flow.jpg)
 
 ### TCP/IP
+This was the original protocol that enables the internet. It had 4 layers, Application, Transpot, Network and Network interface. The official name was Internet Protocol Suite. 
 
+OSI expanded this by adding more layers and create an even greater abstraction that is used today mainly for trouble shooting as TCP/IP is still more populair. 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+![Screenshot OSI vs TCP/IP](../00_includes/NTW-01/osi_vs_tcpip.jpg)
 
 
 ## Ervaren problemen
-[Geef een korte beschrijving van de problemen waar je tegenaan bent gelopen met je gevonden oplossing.]
+Het was goed te doen maar wel veel moeten lezen. 
