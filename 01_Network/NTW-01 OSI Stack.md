@@ -11,10 +11,10 @@ https://www.youtube.com/watch?v=CRdL1PcherM (Network Chuck)
 https://www.iso.org/about-us.html  
 https://www.comparitech.com/net-admin/ultimate-guide-tcp-ip/  
 
-
-
-
 ## Opdracht
+- Study OSI model and its uses.
+- Study TCP/IP model and its uses.
+
 ## Resultaat
 ### OSI Model
 The OSI model or Open System Interconnection is a conceptual model created by ISO (International Organisation of Standardization.). This was created to let different OS to communicate with eachother. 
