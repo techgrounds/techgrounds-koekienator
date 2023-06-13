@@ -78,14 +78,14 @@ Each device shows it's IP, MAC, Name.
 
 ![Screenshot my router](../00_includes/NTW-01/ntw_router_interface.jpg)
 
-The dhcp server on my router
+The dhcp server on my router  
 ![Screenshot my dhcp](../00_includes/NTW-01/ntw_router_dhcp_server.jpg)
 
-How to find my dhcp server on my network.
+How to find my dhcp server on my network.  
 ```
 ipconfig /all
 
-checked my active Ethernet adapter.
+checked my active Ethernet adapter.  
 ```
 ![Screenshot dhcp via ipconfig all](../00_includes/NTW-01/ntw_ipconfig_all.jpg)
 
