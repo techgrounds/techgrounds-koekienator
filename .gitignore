@@ -3,3 +3,6 @@
 *.doc
 *.docx
 *.gdoc
+
+# Block paths/files
+../sprints
