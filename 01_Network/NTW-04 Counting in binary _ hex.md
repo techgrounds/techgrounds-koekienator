@@ -10,7 +10,7 @@
 - Hex = Base-16
 
 ### Used Sources
-https://www.mathsisfun.com/binary-number-system.html
+https://www.rapidtables.com/convert/number/hex-to-decimal.html  
 
 ## Assignment
 - Study counting in base 2 and base 16

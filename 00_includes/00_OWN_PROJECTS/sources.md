@@ -24,7 +24,11 @@ https://www.digitalocean.com/community/tutorials/memcached-telnet-commands-examp
 https://www.digitalocean.com/community/tutorials/telnet-command-linux-unix
 
 ## Scrum
-https://aws.amazon.com/what-is/scrum/
+https://aws.amazon.com/what-is/scrum/ 
+
+## Wireshark
+https://www.geeksforgeeks.org/how-to-install-and-use-wireshark-on-ubuntu-linux/
+https://www.geeksforgeeks.org/nmap-command-in-linux-with-examples/
 
 The number 2 in the output refers to the number of links to this file. In Linux, links provide a method to create shortcuts to help users navigate the filesystem. When you created this file, Linux did some background work to create an absolute link to the file, and a self-referential link to the file to allow for users to navigate along a relative path. We’ll discuss absolute and relative paths in the next section.
 

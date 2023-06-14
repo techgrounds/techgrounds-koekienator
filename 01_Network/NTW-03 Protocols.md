@@ -114,6 +114,10 @@ Default color codes problems:
 - Dark yellow = Routing
 - Dark gray = TCP SYN, FIN and ACK traffic
 
+TCP uses a three-way handshake to establish a reliable connection. The connection is full duplex, and both sides synchronize (SYN) and acknowledge (ACK) each other.
+
+![!Screenshot](../00_includes/NTW-01/tcp-threeway-handshake.jpg)
+
 A recoding I made:
 ![Screenshot wireshark](../00_includes/NTW-01/wireshark_testing.jpg)
 
