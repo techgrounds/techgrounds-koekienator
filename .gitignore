@@ -5,4 +5,4 @@
 *.gdoc
 
 # Block paths/files
-../sprints
+.\sprints\
