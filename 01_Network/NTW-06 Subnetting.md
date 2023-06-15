@@ -22,19 +22,19 @@ There are 3 different possible subnets.
 -- Subnet Mask 255.0.0.0  
 -- IP range 0-127.0.0.0  
 -- Up to 126^1 Networks  
--- Up to 254^3 Hosts  
+-- Up to 255^3 Hosts  
 -- Default prefix length /8  
 - Class B network:   
 -- Subnet Mask 255.255.0.0  
 -- IP range 128-191.0.0.0  
 -- Up to 126^2 Networks  
--- Up to 254^2 Hosts  
+-- Up to 255^2 Hosts  
 -- Default prefix length /16  
 - Class B network:  
 -- Subnet Mask 255.255.255.0  
 -- IP range 192-223.0.0.0  
 -- Up to 126^3 Networks  
--- Up to 254^1 Hosts   
+-- Up to 255^1 Hosts   
 -- Default prefix length /24  
 
 ![Screenshot subnetting](../00_includes/NTW-01/subnetting_layers.png)
