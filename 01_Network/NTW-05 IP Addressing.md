@@ -45,11 +45,22 @@ An IP is an unique identifier assigned to a divicer or domain that connects to t
 ### IPv4 vs IPv6
 As the name suggests IPv4 is the fourth version of IP introduced in 1983. How ever there is a limit to combinations you can make with the IPv4 addresses and we reached it's limits now. IPv6 is the latest version (they never adapted IPv5). 
 
-IPv4 has addresses (2^32) ``4.27e9``  
-IPv6 has addresses (2^128) ``340.28e36``  
-This makes IPv6 practicly inifinite.
-With currently ``7,942,645,086 people as of 29-12-22``.  
-For every person there are ``42.84e37 IP addresses`` availible.  
+||IPv4|IPv6|
+|---|---|---|
+|Bits|32|128|
+|Bytes|4|16|
+|Segmented| 8 bit | 32 bit |
+|| 1 byte | 4 bytes|
+|Notation|Decial|Hex|
+Addresses|2^32|2^128|
+
+
+Example: 
+``` 
+IPv4 132.88.142.5 
+IPv6 84.58.8e.05 or (0x84588e05)  
+```
+
 
 ### Public vs Private IP
 Public IP connects to the internet.
