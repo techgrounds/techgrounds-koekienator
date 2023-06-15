@@ -37,7 +37,8 @@ IP stands for Internet Protocol and is active on the *network layer*. It is a se
 Each packet has the IP information and helps routers to send the packets to the right place. Every device or domain that connects to the internet has an IP attached to them.  
 On arrival it depends on the transport protocol how it's handled. The most common ones are TCP and UDP.
 
-An IP is an unique identifier assigned to a divicer or domain that connects to the internet. Each IP has a series of characters, *192.168.1.1`. Via DNS resolvers, that translate human-readable domain to IP addresses, uses are able to connect to a website without memorizing this complext series of characters. Each packet will both the IP of the device or the domain together with te internet recipient. Just like how you would have a mail you would send via a postal service. 
+An IP is an unique identifier assigned to a divicer or domain that connects to the internet. Each IP has a series of characters, *192.168.1.1`. Via DNS resolvers, that translate human-readable domain to IP addresses, uses are able to connect to a website without memorizing this complext series of characters. Each packet will both the IP of the device or the domain together with te internet recipient. Just like how you would have a mail you would send via a postal service.  
+
 ![Screenshot IP addressing](../00_includes/NTW-01/IP_how_does_it_work.jpg)
 
 
