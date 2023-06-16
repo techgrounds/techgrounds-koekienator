@@ -63,26 +63,43 @@ Below an office and it's requirements and below that how it looks like as FLSM a
 ### How to calculate a VLSM.
 As stated before there is a network and host within an IP. Subnetting is nothing more than a borrowing system.
 
+Public subnet:
 First we make our subnet into binary.
 ```
-255.255.255.0
+192.168.1.0
 
 11111111.11111111.11111111.00000000
 ```
-From here we can calculate the subnet mask. We use the binary * 2 for this, to see how large a subnet needs to be depending on the amount of IP addresses are required. Every subnet has 2 addresses reserved for Network and Broadcast. In this case we got 6 hosts + Internet gateway. 
+From here we can calculate the subnet mask. We use the binary * 2 for this, to see how large a subnet needs to be depending on the amount of IP addresses are required. Every subnet has 2 addresses reserved for Network and Broadcast. In this case we got 15 hosts.
 ```
 256 128 64 32 16 8 4 2
 
-7 + 2 reserved = 9
-smallest network will be 16.
+15 + 2 reserved = 17
+smallest network will be 32.
 
 ```
-Now we can change the binary subnet. We only need 4x 0 so the rest becomes a 1. Then we can count the 1's and that is 8+8+8+4 = 28
+Now we can change the binary subnet. We need 5x 0 so the rest becomes a 1. Then we can count the 1's and that is 8+8+8+3 = 27
 ```
-11111111.11111111.11111111.11110000
+11111111.11111111.11111111.11100000
 
-Subnet Mask is 255.255.255.0/28
+Subnet Mask is 255.255.255.0/27
 ```
+
+Private 2:
+- 30 hosts + NAT
+- Fits within 64. 
+- 11111111.11111111.11111111.11000000
+- 255.255.255.32/26
+
+Public 1:
+- 5 hosts + Internet Gateway
+- Fits within 8.
+- 11111111.11111111.11111111.11111000
+- 255.255.255.96/29
+
+
+![Screenshot my network diagram](../00_includes/NTW-01/subnetting_own_diagram.jpg)
+
 
 ## Encountered problems
 Between our scrum team there was a lot of discussion of the right way to calculate a VLSM. Still doubting a bit if I got it correctly now. 
