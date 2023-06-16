@@ -2,6 +2,8 @@
 What are protocols and what are some widely used ones. 
 
 ### Key-terms
+- **Half Duplex** One-way communication at a time.
+- **Full Duplex** Two-way communication at a time. 
  
 
 ### Used Sources
