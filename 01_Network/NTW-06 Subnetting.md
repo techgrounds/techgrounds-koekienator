@@ -1,8 +1,8 @@
 # [Subnetting]
-[Geef een korte beschrijving van het onderwerp]
+How to divide our network in smaller pieces? Subnetting.
 
 ### Key-terms
-[Schrijf hier een lijst met belangrijke termen met eventueel een korte uitleg.]
+
 
 ### Used Sources
 https://www.networkworld.com/article/3588315/what-is-an-ip-address-and-what-is-your-ip-address.html  
@@ -19,28 +19,19 @@ IP addresses work hierarchically. In general, the numbers to the left tell you w
 The IP address is divided in 4 segments of 8 bits (octet). Routers determine what parts of the IP are referred to the network, subnet and devices.
 
 There are 3 different classes between subnets.
-- Class A network:  
--- Subnet Mask 255.0.0.0  
--- IP range 0-127.0.0.0  
--- Up to 126^1 Networks  
--- Up to 255^3 Hosts  
--- Default prefix length /8  
-- Class B network:   
--- Subnet Mask 255.255.0.0  
--- IP range 128-191.0.0.0  
--- Up to 126^2 Networks  
--- Up to 255^2 Hosts  
--- Default prefix length /16  
-- Class B network:  
--- Subnet Mask 255.255.255.0  
--- IP range 192-223.0.0.0  
--- Up to 126^3 Networks  
--- Up to 255^1 Hosts   
--- Default prefix length /24  
+
+|Class A|Class B|Class C|
+|---|---|---|
+|Subnet Mask 255.0.0.0 |Subnet Mask 255.255.0.0|Subnet Mask 255.255.255.0|
+|IP range 0-127.0.0.0|IP range 128-191.0.0.0|IP range 192-223.0.0.0 |
+|Up to 126^1 Networks|Up to 126^2 Networks|Up to 126^3 Networks|
+|Up to 255^3 Hosts|Up to 255^2 Hosts|Up to 255^1 Hosts|
+|Default prefix /8 |Default prefix /16|Default prefix /24|
+
+
 
 ![Screenshot subnetting](../00_includes/NTW-01/subnetting_layers.png)
 ![Screenshot subnetting id](../00_includes/NTW-01/subnetting_id.png)
-![Screenshot subnetting example](../00_includes/NTW-01/subnetting_examples.jpg)
 
 ### What is subnet masking?
 Subnet masking is literally masking your subnet. Your IP range from ```255.255.255.0 - 255.255.255.31`` would have subnet mask ``255.255.255.0/29``. Since the first IP is your Network and the last is broadcasting, a person trying to find out an IP address from a specific device can't see the IP address and only sees the subnet mask.
@@ -73,7 +64,6 @@ First we make our subnet into binary.
 From here we can calculate the subnet mask. We use the binary * 2 for this, to see how large a subnet needs to be depending on the amount of IP addresses are required. Every subnet has 2 addresses reserved for Network and Broadcast. In this case we got 15 hosts.
 ```
 256 128 64 32 16 8 4 2
-
 15 + 2 reserved = 17
 smallest network will be 32.
 
@@ -81,25 +71,22 @@ smallest network will be 32.
 Now we can change the binary subnet. We need 5x 0 so the rest becomes a 1. Then we can count the 1's and that is 8+8+8+3 = 27
 ```
 11111111.11111111.11111111.11100000
-
 Subnet Mask is 255.255.255.0/27
 ```
 
 Private 2:
-- 30 hosts + NAT
+- 30 hosts + NAT (+2 Reserved)
 - Fits within 64. 
 - 11111111.11111111.11111111.11000000
 - 255.255.255.32/26
 
 Public 1:
-- 5 hosts + Internet Gateway
+- 5 hosts + Internet Gateway (+2 Reserved)
 - Fits within 8.
 - 11111111.11111111.11111111.11111000
 - 255.255.255.96/29
 
-
 ![Screenshot my network diagram](../00_includes/NTW-01/subnetting_own_diagram.jpg)
-
 
 ## Encountered problems
 Between our scrum team there was a lot of discussion of the right way to calculate a VLSM. Still doubting a bit if I got it correctly now. 
