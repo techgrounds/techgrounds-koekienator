@@ -9,8 +9,8 @@ How to detect what happens on your network?
 
 
 ### Used Sources
-https://www.geeksforgeeks.org/nmap-command-in-linux-with-examples/
-https://www.youtube.com/watch?v=-HDpYR_QSFw (Chris Greer. How to filter traffic)
+https://www.geeksforgeeks.org/nmap-command-in-linux-with-examples/   
+https://www.youtube.com/watch?v=-HDpYR_QSFw (Chris Greer. How to filter traffic)  
 
 ## Assignment
 - Scan the network of your Linux machine using nmap. What do you find?
@@ -45,7 +45,7 @@ Wireshark is used to monitor network traffic and is used for trouble shooting ba
 
  First I filtered out my own local IP. This can be done by typing ``IP`` in the search bar at the top. Here you get a dropdown and select the first one with your IP address. ``ip.addr eq \<your ip\>.
 
- Then I searched online for Public IP addresses Youtube uses and found a list ![here]"https://www.lifewire.com/ip-address-of-youtube-818157". 
+ Then I searched online for Public IP addresses Youtube uses and found a list ![here](https://www.lifewire.com/ip-address-of-youtube-818157"). 
  
  Scrolling a bit and I saw 216.58.208.99 that is within a range of public IP Youtube uses. So I made a conversation filter by IPv4. 
 
@@ -56,8 +56,16 @@ Here I saw multiple protocol.
 
 To my surprise there was no UDP for the video's, then I started googling and found out QUIC was developed by Google to make TCP connections faster. 
 
-With another filter I wanted to check for 3 way handshakes ``tcp.flags.syn==1``. In this list I saw green packets (HTTP) that used this written as ``SYN, SYN/ACK, ACK`` in different lines. 
+With another filter I wanted to check for 3 way handshakes ``tcp.flags.syn==1``. In this list I saw green packets (HTTP) that used this written as ``SYN, SYN/ACK, ACK`` in different lines.  
 ![Screenshot 3way handshake](../00_includes/SEC-01/wireshark_self_3wayhandshake.jpg)
+
+---
+Update
+---
+After talking go gether we found View -> Name resolutions. This turned most IP addresses in domain names making it much easier to find out what you are looking for.
+
+Apparently Google uses a domain www.gstatic.com to help load their content faster from all their servers around the world.
+https://softwarekeep.com/help-center/what-is-gstatic-com
 
 ## Encountered problems
 Watched a short tutorial to understand basics a little bit. Still a lot of information that I can't filter properly yet by just looking at it. 
