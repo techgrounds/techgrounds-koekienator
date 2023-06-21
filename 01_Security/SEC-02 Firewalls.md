@@ -46,7 +46,7 @@ Just incase as I just locked myself out, the SSH commands. Should be fine with `
 After this we can enable ufw.  
 ```sudo ufw enable```  
 Now we can see what is enabled.  
-```sudo ufw status verbose```
+```sudo ufw status verbose```  
 ![!Screenshot ufw status](../00_includes/SEC-01/ufw_enabled_status.jpg)
 
 Now to disable our port 80/443 for Apache.
