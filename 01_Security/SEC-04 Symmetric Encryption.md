@@ -1,13 +1,24 @@
 # [Symmetric encryption]
+
 How can we encrypt our data now days to keep our data safe?
 
+
+
+## Assignment
+
+- Find one more historic cipher besides the Caesar cipher.
+- Find two digital ciphers that are being used today.
+- Make a symmetrically encrypted message and let a peer decipher it. 
+
 ### Key-terms
-- Cipher, a cryptographic algorithm.
-- Asymmetric encryption
-- Symmetric encryption
+
+- Cipher, a cryptographic algorithm.  
+- Asymmetric encryption  
+- Symmetric encryption  
 
 
 ### Used Sources
+
 https://www.secplicity.org/2017/05/25/  historical-cryptography-ciphers/  
 https://cryptii.com/pipes/caesar-cipher  
 https://crashtest-security.com/block-cipher-vs-stream-cipher/  
@@ -15,15 +26,10 @@ https://www.geeksforgeeks.org/  difference-between-block-cipher-and-stream-ciphe
 https://www.youtube.com/watch?v=NuyzuNBFWxQ (7 Cryptography Concepts)  
 https://www.geeksforgeeks.org/advanced-encryption-standard-aes/  
 
-
-
-## Assignment
-- Find one more historic cipher besides the Caesar cipher.
-- Find two digital ciphers that are being used today.
-- Make a symmetrically encrypted message and let a peer decipher it. 
-
 ## Results
+
 ### What is the definition of a Cipher.
+
 The definition from the Oxford Dictionary is:  
 ```a secret or disguised way of writing; a code.``  
 
@@ -31,8 +37,10 @@ Cipher is away to encode a readable "plaintext" message in a way that prevents u
 
 Today ciphers are referred as encryption that is used by many protocols on the different layers of the OSI model.
 
-### Historic Ciphers
+### Historic Ciphers  
+
 #### Caesar Cipher (Substitution)
+
 This is one of the most basic encryption techniques. It works by replacing each letter in the original plaintext messages with a different letter based of a fixed shift of the alphabet.
 ```
 Example we shift 9 to the left A -> R. 
