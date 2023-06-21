@@ -1,5 +1,5 @@
 # [Symmetric encryption]
-[Geef een korte beschrijving van het onderwerp]
+How can we encrypt our data now days to keep our data safe?
 
 ### Key-terms
 - Cipher, a cryptographic algorithm.
@@ -20,7 +20,7 @@ https://www.geeksforgeeks.org/advanced-encryption-standard-aes/
 ## Assignment
 - Find one more historic cipher besides the Caesar cipher.
 - Find two digital ciphers that are being used today.
-
+- Make a symmetrically encrypted message and let a peer decipher it. 
 
 ## Results
 ### What is the definition of a Cipher.
@@ -118,6 +118,15 @@ Some common use cases for RSA:
 - Key exchange
 - Digital certificates
 - VPN
+
+### Sending encrypted message to a peer
+I've used a online tool to create a AES(CBC) encryption and shared it in public slack and tagged them. ![The Tool](https://www.aesencryptiononline.com/2022/03/aes-encryption-function-ontools.html)
+
+![Screenshot AES encryption](../00_includes/SEC-01/my_AED_CBC.jpg)
+![Screenshot AES Vincent](../00_includes/SEC-01/my_AED_vin.jpg)
+
+Vincent was able to find a calculator that worked with the Key I generated, though Kaman didn't find one. It seems there are multiple ways to make a key and a fair amount of calculates use different required inputs. I did share it was AES(CBC) without Padding or PBKDF2. Still it took well over an hour to find the correct calculator.
+
 
 ## Encountered problems
 Got lost in the amount of encryptions that are use now days. 
