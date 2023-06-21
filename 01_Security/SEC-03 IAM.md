@@ -3,7 +3,7 @@ How can we identify and authorize users?
 
 ### Key-terms
 - Authentication
-- MFA multi-factor-authentication
+- Authorization
 
 ### Used Sources
 https://www.freecodecamp.org/news/whats-the-difference-between-authentication-and-authorisation/  
