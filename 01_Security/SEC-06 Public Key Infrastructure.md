@@ -26,14 +26,18 @@ https://www.youtube.com/watch?v=VH4gXcvkmOY
 https://www.ssl.com/faqs/what-is-an-x-509-certificate/  
 https://learn.microsoft.com/en-us/skype-sdk/sdn/articles/installing-the-trusted-root-certificate  
 
-
 ## Results
 
-### Self-signed certificate
+### What is a PKI
+The PKI is an important aspect of internet security. It is a set of technology and processes that make up a framework of encryption to protect and authenticate digital communications. 
+
+Simplified, we got a digital certificate that links a public key with a device or user. This helps authenticate user and device to ensure a secure digital communication.
+
+### Self-Signed Certificate
 
 We're going to make a self-signed x509 certificate using OpenSSL. This is a standard format for PKC, digital documents that securely associate key pairs with identities such as websites, individuals or companies.  
 
-#### Generate CA
+#### Generate a CA
 
 Let's make our own CA for local use.
 We need a  public key here we use RSA with ``aes256`` with a 4096 bit size.
@@ -43,7 +47,7 @@ openssl genrsa -aes256 -out ca-key.pem 4096
 ```  
 
 Then we can create a public CA Certificate:
-Type will be ``x509`` key will be a HASH ``sha256``.  
+Type will be ``x509`` key will be a HASH ``sha256``. In short a ``x509`` is a certificate that binds an identity to a public key using  a digital signature. These are used in protocols like TLS and SSL.  
 
 ```text
 openssl req -new -x509 -sha256 -days 365 -key ca-key.pem -out ca.pem
@@ -61,7 +65,7 @@ openssl x509 -in myCA.pem -text
 ![Screenshot CA True](../00_includes/SEC-01/openssl_CA_Cert_True.jpg)
 ![Screenshot CA Cert](../00_includes/SEC-01/openssl_CA_Cert.jpg)
 
-#### Generate Certificate
+#### Generate a Digital Certificate
 
 Now we going to create the certificate.  
 We going to need a key again.
@@ -85,8 +89,7 @@ We need to add alternative names to work locally.
 echo "subjectAltName=DNS:127.0.0.53,IP:10.105.175.95" >> extfile.cnf
 ```
 
-Finally we can create the certificate and check if it is ok. 
-It will be a x509 certificate
+Finally we can create the certificate and check if it is ok. It will be a x509 certificate.
 
 ```text
 openssl x509 -req -sha256 -days 365 -in cert.csr -CA ca.pem -CAkey ca-key.pem -out cert.pem -extfile extfile.cnf
@@ -103,7 +106,7 @@ In your browser left of the address bar there is a lock icon, if you click on it
 ![Screenshot youtube certificate](../00_includes/SEC-01/certificate_google_youtube.jpg)  
 
 The youtube certificate is part of the ``*.google.com`` certificate that has a pool over 100 DNS-Names. Youtube has 9 of those DNS-Names.  
-The certificate is self has four layers: ``*.google.com`` -> ``GTS CA 1C3`` -> ``GTS Root R1`` -> ``GlobalSign Root CA``. The last one GlobalSign is on of the big players for SSL certificates.  
+The certificate is self has four layers: ``*.google.com`` -> ``GTS CA 1C3`` -> ``GTS Root R1`` -> ``GlobalSign Root CA``. The last one GlobalSign is one of the big players for SSL certificates.  
 ![Screenshot google certificate](../00_includes/SEC-01/certificate_google.jpg)
 
 #### Google self signed certificate  
@@ -130,8 +133,8 @@ In Linux these are found in this directory:
 /etc/ssl/certs/
 ```
 
-![Screenshot Certificates linux](../00_includes/SEC-01/trusted_certificates_linux.jpg)
+![Screenshot Certificates linux](../00_includes/SEC-01/trusted_certificates_Linux.jpg)
 
 ## Encountered problems
 
-Tried to make my certificate work on apache but got off track so much as it wasn't the assignment.  
+Tried to make my certificate work on apache but got off track so much, since that wasn't the assignment I stopped at making a certificate.  
