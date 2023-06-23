@@ -52,7 +52,7 @@ Snelheid: Na een paar dagen liep ik achter met de opdrachten. Dit misschien ook 
 
 TBA, hij is er deze middag niet.  
 
-### Wat kunnen wij doen om het te verbeteren?
+## Wat kunnen wij doen om het te verbeteren? 
 
 - Elkaar beter aansturen bij het afdwalen
 - Opdrachten van peers bekijken en feedback geven. (proactiever zijn)
