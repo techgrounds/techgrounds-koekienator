@@ -44,16 +44,16 @@ Betrokkenheid: Iedereen hielp me toen ik bij opdracht 4 & 5 was aangekomen waarb
 
 ## Wat kan er beter?
 
-Documentation: Ik had beter kunnen documenteren in Markdown. Nu is veel van mijn GitHub nog erg rommelig en missen er veel stappen die ik heb genomen.
+- Documentation: Ik had beter kunnen documenteren in Markdown. Nu is veel van mijn GitHub nog erg rommelig en missen er veel stappen die ik heb genomen.
 
-Snelheid: Na een paar dagen liep ik achter met de opdrachten. Dit misschien ook wel omdat ik veel ging uitproberen buiten de opdrachten om.
+- Snelheid: Na een paar dagen liep ik achter met de opdrachten. Dit misschien ook wel omdat ik veel ging uitproberen buiten de opdrachten om.
 
 ## Vincent
 
 TBA, hij is er deze middag niet.  
 
-## Wat kunnen wij doen om het te verbeteren? 
+## Wat kunnen wij doen om het te verbeteren?  
 
 - Elkaar beter aansturen bij het afdwalen
 - Opdrachten van peers bekijken en feedback geven. (proactiever zijn)
-- Checkins: Misschien door de dag heen ook eens vragen waar iedereen is. Niet dat dat niet gebeurde maar als we dan merken dat iemand achter loopt even vragen of die hulp nodig heeft of waar die niet uit komt. Dit werd goed gedaan maar is daarom extra waardevol om vaker te doen.  
+- Checkins: Misschien door de dag heen ook eens vragen waar iedereen is. Niet dat dat niet gebeurde maar als we dan merken dat iemand achter loopt even vragen of die hulp nodig heeft of waar die niet uit komt. Dit werd goed gedaan maar is daarom extra waardevol om vaker te doen.
