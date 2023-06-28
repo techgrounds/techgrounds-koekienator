@@ -20,8 +20,8 @@ Study:
 
 ### Used Sources
 
-https://learn.microsoft.com/en-us/azure/reliability/availability-zones-overview 
-https://www.youtube.com/watch?v=C-nNw1mGwzE
+https://learn.microsoft.com/en-us/azure/reliability/availability-zones-overview  
+https://www.youtube.com/watch?v=C-nNw1mGwzE  
 
 ## Results
 
@@ -61,8 +61,8 @@ Not all regions are supported.
 Supported regions has three of more zones.  
 A zone is one or more datacenters.  
 
-![Screenshot services legend](../00_includes/AZ-01/Azure_services_legend.png)
-![Screenshot availability zones](../00_includes/AZ-01/Azure_availability_zones.jpg)
+![Screenshot services legend](../00_includes/AZ-01/Azure_services_legend.png)  
+![Screenshot availability zones](../00_includes/AZ-01/Azure_availability_zones.jpg)  
 
 #### Region pairs
 
@@ -72,9 +72,9 @@ Each pair resides within the same geography.
 Physical isolation with at least 483km distance.  
 Some services have platform-provided replication.  
 Planned updates across the pairs.  
-Data residency maintained for disaster recovery.
+Data residency maintained for disaster recovery.  
 
-![Screenshot region pairs](../00_includes/AZ-01/Azure_region_pairs.jpg)
+![Screenshot region pairs](../00_includes/AZ-01/Azure_region_pairs.jpg)  
 
 #### Benefits of choosing a region
 
