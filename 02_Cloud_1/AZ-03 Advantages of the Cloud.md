@@ -11,6 +11,12 @@ Study:
 
 ### Key-terms
 
+- Scalability
+- Elasticity 
+- Agility
+- Geo-Distribution
+- Disaster Recovery
+
 ### Used Sources
 
 https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/benefits-of-cloud-migration/#benefits  
@@ -58,3 +64,5 @@ You're charged for only what you use. This model is also known as the pay-as-you
 ![Screenshot Consumption based model](../00_includes/AZ-01/Azure_consumption_based_model.jpg)
 
 ## Encountered problems
+
+No problems, most subjects where touched a bit in the 1st assignment.
