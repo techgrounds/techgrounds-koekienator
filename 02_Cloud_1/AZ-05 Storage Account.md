@@ -1,8 +1,10 @@
 # [Azure Storage Account]
 
-[Geef een korte beschrijving van het onderwerp]
+How to create a storage account and why do you want one.
 
 ## Assignment
+
+- Create a storage account only you can access. Add a file online and retrieve a file via Azure Storage Exchange. 
 
 ### Key-terms
 
@@ -24,7 +26,7 @@ This is defined in 3 different ways.
 - Structured.  
 -- SQL
 
-- Semi-Structured.
+- Semi-Structured.  
 -- NoSQL
 
 - No Structure.  
@@ -111,4 +113,5 @@ https://marcelcloud11.z6.web.core.windows.net/
 All my peers can access the website.
 
 ## Encountered problems
+
 No problems encountered.
