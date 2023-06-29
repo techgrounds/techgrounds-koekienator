@@ -26,9 +26,9 @@ Study:
 
 ### Used Sources
 
-https://learn.microsoft.com/nl-nl/azure/firewall/overview  
-https://www.youtube.com/watch?v=VIEaz869njk  Youtube AZ Firewalls
-https://www.youtube.com/watch?v=w8H5fWBHddA  Youtube AZ NSG
+![MS Doc, azure firewall](https://learn.microsoft.com/nl-nl/azure/firewall/overview)
+![Youtube AZ Firewalls](https://www.youtube.com/watch?v=VIEaz869njk)  
+![Youtube AZ NSG](https://www.youtube.com/watch?v=w8H5fWBHddA)  
 
 ## Results
 
@@ -111,10 +111,10 @@ I've created a new VM to connect to via SSH with a running apache server for web
 
 Found the NSG via market place and ticking the box with Azure services only. After the set up (was only selecting right resource group and give it a name). I can enter the NSG and add inbound and outbound rules for my resource group.  
 
-![Screenshot](../00_includes/AZ-01/Azure_NSG_BlockSSH.jpg)
-![Screenshot](../00_includes/AZ-01/Azure_NSG_BlockSSH1.jpg)
-![Screenshot](../00_includes/AZ-01/Azure_NSG_BlockSSH2.jpg)
-![Screenshot](../00_includes/AZ-01/Azure_NSG_AllowHTTP.jpg)
+![Screenshot](../00_includes/AZ-01/Azure_NSG_BlockSSH.jpg)  
+![Screenshot](../00_includes/AZ-01/Azure_NSG_BlockSSH1.jpg)  
+![Screenshot](../00_includes/AZ-01/Azure_NSG_BlockSSH2.jpg)  
+![Screenshot](../00_includes/AZ-01/Azure_NSG_AllowHTTP.jpg)  
 
 ## Encountered problems
 
