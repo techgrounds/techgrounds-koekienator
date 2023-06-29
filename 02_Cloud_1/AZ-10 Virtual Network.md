@@ -18,6 +18,32 @@ How do VNs work within Azure?
 
 ## Results
 
+### What is a Virtual Network?
+
+A VN is a emulated network in this case in Azure. This is used to let VMs, Web app and databases communicated with each other, other users or the internet.  
+
+VNs got different responsibilities:
+
+- Isolation and segmentation of a network
+- Internet communication
+- Communication between the Azure resources
+- Communication with on-premises resources
+- Routing network traffic
+- Filtering network traffic
+- Connecting to other VN
+
+Within a VN you can create subnets within your own private IP range.
+There are three ways to connect to a on-premises network. 
+
+- Point-to-Site VPN:  
+-- The Azure VN can be reached with a VPN from a on-premise computer.  
+- Site-to-Site VPN:  
+-- The on-premises VPN device or gateway is used to connect to the Azure VPN gateway. This is effectively 1 big network.
+- Azure Express route:  
+-- This is a physical connection from you local environment to Azure.  
+
+It's also possible to connect to Azure VN to each other with VN Peering. This can be done via UDR, user defined routing. It can be used for VN in different regions.
+
 ### Assignment 1
 
 We create a new VN, search VN in the search bar and select Virtual Network.  
