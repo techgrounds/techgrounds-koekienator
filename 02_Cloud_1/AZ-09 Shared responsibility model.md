@@ -17,8 +17,8 @@ Study:
 
 ### Used Sources
 
-https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility
-https://www.youtube.com/watch?v=9CVBohl6w0Q Youtube, IaaS vs PaaS vs SaaS
+![MS Doc, Shared Responsibilities](https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility)  
+![Youtube, IaaS vs PaaS vs SaaS](https://www.youtube.com/watch?v=9CVBohl6w0Q)  
 
 ## Results
 
