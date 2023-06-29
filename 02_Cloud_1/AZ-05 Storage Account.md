@@ -5,6 +5,7 @@ How to create a storage account and why do you want one.
 ## Assignment
 
 - Create a storage account only you can access. Add a file online and retrieve a file via Azure Storage Exchange. 
+- Create a new container, upload the AWS web demo files into the container. Enable Static Web hosting.
 
 ### Key-terms
 
@@ -14,8 +15,8 @@ How to create a storage account and why do you want one.
 
 ### Used Sources
 
-https://www.youtube.com/watch?v=_Qlkvd4ZQuo  
-https://learn.microsoft.com/nl-nl/azure/storage/blobs/storage-blob-static-website  
+![MS Doc, static website](https://learn.microsoft.com/nl-nl/azure/storage/blobs/storage-blob-static-website)  
+![Youtube, Azure Storage Services](https://www.youtube.com/watch?v=_Qlkvd4ZQuo)  
 
 ## Results
 
