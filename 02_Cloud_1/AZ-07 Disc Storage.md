@@ -1,12 +1,11 @@
 # [Azure Disk Storage]
 
-[Geef een korte beschrijving van het onderwerp]
+How to make new disks and attach them to your VM. 
 
 ## Assignment
 
 - Start 2 VM via SSH.
 - Create an Azure Disc Management, connect to both VM.
-- 
 
 ### Key-terms
 
@@ -18,7 +17,7 @@
 
 ### Used Sources
 
-https://learn.microsoft.com/en-us/azure/virtual-machines/linux/attach-disk-portal?tabs=ubuntu 
+![MS Doc, attach disks VM](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/attach-disk-portal?tabs=ubuntu) 
 
 ## Results
 
