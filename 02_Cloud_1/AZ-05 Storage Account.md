@@ -15,8 +15,8 @@ How to create a storage account and why do you want one.
 
 ### Used Sources
 
-![MS Doc, static website](https://learn.microsoft.com/nl-nl/azure/storage/blobs/storage-blob-static-website)  
-![Youtube, Azure Storage Services](https://www.youtube.com/watch?v=_Qlkvd4ZQuo)  
+[MS Doc, static website](https://learn.microsoft.com/nl-nl/azure/storage/blobs/storage-blob-static-website)  
+[Youtube, Azure Storage Services](https://www.youtube.com/watch?v=_Qlkvd4ZQuo)  
 
 ## Results
 
@@ -25,13 +25,13 @@ How to create a storage account and why do you want one.
 This is defined in 3 different ways.
 
 - Structured.  
--- SQL
+-- SQL  
 
 - Semi-Structured.  
--- NoSQL
+-- NoSQL  
 
 - No Structure.  
--- Native format
+-- Native format  
 
 #### BLOB containers
 
