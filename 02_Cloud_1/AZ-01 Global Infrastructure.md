@@ -35,7 +35,7 @@ Ensure data residency, sovereignty, resiliency, and compliance requirements are 
 Fault tolerant to protect from region wide failures.  
 Broken up into areas: Americas, Europe, Asia Pacific, Middle east and Africa.  
 
-![Screenshot Geographies](../00_includes/AZ-01/Azure-Geographies.jpg)
+![Screenshot Geographies](../00_includes/AZ-01/Azure-Geographies.png)
 
 #### Regions
 
@@ -48,7 +48,7 @@ Globally 50+ regions.
 Special Government regions.  
 Special partnered regions.  
 
-![interactive map](https://datacenters.microsoft.com/globe/explore)
+![MS Azure, interactive map](https://datacenters.microsoft.com/globe/explore)
 
 #### Availability zones
 
@@ -74,7 +74,7 @@ Some services have platform-provided replication.
 Planned updates across the pairs.  
 Data residency maintained for disaster recovery.  
 
-![Screenshot region pairs](../00_includes/AZ-01/Azure_region_pairs.jpg)  
+![Screenshot region pairs](../00_includes/AZ-01/Azure_region_pairs.png)  
 
 #### Benefits of choosing a region
 
