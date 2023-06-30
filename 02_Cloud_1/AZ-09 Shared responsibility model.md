@@ -17,15 +17,15 @@ Study:
 
 ### Used Sources
 
-![MS Doc, Shared Responsibilities](https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility)  
-![Youtube, IaaS vs PaaS vs SaaS](https://www.youtube.com/watch?v=9CVBohl6w0Q)  
+[MS Doc, Shared Responsibilities](https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility)  
+[Youtube, IaaS vs PaaS vs SaaS](https://www.youtube.com/watch?v=9CVBohl6w0Q)  
 
 ## Results
 
 ### On-Premise
 
 - Cloud provider manages infrastructure  
--- Nothing
+-- Nothing  
 
 - You manage infrastructure, platform and software  
 -- Infrastructure, Networking + Hardware + Virtualization  
@@ -45,8 +45,8 @@ Study:
 
 Use cases:  
 
-- Migration of workloads
-- Test & Development
+- Migration of workloads  
+- Test & Development  
 - Storage, Backup & Recovery  
 
 ![Screenshot](../00_includes/AZ-01/Azure_IaaS_UseCases.jpg)  
@@ -64,8 +64,8 @@ Use cases:
 
 Use cases:
 
-- Development framework
-- Analytics & business intelligence
+- Development framework  
+- Analytics & business intelligence  
 
 ![Screenshot](../00_includes/AZ-01/Azure_PaaS_UseCases.jpg)  
 ![Screenshot](../00_includes/AZ-01/Azure_PaaS.jpg)  
