@@ -26,9 +26,9 @@ Study:
 
 ### Used Sources
 
-![MS Doc, azure firewall](https://learn.microsoft.com/nl-nl/azure/firewall/overview)
-![Youtube AZ Firewalls](https://www.youtube.com/watch?v=VIEaz869njk)  
-![Youtube AZ NSG](https://www.youtube.com/watch?v=w8H5fWBHddA)  
+[MS Doc, azure firewall](https://learn.microsoft.com/nl-nl/azure/firewall/overview)  
+[Youtube AZ Firewalls](https://www.youtube.com/watch?v=VIEaz869njk)  
+[Youtube AZ NSG](https://www.youtube.com/watch?v=w8H5fWBHddA)  
 
 ## Results
 
@@ -70,7 +70,7 @@ Study:
 
 ### What can Azure Firewall do more than a regular firewall
 
-Azure Firewall is a cloud-native and intelligent service. It's fully statefull, firewall as a service with built-in high availability and unrestricted cloud scalability.
+Azure Firewall is a cloud-native and intelligent service. It's fully stateful, firewall as a service with built-in high availability and unrestricted cloud scalability.
 
 Where a normal firewall you install on your OS needs regular updates and isn't intelligent most of the time. 
 
@@ -90,11 +90,11 @@ Where a normal firewall you install on your OS needs regular updates and isn't i
 - Designed to filter traffic to (inbound) and from (outbound) Azure resources located in AVN.
 - Filtering controlled by rules
 - Ability to have multiple inbound and outbound rules
-- Rules are created by specifying:
--- Source/Destination  (IP address, service tag, application security groups)
--- Protocol  (TCP, UDP, etc..)
--- Port  (por port ranges)
--- Direction (in- or outbound)
+- Rules are created by specifying:  
+-- Source/Destination  (IP address, service tag, application security groups)  
+-- Protocol  (TCP, UDP, etc..)  
+-- Port  (por port ranges)  
+-- Direction (in- or outbound)  
 
 ![Screenshot NSG](../00_includes/AZ-01/Azure_NSG.jpg)
 
