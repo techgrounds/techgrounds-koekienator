@@ -12,16 +12,16 @@ Study:
 ### Key-terms
 
 - Scalability
-- Elasticity 
+- Elasticity
 - Agility
 - Geo-Distribution
 - Disaster Recovery
 
 ### Used Sources
 
-https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/benefits-of-cloud-migration/#benefits  
-https://cloud.google.com/learn/what-is-disaster-recovery  
-https://www.youtube.com/watch?v=NdqncsMtryY  
+[MS Doc, cloud migration](https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/benefits-of-cloud-migration/#benefits)  
+[Google Doc, disaster recovery](https://cloud.google.com/learn/what-is-disaster-recovery)  
+[Youtube, Consumption based model](https://www.youtube.com/watch?v=NdqncsMtryY)  
 
 ## Results
 
