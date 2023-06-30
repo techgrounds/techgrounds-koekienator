@@ -28,12 +28,12 @@ Study:
 
 ### Used Sources
 
-https://learn.microsoft.com/en-us/azure/well-architected/cost/principles  
-https://www.youtube.com/watch?v=7w88KBVesPI  
-https://azure.microsoft.com/en-us/free/free-account-faq  
-https://securityboulevard.com/2021/01/capex-vs-opex-whats-best-for-it-budgeting/  
-https://azure.microsoft.com/en-us/pricing/tco/calculator/  
-https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/cost-mgt-alerts-monitor-usage-spending  
+[MS Doc, cost principles](https://learn.microsoft.com/en-us/azure/well-architected/cost/principles)  
+[MS Doc, cost alerts](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/cost-mgt-alerts-monitor-usage-spending)
+[MS Doc, free account FAQ](https://azure.microsoft.com/en-us/free/free-account-faq)
+[MS Doc, TCO calc](https://azure.microsoft.com/en-us/pricing/tco/calculator/)
+[CapEX vs OpEX](https://securityboulevard.com/2021/01/capex-vs-opex-whats-best-for-it-budgeting/  )
+[Youtube, Azure cost management](https://www.youtube.com/watch?v=7w88KBVesPI)  
 
 ## Results
 
@@ -42,32 +42,39 @@ https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/cost-mgt-a
 Every business wants a ROI and drive a cost-efficient workload while you keep to your given budget. It is very important to know where your money goes and adjust it accordingly to your needs. Azure some principles in their well-architected-framework.  
 
 Choose resources aligned with business goals and workload performance.
+
 - Explore modernization and cloud native options like PaaS or SaaS.
 - PaaS and SaaS are typically more cost-effective than IaaS.
 
 Be mindful of cost implications and set budgets:
+
 - Consider budget constraints when making design choices.
 - Define acceptable boundaries for scale, redundancy, and performance.
 
 Dynamically allocate and de-allocate resources:
+
 - Match performance needs by adjusting resource allocation.
 - Identify and handle idle or underutilized resources.
 
 Optimize workloads for scalable costs:
+
 - Leverage the cloud's dynamic scaling capability.
 - Workload cost should scale linearly with demand.
 - Utilize automatic scaling to save costs.
 
 Recommendations for workload optimization:
+
 - Use usage metrics and performance to determine the required number of instances.
 - Choose smaller instances for highly variable workloads.
 - Scale out (horizontally) rather than up (vertically) for performance needs.
 
 Cost management process:
+
 - Approach cost management rigorously and iteratively.
 - Responsible cloud optimization requires diligent cost monitoring.
 
 Continuously monitor and optimize cost management:
+
 - Conduct regular cost reviews.
 - Measure and forecast capacity needs to provision resources accordingly.
 
@@ -102,6 +109,7 @@ You can make a cost alert in Azure, write Cost Management in the search bar at t
 ![Screenshot student budget](../00_includes/AZ-01/azure_budgetalert_students.jpg)
 
 ### Options to view your expenditures
+
 There are a few options available.  
 
 - Resources groups per month
