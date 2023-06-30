@@ -17,7 +17,7 @@ How to make new disks and attach them to your VM.
 
 ### Used Sources
 
-![MS Doc, attach disks VM](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/attach-disk-portal?tabs=ubuntu) 
+[MS Doc, attach disks VM](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/attach-disk-portal?tabs=ubuntu) 
 
 ## Results
 
