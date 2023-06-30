@@ -20,8 +20,8 @@ Study:
 
 ### Used Sources
 
-https://learn.microsoft.com/en-us/azure/reliability/availability-zones-overview  
-https://www.youtube.com/watch?v=C-nNw1mGwzE  
+[MS Doc, Availability zones](https://learn.microsoft.com/en-us/azure/reliability/availability-zones-overview)  
+[Youtube, Geographies, Regions & Availability zones](https://www.youtube.com/watch?v=C-nNw1mGwzE)  
 
 ## Results
 
