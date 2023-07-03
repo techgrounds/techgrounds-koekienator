@@ -10,21 +10,21 @@ What if our services get overloaded and we need to scale up?
 ### Key-terms
 
 - ALB, Azure Load Balancer work on OSI Layer 4
+- Application Gateway, OSI Layer 7 load balancer
 - Autoscaling
 - VMSS, VM Scale Set
 - Spiky workload
 - Image
 - Azure Monitor
-- Application Gateway, OSI Layer 7 load balancer
 
 ### Used Sources
 
-[MS Doc, Azure Load Balancer](https://learn.microsoft.com/en-us/azure/load-balancer/load-balancer-overview)
-[MS Doc, Application Gateway](https://learn.microsoft.com/en-us/azure/application-gateway/overview)
-[MS Doc, VM Scale Sets](https://learn.microsoft.com/nl-nl/azure/virtual-machine-scale-sets/overview)
-[MS Doc, VM Scale Sets, Azure CLI commands](https://learn.microsoft.com/nl-nl/cli/azure/vmss?view=azure-cli-latest)
-[MS Doc, VM Scale Sets, set-up](https://learn.microsoft.com/nl-nl/azure/virtual-machine-scale-sets/flexible-virtual-machine-scale-sets-portal)
-[Youtube, AZ900 Compute Services](https://www.youtube.com/watch?v=inaXkN2UrFE)
+[MS Doc, Azure Load Balancer](https://learn.microsoft.com/en-us/azure/load-balancer/load-balancer-overview)  
+[MS Doc, Application Gateway](https://learn.microsoft.com/en-us/azure/application-gateway/overview)  
+[MS Doc, VM Scale Sets](https://learn.microsoft.com/nl-nl/azure/virtual-machine-scale-sets/overview)  
+[MS Doc, VM Scale Sets, Azure CLI commands](https://learn.microsoft.com/nl-nl/cli/azure/vmss?view=azure-cli-latest)  
+[MS Doc, VM Scale Sets, set-up](https://learn.microsoft.com/nl-nl/azure/virtual-machine-scale-sets/flexible-virtual-machine-scale-sets-portal)  
+[Youtube, AZ900 Compute Services](https://www.youtube.com/watch?v=inaXkN2UrFE)  
 
 ## Results
 
@@ -123,12 +123,65 @@ example: an URL includes /images it can be routed to a specific set of servers (
 - Easy to create and manage multiple VMs  
 - High availability and durability (scale over an availability zone)  
 - Auto scaling based on demand (increase/decrease amount of VMs)  
-- Designed for manual and auto-scaled workloads like web services, batch processing, etc.
+- Designed for manual and auto-scaled workloads like web services, batch processing, etc.  
 
 ## Assignment 1
 
+For setting up a VMSS we need to set up a few things making the VMSS:  
+
+- Vnet  
+- NSG  
+- Load balancer  
+
+In the VMSS we want a few setting:  
+
+- Ubuntu server 20.04 LTS - Gen 1  
+- Size: Standard_B1ls  
+- Allowed inbound ports: SSH & HTML  
+- Disk: Standard SSD  
+- Boot diagnostics: OFF  
+- Custom data:  
+
+```bash
+#!/bin/bash
+sudo su
+apt update
+apt install apache2 -y
+ufw allow 'Apache'
+systemctl enable apache2
+systemctl restart apache2
+```
+
+- Initial instance count: 2  
+- Scaling Policy: Custom  
+-- Amount of VM, min 1 and max 4  
+-- Add VM at 75% CPU  
+-- Delete VM at 30% CPU  
+
+![Screenshot VMSS auto-scale](../00_includes/AZ-01/VMSS_autoscale_rules.jpg)
+
 ## Assignment 2
+
+### Can we reach the endpoint of our load balancer and connect to the webpage?
+
+We can reach the webpage via our load balancer  
+
+![Screenshot ALB ip address](../00_includes/AZ-01/ALB_IP_Address.jpg)
+
+### Activate a load test on our server(s) to test auto scaling
+
+Now we can test our VMSS via stress testing. I've used the ``stress`` command in Linux.  
+
+```bash
+stress -v --cpu 8
+```
+
+After 5 minutes the 4 VMs where up.  
+
+![Screenshot cpu monitor](../00_includes/AZ-01/VMSS_StressTest_Monitor_CPU.jpg)
+![Screenshot hit max VMs](../00_includes/AZ-01/VMSS_StressTest_4_Instances.jpg)
 
 ## Encountered problems
 
-A lot of documentation and Youtube videos, was fairly easy.
+A lot of documentation and Youtube videos, was fairly easy.  
+Tried a bit with with Azure Load Test but didn't manage to go over 2% cpu usage, Then switched to cpu stress testing on Linux to enable the VMSS.  
