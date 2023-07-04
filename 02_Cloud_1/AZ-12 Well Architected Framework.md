@@ -66,6 +66,8 @@ Key points of reliability:
 - Durability
 - Resilience
 
+Design choices:  
+
 - Design for business requirements  
 -- Reliability is setting expectations  
 -- Reliability is measured from the costumers perspective  
@@ -148,7 +150,7 @@ There are 5 broad security area's:
 -- Set up authentication with Azure Active Directory
 
 - Protect your infrastructure  
--- Use Azure role-based access control (RBAC), different roles with different privileges over:
+-- Use Azure role-based access control (RBAC), different roles with different privileges over:  
 -- Subscriptions  
 -- Resource group  
 -- Single resources  
@@ -157,14 +159,14 @@ There are 5 broad security area's:
 -- Encrypt data in-transit with the latest supported TLS versions  
 -- Protect against CSRF (Cross Site Request Forgery) and XSS (Cross Site Scripting) attacks  
 -- Prevent SQL injection attacks  
--- Store application secrets within Azure Key Vault
+-- Store application secrets within Azure Key Vault  
 
 - Data sovereignty and encryption  
 -- Keep data in the correct geopolitical zone when using Azure Data Services  
--- Use Key Vault to safeguard cryptographic keys and secrets
--- You can encrypt keys and secrets with keys protected by hardware security's modules (HMSs)
+-- Use Key Vault to safeguard cryptographic keys and secrets  
+-- You can encrypt keys and secrets with keys protected by hardware security's modules (HMSs)  
 
-- Security resources
+- Security resources  
 -- MS Defender for cloud  
 -- Azure Security Documentation  
 -- MS Trust Center  
@@ -203,3 +205,5 @@ Protect against common attacks:
 ![Screenshot Security](../00_includes/AZ-01/CORPS_Security.jpg)
 
 ## Encountered problems
+
+Just a very very long read and it was very dry material.
