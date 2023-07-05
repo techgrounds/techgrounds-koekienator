@@ -1,4 +1,4 @@
-# [Files,AppServices,CDN,DNS,Database]
+# [Files, AppServices, CDN, DNS, Database]
 
 Common services you will interact with on a regular base. 
 
@@ -110,14 +110,51 @@ In many ways Azure CDN, AWS CloudFront, Google Cloud CDN are the same and they i
 ### Azure DNS  
 
 [MS Doc, Azure DNS](https://learn.microsoft.com/en-us/azure/dns/dns-overview)
+[Youtube, Azure DNS](https://www.youtube.com/watch?v=6kdBgO0jqaY)
+
+ 
+
+#### Azure DNS ...? On-Prem
+
+#### Azure DNS with other services
+
+#### Difference between Azure DNS and likewise services
 
 ### Azure Files  
 
 [MS Doc, Azure Files](https://learn.microsoft.com/en-us/azure/storage/files/storage-files-introduction)
+[Youtube, Azure Files](https://www.youtube.com/watch?v=BCzeb0IAy2k)
+
+Azure Files is a sub service from Azure Storage Accounts it's similar to a FTP server in your home network.  
+It can create fully managed file shares in the cloud accessible via: SMB (Server Message Block), HTTP (FileREST)
+
+- Snapshotting
+- Support for AzCopy, Storage Explorer, Azure CLI & Powershell
+- Resiliency, Scalability and security of storage accounts
+- Support for Identity with Azure AD services and on-prem AD Domain services
+
+Common use cases:  
+
+- "Lift and Shift" applications
+- Replace/extend on-prem servers as a cache with Azure File Sync
+- Persistent storage for containers
+
+#### Azure Files ...? On-Prem
+
+#### Azure Files with other services
+
+#### Difference between Azure Files and likewise services
 
 ### Azure Database  
 
 [MS Doc, Azure SQL](https://learn.microsoft.com/en-us/azure/azure-sql/azure-sql-iaas-vs-paas-what-is-overview?view=azuresql)
+
+
+#### Azure Database ...? On-Prem
+
+#### Azure Database with other services
+
+#### Difference between Azure Database and likewise services
 
 ## Encountered problems  
 
