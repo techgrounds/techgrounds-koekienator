@@ -112,17 +112,25 @@ In many ways Azure CDN, AWS CloudFront, Google Cloud CDN are the same and they i
 [MS Doc, Azure DNS](https://learn.microsoft.com/en-us/azure/dns/dns-overview)
 [Youtube, Azure DNS](https://www.youtube.com/watch?v=6kdBgO0jqaY)
 
- 
+Azure DNS is a service that allows you to manage and resolve domain names for your Azure resources. It always has a static private IP address 168.63.129.16
 
-#### Azure DNS ...? On-Prem
+- Domain hosting: Host domain names within Azure DNS, allowing you to manage the DNS records for you domains directly from Auzre Portal  
+- DNS resolution: Provide name resolution for your azure resources, such as VM, load balancers, and web apps. It ensures resources are accessible via their domain names.
+- Zone management: Create and manage DNS zones within Azure DNS. A DNS zone represents a domain, and it contains the DNS records for that domain.
+- Record management: This allows you to map domain names to IP addresses and define additional settings.
+
+#### can Azure DNS replace On-Prem
 
 #### Azure DNS with other services
+
+- Azure DNS Private Resolver + Azure Private DNS, for cross-premises name resolution.
 
 #### Difference between Azure DNS and likewise services
 
 ### Azure Files  
 
 [MS Doc, Azure Files](https://learn.microsoft.com/en-us/azure/storage/files/storage-files-introduction)
+[MS Doc, How to mount SMB File share to Windows](https://learn.microsoft.com/en-us/azure/storage/files/storage-how-to-use-files-windows)
 [Youtube, Azure Files](https://www.youtube.com/watch?v=BCzeb0IAy2k)
 
 Azure Files is a sub service from Azure Storage Accounts it's similar to a FTP server in your home network.  
@@ -139,11 +147,42 @@ Common use cases:
 - Replace/extend on-prem servers as a cache with Azure File Sync
 - Persistent storage for containers
 
-#### Azure Files ...? On-Prem
+#### Azure Files can replace/extend On-Prem solutions
+
+You can replace your on-prem file share with a cloud solution, or extend your current file share.  
+For extending you would need some key components: Azure AD, Azure Files, VPN Gateway.  
+
+- Replace or supplement on-prem file servers with Azure AD and Azure Files
+- Lift and Shift, completely move yo the cloud
+- Backup and disaster recovery, use Azure Files for backups
+- Azure File Sync, to replicate files to a windows-server, either on-prem or cloud
 
 #### Azure Files with other services
 
+Common combinations as mentioned above are, Azure File Share, Azure File Sync, and Azure AD.
+
 #### Difference between Azure Files and likewise services
+
+Azure Files has a lot of online competitors as it is a from of FTP server but instead of local it's in the cloud. 
+
+#### How to create/start Azure Files
+
+First we need to make a Storage Account,  
+Then we can create a new File Share.  
+
+Important is the storage tier: Premium, Transactional optimized, hot, cold  
+This completely depends on the usage for your new File Share.
+Theres a back-up option but I've disabled that as I don't need it.
+
+Now we can use the connect option to connect to our File Share.
+I used the Windows option and copied the script, now I can run this in my windows terminal.  
+It might not show up automatically when you need to go to File Explorer, right click on network to add a ``map network device``. Here we can fill in the name of our domain ``\\$nameStorageAccount.file.core.core.windows.net\$nameFileShare`` and select the drive (I took Y). Now it's a network drive under 'This PC'.
+
+![Screenshot connect via powershell](../00_includes/AZ-01/Azure_Files_connect1.jpg)
+![Screenshot add as network folder](../00_includes/AZ-01/Azure_Files_connect2.jpg)
+![Screenshot network folders show at 'this PC'](../00_includes/AZ-01/Azure_Files_connect3.jpg)
+
+There are alternatives to connect using, Azure Point-to-Site VPN, Site-to-Site VPN, or ExpressRoute.  
 
 ### Azure Database  
 
@@ -158,3 +197,4 @@ Common use cases:
 
 ## Encountered problems  
 
+Demount your network folders for file share before you delete them on Azure. My File Explorer kept crashing (even using cd in powershell) doing it the other way around, ``sfc/scannow`` and a restart fixed it all.
