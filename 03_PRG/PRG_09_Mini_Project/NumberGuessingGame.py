@@ -23,7 +23,7 @@ tries = 0
 # Used this to test the win condition
 #print(guess_number)
 
-# Continue this loop until the user input is 100
+# Continue as long as user input is below 7 (7 tries to win)
 while tries < 7:
     user_input = int(input("Please enter a number: "))
     tries += 1
@@ -42,6 +42,7 @@ while tries < 7:
     else:
         print("Please enter a number between 1 and 100")
 
+# when the user broke from the while loop and his tries equal 7, the user lost
 if tries == 7:
     print("You have lost the game")
     print(f"The number was: {guess_number}")
