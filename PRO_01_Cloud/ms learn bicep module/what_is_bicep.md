@@ -12,6 +12,7 @@
 ## Used Sources
 
 [MS Doc, Bicep](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/overview?tabs=bicep)  
+[MS Learn module, Introduction to infrastructure as code using Bicep](https://learn.microsoft.com/en-gb/training/modules/introduction-to-infrastructure-as-code-using-bicep/)  
 [Youtube, Getting Started with Azure Bicep](https://www.youtube.com/watch?v=77AfsFzTsI4)  
 
 ## Introduction to Bicep
@@ -22,7 +23,8 @@
 
 "IoC" is comparable to a setup guide for infrastructure, detailing the intended resource arrangement and the steps to attain it. This approach automates infrastructure setup with a coding language and versioning system akin to source code. Similar to how source code yields dependable results, this method guarantees automated, uniform, and repeatable deployment of elements like virtual networks, virtual machines, applications, and storage within the infrastructure.  
 
-<img src="../../00_includes/PRO_01/infrastructure_as_code" width="60%">
+<!-- <img src="../../00_includes/PRO_01/infrastructure_as_code" width="60%"> -->
+![IoC](../../00_includes/PRO_01/infrastructure_as_code.jpg)
 
 #### **Why use infrastructure as code?**  
 
@@ -34,7 +36,6 @@
     **Efficient Secret Management:** IoC aids in efficient management of sensitive information.  
     **Enhanced Access Control:** IoC contributes to better access control mechanisms.  
     **Prevention of Configuration Drift:** Configuration drift is avoided through IoC implementation.  
-
 
 - **Varied Application Environments in Organizations:**  
     Numerous organizations manage multiple application environments, with developers housing various versions of code in repositories for distinct environment releases. These encompass development, testing, and production stages. Some organizations even uphold multiple production environments for global distribution, while independent software vendors (ISVs) maintain multiple tenant environments for clients.  
@@ -217,7 +218,8 @@ Having gained insight into the Bicep template language and its advantages for re
 
 Bicep, being a domain-specific language, is finely tailored for simplifying the deployment and configuration of Azure resources. Upon deploying resources to Azure, the Bicep template is submitted to Resource Manager, albeit in JSON format. The integrated tooling in Bicep facilitates an automatic conversion of the Bicep template into JSON—a process termed "transpilation." This conversion occurs either automatically during deployment submission or manually, if desired.
 
-<img src="../../00_includes/PRO_01/from_bicep_to_json.jpeg" height="200">
+<!-- <img src="../../00_includes/PRO_01/from_bicep_to_json.jpeg" height="200"> -->
+![From Bicep to JSON](../../00_includes/PRO_01/from_bicep_to_json.jpeg)
 
 #### Azure CLI and Azure PowerShell Integration
 
@@ -237,7 +239,8 @@ Resource Manager examines the existing Azure deployment and the intended changes
 
 To view the JSON template sent to Resource Manager, the "bicep build" command can be employed to convert a Bicep template into JSON. Notably, Bicep offers a simpler syntax compared to JSON. The succinctness and readability of Bicep code are evident in the provided comparison of Bicep and JSON templates.
 
-<img src="../../00_includes/PRO_01/difference_bicep_vs_arm.jpg" height="500">
+<!-- <img src="../../00_includes/PRO_01/difference_bicep_vs_arm.jpg" height="500"> -->
+![Bicep Vs JSON](../../00_includes/PRO_01/difference_bicep_vs_arm.jpg)
 
 Choosing Bicep for Your Deployments: Summary
 
