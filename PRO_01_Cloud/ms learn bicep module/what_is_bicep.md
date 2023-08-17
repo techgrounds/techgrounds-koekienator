@@ -7,6 +7,7 @@
 - ***IoC:*** Infrastructure as Code
 - ***Imperative Syntax:*** Step-by-step instructions that need to be followed in a specific order.  
 - ***Declarative syntax:*** Instead of step-by-step, you describe the end goal without specifying the exact process to achieve it.  
+- ***Transpilation*** is the process of converting source code written in one language into another language.
 
 ## Used Sources
 
@@ -21,7 +22,7 @@
 
 "IoC" is comparable to a setup guide for infrastructure, detailing the intended resource arrangement and the steps to attain it. This approach automates infrastructure setup with a coding language and versioning system akin to source code. Similar to how source code yields dependable results, this method guarantees automated, uniform, and repeatable deployment of elements like virtual networks, virtual machines, applications, and storage within the infrastructure.  
 
-<img src="../00_includes/PRO_01/infrastructure_as_code" width="60%">
+<img src="../../00_includes/PRO_01/infrastructure_as_code" width="60%">
 
 #### **Why use infrastructure as code?**  
 
@@ -155,3 +156,115 @@ ARM templates serve as files defining deployment infrastructure and configuratio
 
 Two ARM template types are available: JSON templates and Bicep templates. JSON, an open-standard file format, is widely applicable. Bicep, a newer domain-specific language, offers a more user-friendly syntax for authoring ARM templates. Both template formats can be employed for resource deployments.
 
+### **Bicep**  
+
+#### **What is Bicep?**
+
+After familiarizing your team with Azure Resource Manager's functioning and choosing ARM templates for resource provisioning, the next step is to delve into the specifics of Bicep templates. Bicep offers an alternative to JSON for template creation and deployment and promises a simplified experience.
+
+#### **Bicep Language**
+
+Bicep serves as a Resource Manager template language primarily designed for declarative Azure resource deployment. It's distinct as a domain-specific language tailored for creating Resource Manager templates. Bicep's clarity and ease of learning are emphasized, regardless of one's programming background. All resource types, API versions, and properties are valid within Bicep templates.
+
+#### **Advantages of Bicep:**
+
+Bicep introduces several improvements over JSON for template creation:
+
+- **Simplified Syntax:**  
+    Bicep's syntax is simpler, facilitating direct reference to parameters and variables without complex functions. It employs string interpolation instead of concatenation, making code more readable. Resource properties can be directly referenced using symbolic names.  
+
+- **Modularity with Modules:**  
+    Complex deployments are simplified by breaking them into smaller module files, promoting management and reusability. Sharing modules within teams is also supported.  
+
+- **Automated Dependency Management:**  
+    Bicep often detects dependencies between resources automatically, reducing manual effort in template creation.  
+
+- **Type Validation and IntelliSense:**  
+    Visual Studio Code's Bicep extension provides comprehensive validation and IntelliSense for Azure resource type APIs, enhancing the authoring experience.  
+
+This Bicep example demonstrates the automatic generation of an Azure storage account's name and returning its resource ID upon deployment.  
+
+```BICEP
+param location string = resourceGroup().location
+param namePrefix string = 'storage'
+
+var storageAccountName = '${namePrefix}${uniqueString(resourceGroup().id)}'
+var storageAccountSku = 'Standard_RAGRS'
+
+resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
+  name: storageAccountName
+  location: location
+  kind: 'StorageV2'
+  sku: {
+    name: storageAccountSku
+  }
+  properties: {
+    accessTier: 'Hot'
+    supportsHttpsTrafficOnly: true
+  }
+}
+
+output storageAccountId string = storageAccount.id
+```
+
+### How Bicep Works
+
+#### Understanding Bicep Deployment
+
+Having gained insight into the Bicep template language and its advantages for resource provisioning, the focus now shifts to comprehending how Bicep operates within Azure Resource Manager.
+
+#### Bicep Deployment Process
+
+Bicep, being a domain-specific language, is finely tailored for simplifying the deployment and configuration of Azure resources. Upon deploying resources to Azure, the Bicep template is submitted to Resource Manager, albeit in JSON format. The integrated tooling in Bicep facilitates an automatic conversion of the Bicep template into JSON—a process termed "transpilation." This conversion occurs either automatically during deployment submission or manually, if desired.
+
+<img src="../../00_includes/PRO_01/from_bicep_to_json.jpeg" height="200">
+
+#### Azure CLI and Azure PowerShell Integration
+
+The latest iterations of Azure CLI and Azure PowerShell inherently support Bicep. Deployment commands for Bicep and JSON templates are identical. For example, a Bicep template can be deployed using Azure CLI's command as illustrated.
+
+```BASH
+az deployment group create \
+  --template-file main.bicep \
+  --resource-group storage-resource-group
+```
+
+#### Resource Manager Process
+
+Resource Manager examines the existing Azure deployment and the intended changes in your Bicep template, then orchestrates a series of steps to align Azure with your intended state. The entire process involves the invocation of the Resource Manager API.
+
+#### Template Conversion and Comparison
+
+To view the JSON template sent to Resource Manager, the "bicep build" command can be employed to convert a Bicep template into JSON. Notably, Bicep offers a simpler syntax compared to JSON. The succinctness and readability of Bicep code are evident in the provided comparison of Bicep and JSON templates.
+
+<img src="../../00_includes/PRO_01/difference_bicep_vs_arm.jpg" height="500">
+
+Choosing Bicep for Your Deployments: Summary
+
+### Is Bicep Suitable?
+
+When evaluating infrastructure-as-code tools, it's crucial to determine if Bicep is the right fit for you and your organization, considering its strengths and limitations.
+
+#### Advantages of Bicep
+
+For Azure-focused deployments, Bicep offers several advantages:
+
+- Azure-Native:  
+    Bicep is tailored for Azure, ensuring swift support for new Azure features upon release or updates.  
+- Azure Integration:  
+    Both JSON and Bicep ARM templates are seamlessly integrated within Azure, enabling monitoring in the Azure portal during Resource Manager deployments.  
+- Azure Support:  
+    Bicep is fully backed by Microsoft Support.  
+- State Management:  
+    Bicep deployments synchronize Azure resource states with template-defined states, eliminating the need for separate state management.  
+- Smooth Transition from JSON:  
+    Transitioning from ARM JSON templates to Bicep is straightforward using the Bicep CLI's "bicep decompile" command.  
+
+#### When Bicep Might Not Be Appropriate
+
+Certain scenarios might warrant exploring other tools:
+
+- Existing Tool Set:  
+    If your organization already employs a different tool set for infrastructure-as-code, consider leveraging existing investments and knowledge before adopting a new approach.
+- Multicloud Environments:  
+    Bicep isn't suitable for multicloud deployments, as it's exclusive to Azure. For multiple cloud providers, tools like Terraform provide more versatile solutions, including Azure deployments.  
