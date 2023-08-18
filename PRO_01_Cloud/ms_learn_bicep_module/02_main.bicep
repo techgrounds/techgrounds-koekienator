@@ -8,19 +8,15 @@ param location string = 'westeurope'
 param storageAccountName  string = 'koek${uniqueString(resourceGroup().id)}'
 param appServiceAppName string = 'koek${uniqueString(resourceGroup().id)}'
 
-@description('Automatically set the SKUs for each environment type.')
+@description('Set the possible envorinmnets')
 @allowed([
   'nonprod'
   'prod'
 ])
 param environmentType string
 
-@description('Specifies name for the following resources with non-unique IDs.')
-var appServicePlanName = 'koek-product-launch-plan-starter'
-
-@description('Define the environment and set the SLU per environment')
+@description('Define the environment and set the SKU per environment')
 var storageAccountSkuName = (environmentType == 'prod') ? 'Standard_GRS' : 'Standard_LRS'
-var appServicePlanSkuName = (environmentType == 'prod') ? 'P2v3' : 'F1'
 
 @description('Define the Storage Account')
 resource strorageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
@@ -35,25 +31,15 @@ resource strorageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   }
 }
 
-
-@description('Define the App Service Plan')
-resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
-  name: appServicePlanName
-  location: location
-  sku: {
-    name: appServicePlanSkuName
+@description('Define the App Service via the 02_appService.bicep module')
+module appService '02_appService.bicep' = {
+  name: 'appService'
+  params: {
+    location: location
+    appServiceAppName: appServiceAppName
+    environmentType: environmentType
   }
 }
 
-@description('Define the App Service app')
-resource appServiceApp 'Microsoft.Web/sites@2022-09-01' = {
-  name: appServiceAppName
-  location: location
-  properties: {
-    serverFarmId: appServicePlan.id
-    httpsOnly: true
-  }
-}
-
-
-// nog deployen en screenshots maken voor md file
+@description('Define output set in 02_appService.bicep to the appServiceAppHostName')
+output appServiceAppHostName string = appService.outputs.appServiceAppHostName
