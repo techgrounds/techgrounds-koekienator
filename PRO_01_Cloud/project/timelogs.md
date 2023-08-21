@@ -4,7 +4,7 @@
 
 ### Daily report
 
-Read the product owners requirements, though of questions to ask product owner.
+Read the product owners requirements, think of questions to ask product owner.
 
 ### Obstacles
 
@@ -13,8 +13,11 @@ A lot of googling and checking in the portal what requirements there are to laun
 
 ### Solutions
 
-
+Drawing word webs with potential requirements for resources.
+Put the user stories in chronological order in Jira.
 
 ### Learnings
+
+
 
 ---
