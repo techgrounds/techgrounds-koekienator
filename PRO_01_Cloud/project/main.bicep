@@ -42,7 +42,7 @@ param location string = 'westeurope'
 param storageAccountName string = take(toLower('stgAc${uniqueString(resourceGroup().id)}'),24) 
 
 @description('The name for the PostDeploymentScripts storage')
-param storageBlobScriptsName string = 'PostDeploymentScripts'
+param containerNameScripts string = 'PostDeploymentScripts'
 
 @description('')
 @allowed([
@@ -63,11 +63,11 @@ resource strorageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   }
 }
 
-// // Won't deploy, maybe needs to be launched as a container
-// resource storageBlobScripts 'Microsoft.Storage/storageAccounts/blobServices@2023-01-01' = {
-//   parent: strorageAccount
-//   name: storageBlobScriptsName
-// }
+resource storageBlobScripts 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = {
+  name: containerNameScripts
+}
+
+// Deploy the blob storage as a container!!
 
 
 
