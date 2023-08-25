@@ -44,6 +44,19 @@ param storageAccountName string = take(toLower('scripts${uniqueString(resourceGr
 @description('The name for the PostDeploymentScripts storage')
 param containerNameScripts string = 'postdeploymentscripts'
 
+// Vnet name params
+param virtualNetworkName1 string = 'app-prd-vnet'
+param virtualNetworkName2 string = 'management-prd-vnet'
+
+// Subnet name params
+param subnetName1 string = 'app-prd-subnet'
+param subnetName2 string = 'management-prd-subnet'
+
+// IP range params
+param ipAdressRange1 string = '10.10.10.0/24'
+param ipAdressRange2 string = '10.20.20.0/24'
+
+
 @description('')
 @allowed([
   'Standard_LRS'
@@ -51,29 +64,75 @@ param containerNameScripts string = 'postdeploymentscripts'
 ])
 param storageAccountSkuName string = 'Standard_LRS'
 
-// StorageAccount Resources/Modules
-resource strorageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
-  name: storageAccountName
-  location: location
-  sku: {
-    name: storageAccountSkuName
-  }
-  kind: 'StorageV2'
-  properties: {
-    accessTier: 'Cool'
-  }
-}
+// // StorageAccount Resources/Modules
+// resource strorageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
+//   name: storageAccountName
+//   location: location
+//   sku: {
+//     name: storageAccountSkuName
+//   }
+//   kind: 'StorageV2'
+//   properties: {
+//     accessTier: 'Cool'
+//   }
+// }
 
-resource storageBlobScripts 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = {
-  name: '${storageAccountName}/default/${containerNameScripts}'
-  dependsOn: [
-    strorageAccount
-  ]
-}
+// resource storageBlobScripts 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = {
+//   name: '${storageAccountName}/default/${containerNameScripts}'
+//   dependsOn: [
+//     strorageAccount
+//   ]
+// }
 
 // Network Resources/Modules
 
+resource webserverVnet 'Microsoft.Network/virtualNetworks@2019-11-01' = {
+  name: virtualNetworkName1
+  location: location
+  properties: {
+    addressSpace: {
+      addressPrefixes: [
+        ipAdressRange1
+      ]
+    }
+    subnets: [
+      {
+        name: subnetName1
+        properties: {
+          addressPrefix: ipAdressRange1
+        }
+      }
+    ]
+  }
 
+  resource subnet1 'subnets' existing = {
+    name: subnetName1
+  }
+}
+
+resource managementVnet 'Microsoft.Network/virtualNetworks@2019-11-01' = {
+  name: virtualNetworkName2
+  location: location
+  properties: {
+    addressSpace: {
+      addressPrefixes: [
+        ipAdressRange2
+      ]
+    }
+    subnets: [
+      {
+        name: subnetName2
+        properties: {
+          addressPrefix: ipAdressRange2
+        }
+      }
+    ]
+  }
+
+  resource subnet2 'subnets' existing = {
+    name: subnetName2
+  }
+}
 
 
   
