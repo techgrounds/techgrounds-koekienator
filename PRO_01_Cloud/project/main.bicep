@@ -42,7 +42,7 @@ param location string = 'westeurope'
 param storageAccountName string = take(toLower('stgAc${uniqueString(resourceGroup().id)}'),24) 
 
 @description('The name for the PostDeploymentScripts storage')
-param containerNameScripts string = 'PostDeploymentScripts'
+param containerNameScripts string = 'postdeploymentscripts'
 
 @description('')
 @allowed([
@@ -51,6 +51,7 @@ param containerNameScripts string = 'PostDeploymentScripts'
 ])
 param storageAccountSkuName string = 'Standard_LRS'
 
+// StorageAccount Resources/Modules
 resource strorageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: storageAccountName
   location: location
@@ -64,10 +65,13 @@ resource strorageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
 }
 
 resource storageBlobScripts 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = {
-  name: containerNameScripts
+  name: '${storageAccountName}/default/${containerNameScripts}'
+  dependsOn: [
+    strorageAccount
+  ]
 }
 
-// Deploy the blob storage as a container!!
+// Network Resources/Modules
 
 
 
