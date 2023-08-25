@@ -1,35 +1,32 @@
-param location string = 'westeurope'
+// Param for the location
+param location string 
 
-//Params for webserverVnet children, and NSG
-param webserverVnetName string = 'app-prd-vnet'
-param webserverVnetSubnetName string = 'webserver-subnet'
-param webserverVnetAddressPrefix string = '10.10.0.0/16'
-param webserverVnetSubnetAddressPrefix string = '10.10.10.0/24'
-param webserverNsgName string = '${webserverVnetSubnetName}NSG'
+// Params for the Virtual Network
+param vnetNetworkName string
+param vnetAddressPrefix string
 
-//Params for managementVnet children, and NSG
-param managementVnetName string = 'management-prd-vnet'
-param managementVnetSubnetName string = 'managementserver-subnet'
-param managementPeerToWebserverName string = 'management-peer-Webserver'
-param managementVnetAddressPrefix string = '10.20.0.0/16'
-param managementVnetSubnetAddressPrefix string = '10.20.20.0/24'
-param managementServerNsgName string = '${managementVnetSubnetName}NSG'
-param webserverVnetExternalID string = '/subscriptions/42d4abc3-eb16-4e20-997a-2a4e28016d24/resourceGroups/koekbiceptestomgeving/providers/Microsoft.Network/virtualNetworks/${webserverVnetName}'
+// Params for the Subnet
+param subnetName string
+param subnetAddressPrefix string
+
+// Params for the Network Security Group
+param networkSecurityGroupName string
+param allowedSSHIp string = '*'
 
 // Webserver NSG + Rules
-resource webserverNsg 'Microsoft.Network/networkSecurityGroups@2023-04-01' = {
-  name: webserverNsgName
+resource subnetNsg 'Microsoft.Network/networkSecurityGroups@2023-04-01' = {
+  name: networkSecurityGroupName
   location: location
 }
 
-resource webserverSshRule 'Microsoft.Network/networkSecurityGroups/securityRules@2023-04-01' = {
-  parent: webserverNsg
+resource subnetSshRule 'Microsoft.Network/networkSecurityGroups/securityRules@2023-04-01' = {
+  parent: subnetNsg
   name: 'AllowSSH'
   properties: {
     protocol: 'Tcp'
     sourcePortRange: '*'
     destinationPortRange: '22'
-    sourceAddressPrefix: managementVnetSubnetAddressPrefix
+    sourceAddressPrefix: allowedSSHIp
     destinationAddressPrefix: '*'
     access: 'Allow'
     priority: 100
@@ -38,7 +35,7 @@ resource webserverSshRule 'Microsoft.Network/networkSecurityGroups/securityRules
 }
 
 resource webserverHttpsRule 'Microsoft.Network/networkSecurityGroups/securityRules@2023-04-01' = {
-  parent: webserverNsg
+  parent: subnetNsg
   name: 'AllowHttps'
   properties: {
     protocol: 'Tcp'
@@ -53,86 +50,35 @@ resource webserverHttpsRule 'Microsoft.Network/networkSecurityGroups/securityRul
 }
 
 resource webserverDenyAllRule 'Microsoft.Network/networkSecurityGroups/securityRules@2023-04-01' = {
-  parent: webserverNsg
+  parent: subnetNsg
   name: 'DenyAllInbound'
   properties: {
     protocol: '*'
     sourcePortRange: '*'
-    destinationPortRange: '22'
+    destinationPortRange: '*'
     sourceAddressPrefix: '*'
     destinationAddressPrefix: '*'
-    access: 'Allow'
+    access: 'Deny'
     priority: 4096
     direction: 'Inbound'
   }     
 }
 
-// Managementserver NSG + Rules
-resource managementNsg 'Microsoft.Network/networkSecurityGroups@2023-04-01' = {
-  name: managementServerNsgName
-  location: location
-}
-
-resource managementserverSshRule 'Microsoft.Network/networkSecurityGroups/securityRules@2023-04-01' = {
-  parent: managementNsg
-  name: 'AllowSSH'
-  properties: {
-    protocol: 'Tcp'
-    sourcePortRange: '*'
-    destinationPortRange: '22'
-    sourceAddressPrefix: '*'
-    destinationAddressPrefix: '*'
-    access: 'Allow'
-    priority: 100
-    direction: 'Inbound'
-  }
-}
-
-resource managementserverHttpsRule 'Microsoft.Network/networkSecurityGroups/securityRules@2023-04-01' = {
-  parent: managementNsg
-  name: 'AllowHTTPS'
-  properties: {
-    protocol: 'Tcp'
-    sourcePortRange: '*'
-    destinationPortRange: '443'
-    sourceAddressPrefix: '*'
-    destinationAddressPrefix: '*'
-    access: 'Allow'
-    priority: 101
-    direction: 'Inbound'
-  }
-}
-
-resource managementserverDenyAllRule 'Microsoft.Network/networkSecurityGroups/securityRules@2023-04-01' = {
-  parent: managementNsg
-  name: 'DenyAllInbound'
-  properties: {
-    protocol: '*'
-    sourcePortRange: '*'
-    destinationPortRange: '22'
-    sourceAddressPrefix: '*'
-    destinationAddressPrefix: '*'
-    access: 'Allow'
-    priority: 4096
-    direction: 'Inbound'
-  }
-}
-
-// Webserver Vnet + Subnet
-resource webserverVnet 'Microsoft.Network/virtualNetworks@2023-04-01' = {
-  name: webserverVnetName
+// Vnet + Subnet
+resource vnet 'Microsoft.Network/virtualNetworks@2023-04-01' = {
+  name: vnetNetworkName
   location: location
   properties: {
     addressSpace: {
       addressPrefixes: [
-        webserverVnetAddressPrefix
+        vnetAddressPrefix
       ]
     }
     subnets: [
       {
-        name: webserverVnetSubnetName
+        name: subnetName
         properties: {
-          addressPrefix: webserverVnetSubnetAddressPrefix
+          addressPrefix: subnetAddressPrefix
           delegations: []
           privateEndpointNetworkPolicies: 'Disabled'
           privateLinkServiceNetworkPolicies: 'Enabled'
@@ -144,87 +90,20 @@ resource webserverVnet 'Microsoft.Network/virtualNetworks@2023-04-01' = {
   }
 }
 
-resource webserverVnetSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-04-01' = {
-  name: webserverVnetSubnetName
-  parent: webserverVnet
+resource subnet 'Microsoft.Network/virtualNetworks/subnets@2023-04-01' = {
+  name: subnetName
+  parent: vnet
   properties: {
-    addressPrefix: webserverVnetSubnetAddressPrefix
+    addressPrefix: subnetAddressPrefix
     delegations: []
     privateEndpointNetworkPolicies: 'Disabled'
     privateLinkServiceNetworkPolicies: 'Enabled'
     networkSecurityGroup: {
-      id: webserverNsg.id
+      id: subnetNsg.id
     }
   }
 }
 
-// Management Vnet + Subnet
-resource managementVnet 'Microsoft.Network/virtualNetworks@2023-04-01' = {
-  name: managementVnetName
-  location: location
-  properties: {
-    addressSpace: {
-      addressPrefixes: [
-        managementVnetAddressPrefix
-      ]
-    }
-    subnets: [
-      {
-        name: managementVnetSubnetName
-        properties: {
-          addressPrefix: managementVnetSubnetAddressPrefix
-          delegations: []
-          privateEndpointNetworkPolicies: 'Disabled'
-          privateLinkServiceNetworkPolicies: 'Enabled'
-        }
-        type: 'Microsoft.Network/virtualNetworks/subnets'
-      }
-    ]
-    virtualNetworkPeerings: [
-      {
-        name: managementPeerToWebserverName
-        properties: {
-          peeringState: 'Connected'
-          peeringSyncLevel: 'FullyInSync'
-          remoteVirtualNetwork: {
-            id: webserverVnetExternalID
-          }
-          allowVirtualNetworkAccess: true
-          allowForwardedTraffic: false
-          allowGatewayTransit: false
-          useRemoteGateways: false
-          doNotVerifyRemoteGateways: false
-          remoteAddressSpace: {
-            addressPrefixes: [
-              webserverVnetAddressPrefix
-            ]
-          }
-          remoteVirtualNetworkAddressSpace: {
-            addressPrefixes: [
-              webserverVnetAddressPrefix
-            ]
-          }
-        }
-        type: 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings'
-      }
-    ]
-    enableDdosProtection: false
-  }
-}
-
-resource managementVnetSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-04-01' = {
-  name: managementVnetSubnetName
-  parent: managementVnet
-  properties: {
-    addressPrefix: managementVnetSubnetAddressPrefix
-    delegations: []
-    privateEndpointNetworkPolicies: 'Disabled'
-    privateLinkServiceNetworkPolicies: 'Enabled'
-    networkSecurityGroup: {
-      id: managementNsg.id
-    }
-  }
-}
-
-// Outputs if needed
-
+output virtualNetworkId string = vnet.id
+output SubnetId string = subnet.id
+output subnetNsgId string = subnetNsg.id

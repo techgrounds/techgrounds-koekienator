@@ -1,17 +1,3 @@
-// Main bicep file, will load modules
-// Default landing page Bicep resources, check references in left menu https://learn.microsoft.com/en-us/azure/templates/
-
-  // param file? probably
-  // https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/parameter-files?tabs=Bicep
-
-  // param policies?
-  // https://learn.microsoft.com/en-us/azure/governance/policy/assign-policy-bicep?tabs=azure-powershell
-
-  // param location = resourceGroup.location
-
-  // Tags
-  // https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/tag-resources-bicep
-
 // Locations allowed for deployment, low latency, low cost
 @allowed([
   'westeurope'
@@ -36,26 +22,9 @@ param location string = 'westeurope'
 // @description('The administrator login password for the Web server.')
 // param webServerAdminLoginPassword string
 
-// Storage account and deployment script parameters
-@description('The storage account name must be globally unique only letters lowercase')
-  // take makes sure it doens't exceed the 24 char limit, toLower makes sure everything is lower cases as required.
+// Storage account params
+@description('The storage account name must be globally unique only letters lowercase and max 24 char long')
 param storageAccountName string = take(toLower('scripts${uniqueString(resourceGroup().id)}'),24) 
-
-@description('The name for the PostDeploymentScripts storage')
-param containerNameScripts string = 'postdeploymentscripts'
-
-// Vnet name params
-param virtualNetworkName1 string = 'app-prd-vnet'
-param virtualNetworkName2 string = 'management-prd-vnet'
-
-// Subnet name params
-param subnetName1 string = 'app-prd-subnet'
-param subnetName2 string = 'management-prd-subnet'
-
-// IP range params
-param ipAdressRange1 string = '10.10.10.0/24'
-param ipAdressRange2 string = '10.20.20.0/24'
-
 
 @description('')
 @allowed([
@@ -64,77 +33,88 @@ param ipAdressRange2 string = '10.20.20.0/24'
 ])
 param storageAccountSkuName string = 'Standard_LRS'
 
-// // StorageAccount Resources/Modules
-// resource strorageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
-//   name: storageAccountName
-//   location: location
-//   sku: {
-//     name: storageAccountSkuName
-//   }
-//   kind: 'StorageV2'
-//   properties: {
-//     accessTier: 'Cool'
-//   }
-// }
+// Deployment Scripts Blob Container params
+@description('The name for the PostDeploymentScripts storage')
+param containerNameScripts string = 'postdeploymentscripts'
 
-// resource storageBlobScripts 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = {
-//   name: '${storageAccountName}/default/${containerNameScripts}'
-//   dependsOn: [
-//     strorageAccount
-//   ]
-// }
+// All webserver params\
+param webServerVnetName string = 'app-prd-vnet'
+param webServerVnetAddressPrefix string = '10.10.10.0/24'
+param webServerSubnetName string = 'webServerSubnet'
+param webServerSubnetAddressPrefix string = '10.10.10.0/25'
+param webServerNSGName string = '${webServerSubnetName}-NSG'
+param webServerAllowedSSHIp string = managementServerSubnetAddressPrefix
 
-// Network Resources/Modules
+// All managementserver params
+param managementServerVnetName string = 'management-prd-vnet'
+param managementServerVnetAddressPrefix string = '10.20.20.0/24'
+param managementServerSubnetName string = 'managementServerSubnet'
+param managementServerSubnetAddressPrefix string = '10.20.20.0/25'
+param managementServerNSGName string = '${managementServerSubnetName}-NSG'
+param managementServerAllowedSSHIp string = '*'
 
-resource webserverVnet 'Microsoft.Network/virtualNetworks@2019-11-01' = {
-  name: virtualNetworkName1
+// StorageAccount (WORKS)
+@description('The storage account for the blob container for post deployment scripts')
+resource strorageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
+  name: storageAccountName
   location: location
-  properties: {
-    addressSpace: {
-      addressPrefixes: [
-        ipAdressRange1
-      ]
-    }
-    subnets: [
-      {
-        name: subnetName1
-        properties: {
-          addressPrefix: ipAdressRange1
-        }
-      }
-    ]
+  sku: {
+    name: storageAccountSkuName
   }
-
-  resource subnet1 'subnets' existing = {
-    name: subnetName1
+  kind: 'StorageV2'
+  properties: {
+    accessTier: 'Cool'
   }
 }
 
-resource managementVnet 'Microsoft.Network/virtualNetworks@2019-11-01' = {
-  name: virtualNetworkName2
-  location: location
-  properties: {
-    addressSpace: {
-      addressPrefixes: [
-        ipAdressRange2
-      ]
-    }
-    subnets: [
-      {
-        name: subnetName2
-        properties: {
-          addressPrefix: ipAdressRange2
-        }
-      }
-    ]
-  }
+// Blob container for scripts (WORKS)
+@description('The blob container for post deployment scripts, only deploys IF storageaccount is availible')
+resource storageBlobScripts 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = {
+  name: '${storageAccountName}/default/${containerNameScripts}'
+  dependsOn: [
+    strorageAccount
+  ]
+}
 
-  resource subnet2 'subnets' existing = {
-    name: subnetName2
+// Webserver virtual network
+@description('The module to define the Webserver vnet, including subnet and NSG, see "modules/network.bicep" for more detailed information.')
+module webserverVnet 'modules/network.bicep' = {
+  name: webServerVnetName
+  params: {
+    location: location
+    networkSecurityGroupName: webServerNSGName
+    allowedSSHIp: webServerAllowedSSHIp
+    subnetAddressPrefix: webServerSubnetAddressPrefix
+    subnetName: webServerSubnetName
+    vnetAddressPrefix: webServerVnetAddressPrefix
+    vnetNetworkName: webServerVnetName
   }
 }
 
+// Webserver virtual network
+@description('The module to define the Managementserver vnet, including subnet and NSG, see "modules/network.bicep" for more detailed information.')
+module managementserverVnet 'modules/network.bicep' = {
+  name: managementServerVnetName
+  params: {
+    location: location
+    networkSecurityGroupName: managementServerNSGName
+    allowedSSHIp: managementServerAllowedSSHIp
+    subnetAddressPrefix: managementServerSubnetAddressPrefix
+    subnetName: managementServerSubnetName
+    vnetAddressPrefix: managementServerVnetAddressPrefix
+    vnetNetworkName: managementServerVnetName
+  }
+}
 
+// // Peering both Vnets
+// @description('The peering connection from webserver to managementserver')
+// resource web2management 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-04-01'{
+// }
+
+// @description('The peering connection from managementserver to webserver')
+// resource management2web 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-04-01'{
+  
+// }
   
 // module webServer 'modules/virtualMachine.bicep' = {
   // Define the resource in modules/virtualMachine.bicep
