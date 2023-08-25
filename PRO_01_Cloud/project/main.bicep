@@ -39,7 +39,7 @@ param location string = 'westeurope'
 // Storage account and deployment script parameters
 @description('The storage account name must be globally unique only letters lowercase')
   // take makes sure it doens't exceed the 24 char limit, toLower makes sure everything is lower cases as required.
-param storageAccountName string = take(toLower('stgAc${uniqueString(resourceGroup().id)}'),24) 
+param storageAccountName string = take(toLower('scripts${uniqueString(resourceGroup().id)}'),24) 
 
 @description('The name for the PostDeploymentScripts storage')
 param containerNameScripts string = 'postdeploymentscripts'
