@@ -44,6 +44,7 @@ param webServerSubnetName string = 'webServerSubnet'
 param webServerSubnetAddressPrefix string = '10.10.10.0/25'
 param webServerNSGName string = '${webServerSubnetName}-NSG'
 param webServerAllowedSSHIp string = managementServerSubnetAddressPrefix
+// param webserverVnetExternalID string = '/subscriptions/42d4abc3-eb16-4e20-997a-2a4e28016d24/resourceGroups/koekbiceptestomgeving/providers/Microsoft.Network/virtualNetworks/app-prd-vnet'
 
 // All managementserver params
 param managementServerVnetName string = 'management-prd-vnet'
@@ -52,6 +53,7 @@ param managementServerSubnetName string = 'managementServerSubnet'
 param managementServerSubnetAddressPrefix string = '10.20.20.0/25'
 param managementServerNSGName string = '${managementServerSubnetName}-NSG'
 param managementServerAllowedSSHIp string = '*'
+// param managementServerVnetExternalID string = '/subscriptions/42d4abc3-eb16-4e20-997a-2a4e28016d24/resourceGroups/koekbiceptestomgeving/providers/Microsoft.Network/virtualNetworks/management-prd-vnet'
 
 // StorageAccount (WORKS)
 @description('The storage account for the blob container for post deployment scripts')
@@ -106,15 +108,23 @@ module managementserverVnet 'modules/network.bicep' = {
   }
 }
 
-// // Peering both Vnets
-// @description('The peering connection from webserver to managementserver')
-// resource web2management 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-04-01'{
-// }
+// Peering both Vnets
+module peeringWebserverToManagementServer 'modules/vnetpeering.bicep' = {
+  name: 'peering-Webserver-to-ManagementServer'
+  params: {
+    vnet1Name: webserverVnet.name
+    vnet2Name: managementserverVnet.name
+  }
+}
 
-// @description('The peering connection from managementserver to webserver')
-// resource management2web 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-04-01'{
-  
-// }
+module peeringManagementServerToWebserver 'modules/vnetpeering.bicep' = {
+  name: 'peering-ManagementServer-to-Webserver'
+  params: {
+    vnet1Name: managementserverVnet.name
+    vnet2Name: webserverVnet.name
+  }
+}
+
   
 // module webServer 'modules/virtualMachine.bicep' = {
   // Define the resource in modules/virtualMachine.bicep
