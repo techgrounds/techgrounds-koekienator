@@ -79,9 +79,9 @@ resource vnet 'Microsoft.Network/virtualNetworks@2023-04-01' = {
         name: subnetName
         properties: {
           addressPrefix: subnetAddressPrefix
-          delegations: []
-          privateEndpointNetworkPolicies: 'Disabled'
-          privateLinkServiceNetworkPolicies: 'Enabled'
+          networkSecurityGroup: {
+            id: subnetNsg.id
+          }
         }
         type: 'Microsoft.Network/virtualNetworks/subnets'
       }
@@ -95,9 +95,6 @@ resource subnet 'Microsoft.Network/virtualNetworks/subnets@2023-04-01' = {
   parent: vnet
   properties: {
     addressPrefix: subnetAddressPrefix
-    delegations: []
-    privateEndpointNetworkPolicies: 'Disabled'
-    privateLinkServiceNetworkPolicies: 'Enabled'
     networkSecurityGroup: {
       id: subnetNsg.id
     }

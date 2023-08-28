@@ -1,26 +1,9 @@
-// Locations allowed for deployment, low latency, low cost
-@allowed([
-  'westeurope'
-  'uksouth'
-])
-param location string = 'westeurope'
+@description('The region where all resources will be deployed to')
+param location string = 'uksouth'
 
-// // Secure logins for management and web server, will be stored in keyvault
-// @secure()
-// @description('The administrator login username for the Management server.')
-// param managementServerAdminLogin string
-
-// @secure()
-// @description('The administrator login password for the Management server.')
-// param managementServerAdminLoginPassword string
-
-// @secure()
-// @description('The administrator login username for the Web server.')
-// param webServerAdminLogin string
-
-// @secure()
-// @description('The administrator login password for the Web server.')
-// param webServerAdminLoginPassword string
+// Testing values
+// pass @koek1234
+// user koek@1234
 
 // Storage account params
 @description('The storage account name must be globally unique only letters lowercase and max 24 char long')
@@ -37,14 +20,23 @@ param storageAccountSkuName string = 'Standard_LRS'
 @description('The name for the PostDeploymentScripts storage')
 param containerNameScripts string = 'postdeploymentscripts'
 
-// All webserver params\
+// All webserver params
 param webServerVnetName string = 'app-prd-vnet'
 param webServerVnetAddressPrefix string = '10.10.10.0/24'
 param webServerSubnetName string = 'webServerSubnet'
 param webServerSubnetAddressPrefix string = '10.10.10.0/25'
 param webServerNSGName string = '${webServerSubnetName}-NSG'
-param webServerAllowedSSHIp string = managementServerSubnetAddressPrefix
-// param webserverVnetExternalID string = '/subscriptions/42d4abc3-eb16-4e20-997a-2a4e28016d24/resourceGroups/koekbiceptestomgeving/providers/Microsoft.Network/virtualNetworks/app-prd-vnet'
+param webServerAllowedSSHIp string= managementServerSubnetAddressPrefix
+param webServerVmName string = 'webserver-${uniqueString(resourceGroup().id)}'
+
+@secure()
+@description('The administrator login username for the Web server.')
+param webServerAdminLogin string 
+
+@secure()
+@description('The administrator login password for the Web server.')
+param webServerAdminLoginPassword string 
+
 
 // All managementserver params
 param managementServerVnetName string = 'management-prd-vnet'
@@ -53,11 +45,20 @@ param managementServerSubnetName string = 'managementServerSubnet'
 param managementServerSubnetAddressPrefix string = '10.20.20.0/25'
 param managementServerNSGName string = '${managementServerSubnetName}-NSG'
 param managementServerAllowedSSHIp string = '*'
-// param managementServerVnetExternalID string = '/subscriptions/42d4abc3-eb16-4e20-997a-2a4e28016d24/resourceGroups/koekbiceptestomgeving/providers/Microsoft.Network/virtualNetworks/management-prd-vnet'
+param manamentServerVmName string = 'managementserver-${uniqueString(resourceGroup().id)}'
+
+@secure()
+@description('The administrator login username for the Management server.')
+param managementServerAdminLogin string 
+
+@secure()
+@description('The administrator login password for the Management server.')
+param managementServerAdminLoginPassword string 
+
 
 // StorageAccount (WORKS)
 @description('The storage account for the blob container for post deployment scripts')
-resource strorageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: storageAccountName
   location: location
   sku: {
@@ -74,11 +75,11 @@ resource strorageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
 resource storageBlobScripts 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = {
   name: '${storageAccountName}/default/${containerNameScripts}'
   dependsOn: [
-    strorageAccount
+    storageAccount
   ]
 }
 
-// Webserver virtual network
+// Webserver virtual network (WORKS)
 @description('The module to define the Webserver vnet, including subnet and NSG, see "modules/network.bicep" for more detailed information.')
 module webserverVnet 'modules/network.bicep' = {
   name: webServerVnetName
@@ -93,7 +94,7 @@ module webserverVnet 'modules/network.bicep' = {
   }
 }
 
-// Webserver virtual network
+// Webserver virtual network (WORKS)
 @description('The module to define the Managementserver vnet, including subnet and NSG, see "modules/network.bicep" for more detailed information.')
 module managementserverVnet 'modules/network.bicep' = {
   name: managementServerVnetName
@@ -108,7 +109,7 @@ module managementserverVnet 'modules/network.bicep' = {
   }
 }
 
-// Peering both Vnets
+// Peering web to management Vnets (WORKS)
 module peeringWebserverToManagementServer 'modules/vnetpeering.bicep' = {
   name: 'peering-Webserver-to-ManagementServer'
   params: {
@@ -117,6 +118,7 @@ module peeringWebserverToManagementServer 'modules/vnetpeering.bicep' = {
   }
 }
 
+// Peering management to web Vnets (WORKS)
 module peeringManagementServerToWebserver 'modules/vnetpeering.bicep' = {
   name: 'peering-ManagementServer-to-Webserver'
   params: {
@@ -125,19 +127,31 @@ module peeringManagementServerToWebserver 'modules/vnetpeering.bicep' = {
   }
 }
 
-  
-// module webServer 'modules/virtualMachine.bicep' = {
-  // Define the resource in modules/virtualMachine.bicep
-// }
+// Virtual Machine for the web server (WORKS)
+module webserverVM 'modules/virtualmachine.bicep' = {
+  name: webServerVmName
+  params: {
+    location: location
+    adminPasswordOrKey: webServerAdminLoginPassword
+    adminUsername: webServerAdminLogin
+    subnetName: webServerSubnetName
+    virtualNetworkName: webServerVnetName
+    vmName: webServerVmName
+  }
+}
 
-// module managementServer 'modules/virtualMachine.bicep' = {
-  // Define the resource in modules/virtualMachine.bicep
-// }
-
-// // Need to find out how these work in Bicep
-// Module Peering?\
-  // Define resource in network.bicep?
-  // Connect Vnet 1 and 2
+// Virtual Machine for the management server (WORKS)
+module managementserverVM 'modules/virtualmachine.bicep' = {
+  name: manamentServerVmName
+  params: {
+    location: location
+    adminPasswordOrKey: managementServerAdminLoginPassword
+    adminUsername: managementServerAdminLogin
+    subnetName: managementServerSubnetName
+    virtualNetworkName: managementServerVnetName
+    vmName: manamentServerVmName
+  }
+}
 
 // Module vaults
   // Snapshot? Standard tier?
@@ -152,4 +166,7 @@ module peeringManagementServerToWebserver 'modules/vnetpeering.bicep' = {
   // https://learn.microsoft.com/nl-nl/azure/azure-resource-manager/bicep/scenarios-rbac
   // Admin account
   // Extend in future?
+
+// output sshWebServer string = webserverVM.outputs.sshCommand
+// output sshManagementServer string = managementserverVM.outputs.sshCommand
 
