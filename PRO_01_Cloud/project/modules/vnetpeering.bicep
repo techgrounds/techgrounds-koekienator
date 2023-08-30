@@ -17,3 +17,17 @@ resource peeringVnet1andVnet2 'Microsoft.Network/virtualNetworks/virtualNetworkP
     }
   }
 }
+
+@description('Reverse connection from peeringVnet1andVnet2')
+resource peeringVnet2andVnet1 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2021-02-01' = {
+  name: '${vnet2Name}/vnet-peering-to-${vnet1Name}'
+  properties: {
+    allowVirtualNetworkAccess: true
+    allowForwardedTraffic: false
+    allowGatewayTransit: false
+    useRemoteGateways: false
+    remoteVirtualNetwork: {
+      id: resourceId(resourceGroup().name, 'Microsoft.Network/virtualNetworks', vnet1Name)
+    }
+  }
+}

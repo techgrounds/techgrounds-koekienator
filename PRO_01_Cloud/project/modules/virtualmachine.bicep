@@ -1,5 +1,5 @@
-@description('The name of you Virtual Machine.')
-param vmName string
+@description('Location for all resources.')
+param location string 
 
 @description('Username for the Virtual Machine.')
 param adminUsername string
@@ -24,17 +24,17 @@ param dnsLabelPrefix string = toLower('${vmName}-${uniqueString(resourceGroup().
 ])
 param ubuntuOSVersion string = 'Ubuntu-2004'
 
-@description('Location for all resources.')
-param location string = resourceGroup().location
+@description('The name of you Virtual Machine.')
+param vmName string
 
 @description('The size of the VM')
 param vmSize string = 'Standard_B1ls'
 
-@description('Name of the VNET')
-param virtualNetworkName string 
+@description('The subnet ID you want to deploy to')
+param subnetId string 
 
-@description('Name of the subnet in the virtual network')
-param subnetName string 
+@description('The NSG ID you want to deploy to')
+param networkSecurityGroupId string
 
 @description('Security Type of the Virtual Machine.')
 @allowed([
@@ -51,9 +51,11 @@ var imageReference = {
     version: 'latest'
   }
 }
+
 var publicIPAddressName = '${vmName}PublicIP'
 var networkInterfaceName = '${vmName}NetInt'
 var osDiskType = 'Standard_LRS'
+
 var linuxConfiguration = {
   disablePasswordAuthentication: true
   ssh: {
@@ -65,6 +67,7 @@ var linuxConfiguration = {
     ]
   }
 }
+
 var securityProfileJson = {
   uefiSettings: {
     secureBootEnabled: true
@@ -80,11 +83,7 @@ var securityProfileJson = {
 // var maaTenantName = 'GuestAttestation'
 // var maaEndpoint = substring('emptystring', 0, 0)
 
-resource virtualNetwork 'Microsoft.Network/virtualNetworks@2021-05-01' existing = {
-  name: virtualNetworkName
-}
-
-resource networkInterface 'Microsoft.Network/networkInterfaces@2021-05-01' = {
+resource networkInterface 'Microsoft.Network/networkInterfaces@2023-04-01' = {
   name: networkInterfaceName
   location: location
   properties: {
@@ -93,21 +92,27 @@ resource networkInterface 'Microsoft.Network/networkInterfaces@2021-05-01' = {
         name: 'ipconfig1'
         properties: {
           subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+            id: subnetId
           }
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
             id: publicIPAddress.id
           }
+          applicationSecurityGroups: [ {
+            id: newASG.id
+          }
+            
+          ]
         }
       }] 
+      networkSecurityGroup: {
+        id: networkSecurityGroupId
+      }
   }
-  dependsOn: [
-    virtualNetwork
-  ]
 }
 
-resource publicIPAddress 'Microsoft.Network/publicIPAddresses@2021-05-01' = {
+
+resource publicIPAddress 'Microsoft.Network/publicIPAddresses@2023-04-01' = {
   name: publicIPAddressName
   location: location
   sku: {
@@ -123,9 +128,15 @@ resource publicIPAddress 'Microsoft.Network/publicIPAddresses@2021-05-01' = {
   }
 }
 
-resource vm 'Microsoft.Compute/virtualMachines@2021-11-01' = {
+resource newASG 'Microsoft.Network/applicationSecurityGroups@2023-04-01' = {
+  name: '${vmName}-ASG'
+  location: location
+}
+
+resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
   name: vmName
   location: location
+  // availability zone
   properties: {
     hardwareProfile: {
       vmSize: vmSize
@@ -184,5 +195,6 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-11-01' = {
 // }
 
 output adminUsername string = adminUsername
+output nicPrivateIp string = networkInterface.properties.ipConfigurations[0].properties.privateIPAddress
 output hostname string = publicIPAddress.properties.dnsSettings.fqdn
 output sshCommand string = 'ssh ${adminUsername}@${publicIPAddress.properties.dnsSettings.fqdn}'
