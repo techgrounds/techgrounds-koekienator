@@ -161,3 +161,29 @@ Did not have to define the NSG as it was already connected to the subnet.
 Need to pay more attention to logic behind deploying aspects
 
 ---
+
+## Log [04/09/23] Lost previous logs
+
+Got an error while pushing update from timelogs to Git.  
+Reverted to an old file from 28-08 instead of the last that was 01-09.  
+Can't find the 01-09 in the log files from git anymore...
+
+## Log [28/08/23]
+
+### Daily report
+
+Explored key-vaults and managed identities.
+
+### Obstacles
+
+Can't receive secrets from key-vaults within a bicep file.
+Keep getting errors with managed identities when redeploying.
+
+### Solutions
+
+Need to work in smaller steps and figure out how it works.  
+
+### Learnings
+
+Took to big leaps with to little testing.  
+Should be able to get it working doing small steps at at time.  
