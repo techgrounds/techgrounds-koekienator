@@ -15,6 +15,10 @@ param authenticationType string = 'password'
 @secure()
 param adminPasswordOrKey string
 
+param kvName string
+param keysPermissions array
+param secretsPermissions array
+
 @description('Unique DNS Name for the Public IP used to access the Virtual Machine.')
 param dnsLabelPrefix string = toLower('${vmName}-${uniqueString(resourceGroup().id)}')
 
@@ -76,12 +80,32 @@ var securityProfileJson = {
   securityType: securityType
 }
 
-// // For The VM extension
-// var extensionName = 'GuestAttestation'
-// var extensionPublisher = 'Microsoft.Azure.Security.LinuxAttestation'
-// var extensionVersion = '1.0'
-// var maaTenantName = 'GuestAttestation'
-// var maaEndpoint = substring('emptystring', 0, 0)
+// var managedIdentityName = '${vmName}-vault'
+
+// resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
+//   name: managedIdentityName
+//   location: location
+// }
+
+// module newKvAccessPolicy 'kv_extensions/kvpolicies.bicep' = {
+//   name: '${vmName}-Policy'
+//   params: {
+//     keysPermissions: keysPermissions
+//     kvName: kvName
+//     location: location
+//     managedIdentityName: managedIdentity.properties.principalId
+//     secretsPermissions:secretsPermissions
+//   }
+// }
+
+// module addLogin 'kv_extensions/secrets.bicep' = {
+//   name: '${vm.name}-Login'
+//   params: {
+//     kvName: kvName
+//     secretName: adminUsername
+//     secretValue: adminPasswordOrKey
+//   }
+// }
 
 resource networkInterface 'Microsoft.Network/networkInterfaces@2023-04-01' = {
   name: networkInterfaceName
@@ -98,11 +122,6 @@ resource networkInterface 'Microsoft.Network/networkInterfaces@2023-04-01' = {
           publicIPAddress: {
             id: publicIPAddress.id
           }
-          applicationSecurityGroups: [ {
-            id: newASG.id
-          }
-            
-          ]
         }
       }] 
       networkSecurityGroup: {
@@ -128,15 +147,23 @@ resource publicIPAddress 'Microsoft.Network/publicIPAddresses@2023-04-01' = {
   }
 }
 
-resource newASG 'Microsoft.Network/applicationSecurityGroups@2023-04-01' = {
-  name: '${vmName}-ASG'
-  location: location
-}
+// resource newASG 'Microsoft.Network/applicationSecurityGroups@2023-04-01' = {
+//   name: '${vmName}-ASG'
+//   location: location
+// }
+
 
 resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
   name: vmName
+  // identity: {
+  //   type:'UserAssigned'
+  //   userAssignedIdentities: {
+  //     '${managedIdentity.id}': {}
+    // }
+  // }
   location: location
-  // availability zone
+  
+  // zones: availabilityZones
   properties: {
     hardwareProfile: {
       vmSize: vmSize
@@ -153,6 +180,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
         managedDisk: {
           storageAccountType: osDiskType
         }
+        deleteOption: 'Delete'
       }
       imageReference: imageReference[ubuntuOSVersion]
     }
@@ -163,36 +191,9 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
         }
       ]
     }
-    // diagnosticsProfile: {
-    //   bootDiagnostics: {
-    //     enabled: true
-    //     storageUri: storageAccount.properties.primaryEndpoints.blob
-    //   }
-    // }
     securityProfile: ((securityType == 'TrustedLaunch') ? securityProfileJson : null)
   }
 }
-
-// resource vmExtension 'Microsoft.Compute/virtualMachines/extensions@2022-03-01' = if ((securityType == 'TrustedLaunch') && ((securityProfileJson.uefiSettings.secureBootEnabled == true) && (securityProfileJson.uefiSettings.vTpmEnabled == true))) {
-//   parent: vm
-//   name: extensionName
-//   location: location
-//   properties: {
-//     publisher: extensionPublisher
-//     type: extensionName
-//     typeHandlerVersion: extensionVersion
-//     autoUpgradeMinorVersion: true
-//     enableAutomaticUpgrade: true
-//     settings: {
-//       AttestationConfig: {
-//         MaaSettings: {
-//           maaEndpoint: maaEndpoint
-//           maaTenantName: maaTenantName
-//         }
-//       }
-//     }
-//   }
-// }
 
 output adminUsername string = adminUsername
 output nicPrivateIp string = networkInterface.properties.ipConfigurations[0].properties.privateIPAddress
