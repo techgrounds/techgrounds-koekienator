@@ -1,0 +1,10 @@
+# Block common file extensions
+*.exe
+*.doc
+*.docx
+*.gdoc
+
+# Block paths/files
+PRO_01_Cloud/project/old_templates
+sprints/
+spellingscheck.md
