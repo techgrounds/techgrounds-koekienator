@@ -182,7 +182,7 @@ Keep getting errors with managed identities when redeploying.
 ### Solutions
 
 Need to work in smaller steps and figure out how it works.  
-
+git ch
 ### Learnings
 
 Took to big leaps with to little testing.  
