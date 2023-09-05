@@ -168,7 +168,7 @@ Got an error while pushing update from timelogs to Git.
 Reverted to an old file from 28-08 instead of the last that was 01-09.  
 Can't find the 01-09 in the log files from git anymore...
 
-## Log [28/08/23]
+## Log [04/09/23]
 
 ### Daily report
 
