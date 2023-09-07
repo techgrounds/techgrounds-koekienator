@@ -36,11 +36,10 @@ param webServerVmName string = 'webserver-${uniqueString(resourceGroup().id)}'
 @description('The administrator login username for the Web server.')
 param webServerAdminLogin string = 'webAdmin'
 
+@description('SSH Key or password for the Web server. SSH key is recommended.')
 @secure()
-@description('The administrator login password for the Web server.')
-param webServerAdminLoginPassword string 
+param webServerAdminLoginPassword string
 
-// var availabilityZone = 2 % i + 1
 
 // All managementserver params/var
 @description('The name of the vnet where the managemetn server is deployed')
@@ -64,21 +63,31 @@ param manamentServerVmName string = 'managementserver-${uniqueString(resourceGro
 @description('The administrator login username for the Management server.')
 param managementServerAdminLogin string = 'mngmntAdmin'
 
+@description('SSH Key or password for the Management server. SSH key is recommended.')
 @secure()
-@description('The administrator login password for the Management server.')
-param managementServerAdminLoginPassword string 
+param managementServerAdminLoginPassword string
+
+// Set up all the permissions for the management server within the keyvault
+param managementServerKeysPermissions array = ['all']
+param managementServerSecretPermissions array = ['all']
+param managementServerCertificatesPermissions array = ['all']
 
 // KV / Secrets params
 @description('Specifies the name of the key vault.')
 param keyVaultName string = 'kv-${uniqueString(resourceGroup().id)}'
 
-// KeyVault (NOT WORKING AS INTENTED YET)
+// KeyVault (Working?)
 module kv 'modules/kv.bicep' = {
   name: keyVaultName
   params: {
     location: location
   }
 }
+
+// // This is needed to use getSecret(), however I don't know how that works yet
+// resource myKv 'Microsoft.KeyVault/vaults@2023-02-01' existing = {
+//   name: keyVaultName
+// }
 
 // StorageAccount (WORKS)
 @description('The storage account for the blob container for post deployment scripts')
@@ -163,15 +172,13 @@ module managementserverVnet 'modules/network.bicep' = {
 module webserverVM 'modules/virtualmachine.bicep' = {
   name: webServerVmName
   params: {
-    adminPasswordOrKey: webServerAdminLoginPassword
+    adminPasswordOrKey:webServerAdminLoginPassword
     adminUsername: webServerAdminLogin
-    keysPermissions: ['get']
     kvName: kv.name
     location:  location
     networkSecurityGroupId: webserverVnet.outputs.subnetNsgId
-    secretsPermissions: ['']
     subnetId: webserverVnet.outputs.SubnetId
-    vmName: webServerVmName
+    vmName: webServerVmName 
   }
 }
 
@@ -180,17 +187,16 @@ module managementserverVM 'modules/virtualmachine.bicep' = {
   params: {
     adminPasswordOrKey: managementServerAdminLoginPassword
     adminUsername: managementServerAdminLogin
-    keysPermissions: ['get', 'list', 'create']
+    keysPermissions: managementServerKeysPermissions
+    secretsPermissions: managementServerSecretPermissions
+    certificatesPermissions: managementServerCertificatesPermissions
     kvName: kv.name
     location: location
     networkSecurityGroupId: managementserverVnet.outputs.subnetNsgId
-    secretsPermissions: ['get', 'list', 'set']
     subnetId: managementserverVnet.outputs.SubnetId
     vmName: manamentServerVmName
   }
 }
-
-
 
 // Peering bothways web and management server (WORKS)
 module vnetPeering 'modules/vnetpeering.bicep' = {
