@@ -182,8 +182,44 @@ Keep getting errors with managed identities when redeploying.
 ### Solutions
 
 Need to work in smaller steps and figure out how it works.  
-git ch
+
 ### Learnings
 
 Took to big leaps with to little testing.  
 Should be able to get it working doing small steps at at time.  
+
+## Log [05/09/23] Git Testing branch was empty after fixing something
+
+Not sure what happened but the testing branch only had time logs.md and the rest was gone.
+Pushed all from local repository and it seems fine now?  
+
+---
+
+## Log [07/09/23]
+
+### Daily report
+
+Fixed VM identities for KeyVault via access policies
+
+### Obstacles
+
+Wasn't able to assign a managed identity or access policy to a Key Vault.
+Kept getting that I couldn't do certain things as "contributor".
+Struggled with this for nearly two weeks.
+Just couldn't find the right keyword to search for to get a solution.
+
+### Solutions
+
+Was able to attach principal id from the vm's to applicationId and objectId.
+
+```bicep
+accessPolicies: [
+      {
+        applicationId: vm.identity.principalId
+        objectId: vm.identity.principalId
+```
+
+### Learnings
+
+Look more often in the portal and how things work in the portal.
+Cloud have saved me a lot of time and frustration.
