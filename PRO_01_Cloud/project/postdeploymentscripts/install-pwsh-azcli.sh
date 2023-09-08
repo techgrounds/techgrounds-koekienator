@@ -1,3 +1,4 @@
+#!/bin/bash
 # Update the list of packages
 sudo apt-get update
 # Install pre-requisite packages.
@@ -13,7 +14,7 @@ sudo apt-get update
 # Install PowerShell
 sudo apt-get install -y powershell
 # Start PowerShell
-pwshp
+pwsh
 # Install Azure CLI
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 # Update Azure CLI

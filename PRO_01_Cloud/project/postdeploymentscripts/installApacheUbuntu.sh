@@ -6,6 +6,9 @@ sudo apt update
 # Install Apache
 sudo apt install apache2 -y
 
+# Add Apache to the UFW 
+sudo ufw allow 'Apache'
+
 # Start Apache service
 sudo systemctl start apache2
 
