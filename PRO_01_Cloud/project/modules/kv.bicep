@@ -36,6 +36,8 @@ param secretsPermissions array = [
 ])
 param skuName string = 'standard'
 
+
+
 // @description('Specifies the name of the secret that you want to create.')
 // param secretName string
 
@@ -47,6 +49,7 @@ resource kv 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
   name: keyVaultName
   location: location
   properties: {
+    createMode: 'recover'
     enabledForDeployment: enabledForDeployment
     enabledForDiskEncryption: enabledForDiskEncryption
     enabledForTemplateDeployment: enabledForTemplateDeployment
@@ -68,7 +71,7 @@ resource kv 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
       family: 'A'
     }
     networkAcls: {
-      defaultAction: 'Allow'
+      defaultAction: 'Deny'
       bypass: 'AzureServices'
     }
   }

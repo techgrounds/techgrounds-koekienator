@@ -13,13 +13,14 @@ param subnetAddressPrefix string
 param networkSecurityGroupName string
 param allowedSSHIp string = '*'
 
-// Webserver NSG + Rules
+// The NSG
 resource subnetNsg 'Microsoft.Network/networkSecurityGroups@2023-04-01' = {
   name: networkSecurityGroupName
   location: location
 }
 
-resource subnetSshRule 'Microsoft.Network/networkSecurityGroups/securityRules@2023-04-01' = {
+// rule to allow certain SSH connections
+resource SshRule 'Microsoft.Network/networkSecurityGroups/securityRules@2023-04-01' = {
   parent: subnetNsg
   name: 'AllowSSH'
   properties: {
@@ -34,7 +35,8 @@ resource subnetSshRule 'Microsoft.Network/networkSecurityGroups/securityRules@20
   }     
 }
 
-resource webserverHttpsRule 'Microsoft.Network/networkSecurityGroups/securityRules@2023-04-01' = {
+// rule to allow Https
+resource HttpsRule 'Microsoft.Network/networkSecurityGroups/securityRules@2023-04-01' = {
   parent: subnetNsg
   name: 'AllowHttps'
   properties: {
@@ -49,7 +51,8 @@ resource webserverHttpsRule 'Microsoft.Network/networkSecurityGroups/securityRul
   }     
 }
 
-resource webserverDenyAllRule 'Microsoft.Network/networkSecurityGroups/securityRules@2023-04-01' = {
+// Rule to deny all access
+resource DenyAllRule 'Microsoft.Network/networkSecurityGroups/securityRules@2023-04-01' = {
   parent: subnetNsg
   name: 'DenyAllInbound'
   properties: {
@@ -64,7 +67,19 @@ resource webserverDenyAllRule 'Microsoft.Network/networkSecurityGroups/securityR
   }     
 }
 
-// Vnet + Subnet
+// Subnet
+resource subnet 'Microsoft.Network/virtualNetworks/subnets@2023-04-01' = {
+  name: subnetName
+  parent: vnet
+  properties: {
+    addressPrefix: subnetAddressPrefix
+    networkSecurityGroup: {
+      id: subnetNsg.id
+    }
+  }
+}
+
+// Vnet
 resource vnet 'Microsoft.Network/virtualNetworks@2023-04-01' = {
   name: vnetNetworkName
   location: location
@@ -90,16 +105,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2023-04-01' = {
   }
 }
 
-resource subnet 'Microsoft.Network/virtualNetworks/subnets@2023-04-01' = {
-  name: subnetName
-  parent: vnet
-  properties: {
-    addressPrefix: subnetAddressPrefix
-    networkSecurityGroup: {
-      id: subnetNsg.id
-    }
-  }
-}
+
 
 output virtualNetworkId string = vnet.id
 output SubnetId string = subnet.id

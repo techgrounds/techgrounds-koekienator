@@ -176,6 +176,7 @@ module webserverVM 'modules/virtualmachine.bicep' = {
     adminUsername: webServerAdminLogin
     kvName: kv.name
     location:  location
+    availabilityZone: '1'
     networkSecurityGroupId: webserverVnet.outputs.subnetNsgId
     subnetId: webserverVnet.outputs.SubnetId
     vmName: webServerVmName 
@@ -192,6 +193,7 @@ module managementserverVM 'modules/virtualmachine.bicep' = {
     certificatesPermissions: managementServerCertificatesPermissions
     kvName: kv.name
     location: location
+    availabilityZone: '2'
     networkSecurityGroupId: managementserverVnet.outputs.subnetNsgId
     subnetId: managementserverVnet.outputs.SubnetId
     vmName: manamentServerVmName

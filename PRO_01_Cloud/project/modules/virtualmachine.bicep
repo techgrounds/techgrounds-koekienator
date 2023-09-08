@@ -17,6 +17,8 @@ param adminPasswordOrKey string
 
 param kvName string
 
+// param userDataOrBlobUrlToScript string
+
 @description('Specifies the permissions to keys in the vault. Valid values are: all, encrypt, decrypt, wrapKey, unwrapKey, sign, verify, get, list, create, update, import, delete, backup, restore, recover, and purge.')
 param keysPermissions array = [
   'get'
@@ -38,6 +40,12 @@ param certificatesPermissions array = [
   'backup'
 ]
 
+@description('Set the availabilityZone for the VM')
+@allowed([
+  '1'
+  '2'
+])
+param availabilityZone string 
 
 @description('Unique DNS Name for the Public IP used to access the Virtual Machine.')
 param dnsLabelPrefix string = toLower('${vmName}-${uniqueString(resourceGroup().id)}')
@@ -100,32 +108,6 @@ var securityProfileJson = {
   securityType: securityType
 }
 
-// var managedIdentityName = '${vmName}-vault'
-
-// resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
-//   name: managedIdentityName
-//   location: location
-// }
-
-// module newKvAccessPolicy 'kv_extensions/kvpolicies.bicep' = {
-//   name: '${vmName}-Policy'
-//   params: {
-//     keysPermissions: keysPermissions
-//     kvName: kvName
-//     location: location
-//     managedIdentityName: managedIdentity.properties.principalId
-//     secretsPermissions:secretsPermissions
-//   }
-// }
-
-// module addLogin 'kv_extensions/secrets.bicep' = {
-//   name: '${vm.name}-Login'
-//   params: {
-//     kvName: kvName
-//     secretName: adminUsername
-//     secretValue: adminPasswordOrKey
-//   }
-// }
 resource kv 'Microsoft.KeyVault/vaults@2023-02-01' existing = {
   name: kvName
 }
@@ -171,6 +153,9 @@ resource networkInterface 'Microsoft.Network/networkInterfaces@2023-04-01' = {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
             id: publicIPAddress.id
+            properties: {
+              deleteOption: 'Delete'
+            }
           }
         }
       }] 
@@ -184,12 +169,14 @@ resource networkInterface 'Microsoft.Network/networkInterfaces@2023-04-01' = {
 resource publicIPAddress 'Microsoft.Network/publicIPAddresses@2023-04-01' = {
   name: publicIPAddressName
   location: location
+  zones: [availabilityZone]
   sku: {
-    name: 'Basic'
+    name: 'Standard'
   }
   properties: {
-    publicIPAllocationMethod: 'Dynamic'
+    publicIPAllocationMethod: 'Static'
     publicIPAddressVersion: 'IPv4'
+    deleteOption: 'Delete'
     dnsSettings: {
       domainNameLabel: dnsLabelPrefix
     }
@@ -209,8 +196,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
     type:'SystemAssigned'
     }
   location: location
-  
-  // zones: availabilityZones
+  zones: [availabilityZone]
   properties: {
     hardwareProfile: {
       vmSize: vmSize
@@ -235,9 +221,13 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
       networkInterfaces: [
         {
           id: networkInterface.id
+          properties: {
+            deleteOption: 'Delete'
+          }
         }
       ]
     }
+    // userData: userDataOrBlobUrlToScript
     securityProfile: ((securityType == 'TrustedLaunch') ? securityProfileJson : null)
   }
 }
@@ -246,3 +236,4 @@ output adminUsername string = adminUsername
 output nicPrivateIp string = networkInterface.properties.ipConfigurations[0].properties.privateIPAddress
 output hostname string = publicIPAddress.properties.dnsSettings.fqdn
 output sshCommand string = 'ssh ${adminUsername}@${publicIPAddress.properties.dnsSettings.fqdn}'
+
