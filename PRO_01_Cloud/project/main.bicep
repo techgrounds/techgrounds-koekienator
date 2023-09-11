@@ -1,3 +1,7 @@
+// Deployment scope
+targetScope = 'subscription'
+
+// Location, default is uksouth
 @description('The region where all resources will be deployed to')
 @allowed([
   'westeurope'
@@ -6,117 +10,132 @@
 param location string = 'uksouth'
 
 // Storage account params
-@description('The storage account name must be globally unique only letters lowercase and max 24 char long')
-param storageAccountName string = take(toLower('scripts${uniqueString(resourceGroup().id)}'),24) 
+@description('The name prefix used to created the storageaccount')
+var storageAccountName = take(toLower('stg${uniqueString(newRG.name)}'),24) 
 
-@description('')
+@description('Set the SKU for the storage account: Standard_LRS or Standard_GRS')
 @allowed([
   'Standard_LRS'
   'Standard_GRS'
 ])
-param storageAccountSkuName string = 'Standard_LRS'
+param storageAccountSkuName string 
 
 // Deployment Scripts Blob Container params
 @description('The name for the PostDeploymentScripts storage')
-param containerNameScripts string = 'postdeploymentscripts'
+param containerPostDeploymentScripts string 
 
-// All webserver params/var
-param webServerVnetName string = 'app-prd-vnet'
-param webServerVnetAddressPrefix string = '10.10.10.0/24'
-param webServerSubnetName string = 'webServerSubnet'
-param webServerSubnetAddressPrefix string = '10.10.10.0/25'
-var webServerAllowedSSHIp = managementserverVM.outputs.nicPrivateIp
+// Webserver params
+@description('The name prefix used for all webserver related resources')
+param webServerNamePrefix string 
 
-@description('Automated naming for the NSG')
-param webServerNSGName string = '${webServerSubnetName}-NSG'
+@description('The address for the webserver vnet')
+param webServerVnetAddressPrefix string 
 
-@description('Automated naming for the webserver virtual machine')
-param webServerVmName string = 'webserver-${uniqueString(resourceGroup().id)}'
+@description('The address for the webserver subnet')
+param webServerSubnetAddressPrefix string 
 
 @description('The administrator login username for the Web server.')
-param webServerAdminLogin string = 'webAdmin'
+param webServerAdminLogin string 
 
 @description('SSH Key or password for the Web server. SSH key is recommended.')
 @secure()
 param webServerAdminLoginPassword string
 
+// Webserver variables
+var webServerName = '${webServerNamePrefix}-${uniqueString(newRG.name)}'
+var webServerVnetName  = '${webServerNamePrefix}-prd-vnet'
+var webServerSubnetName = '${webServerNamePrefix}Subnet'
+var webServerNSGName = '${webServerSubnetName}-NSG'
+var webServerAllowedSSHIp = managementserverVM.outputs.nicPrivateIp
 
-// All managementserver params/var
-@description('The name of the vnet where the managemetn server is deployed')
-param managementServerVnetName string = 'management-prd-vnet'
+// Managementserver params
+@description('The name prefix used for all management related resources')
+param managementServerNamePrefix string 
 
 @description('The address prefix for the management server vnet')
-param managementServerVnetAddressPrefix string = '10.20.20.0/24'
+param managementServerVnetAddressPrefix string 
 
 @description('The address prefix for the management server subnet')
-param managementServerSubnetAddressPrefix string = '10.20.20.0/25'
-
-@description('The name of the subnet where the managemetn server is deployed')
-param managementServerSubnetName string = 'managementServerSubnet'
-
-@description('The name of the NSG for the management server')
-param managementServerNSGName string = '${managementServerSubnetName}-NSG'
-
-@description('The name of the management server with unique suffix')
-param manamentServerVmName string = 'managementserver-${uniqueString(resourceGroup().id)}'
-
-@description('The administrator login username for the Management server.')
-param managementServerAdminLogin string = 'mngmntAdmin'
+param managementServerSubnetAddressPrefix string 
 
 @description('SSH Key or password for the Management server. SSH key is recommended.')
 @secure()
-param managementServerAdminLoginPassword string
+param managementServerAdminLoginPassword string = newGuid()
 
-// Set up all the permissions for the management server within the keyvault
-param managementServerKeysPermissions array = ['all']
-param managementServerSecretPermissions array = ['all']
-param managementServerCertificatesPermissions array = ['all']
+// Managementservers variables
+var managementServerName = '${managementServerNamePrefix}-${uniqueString(newRG.name)}'
+var managementServerVnetName  = '${managementServerNamePrefix}-prd-vnet'
+var managementServerSubnetName = '${managementServerNamePrefix}ServerSubnet'
+var managementServerNSGName = '${managementServerSubnetName}-NSG'
+
+
+@description('The administrator login username for the Management server.')
+param managementServerAdminLogin string = newGuid()
+
+// Set up all the permissions for the webserver within the keyvault
+@description('Specifies the permissions to keys in the vault. Valid values are: all, encrypt, decrypt, wrapKey, unwrapKey, sign, verify, get, list, create, update, import, delete, backup, restore, recover, and purge.')
+param webServerKeysPermissions array
+
+@description('Specifies the permissions to secrets in the vault. Valid values are: all, get, list, set, delete, backup, restore, recover, and purge.')
+param webServerSecretPermissions array 
+
+@description('Specifies the permissions to certificates in the vault. Valid values are: all, get, list ,update, create, import, delete, recover, backup, restore, purge')
+param webServerCertificatesPermissions array 
+
+// Set up all the permissions for the managementserver within the keyvault
+@description('Specifies the permissions to keys in the vault. Valid values are: all, encrypt, decrypt, wrapKey, unwrapKey, sign, verify, get, list, create, update, import, delete, backup, restore, recover, and purge.')
+param managementServerKeysPermissions array
+
+@description('Specifies the permissions to secrets in the vault. Valid values are: all, get, list, set, delete, backup, restore, recover, and purge.')
+param managementServerSecretPermissions array 
+
+@description('Specifies the permissions to certificates in the vault. Valid values are: all, get, list ,update, create, import, delete, recover, backup, restore, purge')
+param managementServerCertificatesPermissions array
 
 // KV / Secrets params
 @description('Specifies the name of the key vault.')
-param keyVaultName string = 'kv-${uniqueString(resourceGroup().id)}'
+param keyVaulNamePrefix string
+var keyVaultName = '${keyVaulNamePrefix}-${uniqueString(newRG.name)}'
 
-// KeyVault (Working?)
+// ResourceGroup params
+param rgNamePrefix string
+var resourceGroupName = '${rgNamePrefix}${uniqueString(subscription().subscriptionId)}'
+
+module newRG 'modules/resourceGroup.bicep' = {
+  name: resourceGroupName
+  params: {
+    resourceGroupLocation: location
+    resourceGroupName: resourceGroupName
+  }
+}
+
+// KeyVault (WORKING)
 module kv 'modules/kv.bicep' = {
   name: keyVaultName
+  scope: resourceGroup(newRG.name)
   params: {
+    keyVaultName: keyVaultName
     location: location
   }
 }
 
-// // This is needed to use getSecret(), however I don't know how that works yet
-// resource myKv 'Microsoft.KeyVault/vaults@2023-02-01' existing = {
-//   name: keyVaultName
-// }
-
-// StorageAccount (WORKS)
-@description('The storage account for the blob container for post deployment scripts')
-resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
+// storage account (WORKING)
+module storageAccount 'modules/storage.bicep' = {
   name: storageAccountName
-  location: location
-  sku: {
-    name: storageAccountSkuName
+  scope: resourceGroup(newRG.name)
+  params: {
+    blobContainerName: containerPostDeploymentScripts
+    location: location
+    storageAccountName: storageAccountName
+    storageAccountSkuName: storageAccountSkuName
   }
-  kind: 'StorageV2'
-  properties: {
-    accessTier: 'Cool'
-    supportsHttpsTrafficOnly: true
-  }
-}
-
-// Blob container for scripts (WORKS)
-@description('The blob container for post deployment scripts, only deploys IF storageaccount is availible')
-resource storageBlobScripts 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = {
-  name: '${storageAccountName}/default/${containerNameScripts}'
-  dependsOn: [
-    storageAccount
-  ]
 }
 
 // Webserver virtual network (WORKS, subnet, nsg included)
 @description('The module to define th-e Webserver vnet, including subnet and NSG, see "modules/network.bicep" for more detailed information.')
 module webserverVnet 'modules/network.bicep' = {
   name: webServerVnetName
+  scope: resourceGroup(newRG.name)
   params: {
     location: location
     networkSecurityGroupName: webServerNSGName
@@ -133,6 +152,7 @@ module webserverVnet 'modules/network.bicep' = {
 @description('The module to define the Managementserver vnet, including subnet and NSG, see "modules/network.bicep" for more detailed information.')
 module managementserverVnet 'modules/network.bicep' = {
   name: managementServerVnetName
+  scope: resourceGroup(newRG.name)
   params: {
     location: location
     networkSecurityGroupName: managementServerNSGName
@@ -143,66 +163,47 @@ module managementserverVnet 'modules/network.bicep' = {
   }
 }
 
-// // Virtual Machine for the web server (WORKS, asg included | no backup, no key-pair)
-// module webserverVM 'modules/virtualmachine.bicep' = {
-//   name: webServerVmName
-//   params: {
-//     location: location
-//     adminPasswordOrKey: webServerAdminLoginPassword
-//     adminUsername: webServerAdminLogin
-//     networkSecurityGroupId: webserverVnet.outputs.subnetNsgId
-//     subnetId: webserverVnet.outputs.SubnetId
-//     vmName: webServerVmName
-//   }
-// }
-
-// // Virtual Machine for the management server (WORKS)
-// module managementserverVM 'modules/virtualmachine.bicep' = {
-//   name: manamentServerVmName
-//   params: {
-//     location: location
-//     adminPasswordOrKey: managementServerAdminLoginPassword
-//     adminUsername: managementServerAdminLogin
-//     networkSecurityGroupId: managementserverVnet.outputs.subnetNsgId
-//     subnetId: managementserverVnet.outputs.SubnetId
-//     vmName: manamentServerVmName
-//   }
-// }
 
 module webserverVM 'modules/virtualmachine.bicep' = {
-  name: webServerVmName
+  name: webServerName
+  scope: resourceGroup(newRG.name)
   params: {
-    adminPasswordOrKey:webServerAdminLoginPassword
+    virtualMachineLocation: location
+    adminPasswordOrKey: webServerAdminLoginPassword
     adminUsername: webServerAdminLogin
-    kvName: kv.name
-    location:  location
     availabilityZone: '1'
+    kvName: kv.name
     networkSecurityGroupId: webserverVnet.outputs.subnetNsgId
     subnetId: webserverVnet.outputs.SubnetId
-    vmName: webServerVmName 
+    vmName: webServerName
+    keysPermissions: webServerKeysPermissions
+    secretsPermissions: webServerSecretPermissions
+    certificatesPermissions: webServerCertificatesPermissions
   }
 }
 
 module managementserverVM 'modules/virtualmachine.bicep' = {
-  name: manamentServerVmName
+  name: managementServerName
+  scope: resourceGroup(newRG.name)
   params: {
+    virtualMachineLocation: location
     adminPasswordOrKey: managementServerAdminLoginPassword
     adminUsername: managementServerAdminLogin
+    availabilityZone: '2'
+    kvName: kv.name
+    networkSecurityGroupId: managementserverVnet.outputs.subnetNsgId
+    subnetId: managementserverVnet.outputs.SubnetId
+    vmName: managementServerName
     keysPermissions: managementServerKeysPermissions
     secretsPermissions: managementServerSecretPermissions
     certificatesPermissions: managementServerCertificatesPermissions
-    kvName: kv.name
-    location: location
-    availabilityZone: '2'
-    networkSecurityGroupId: managementserverVnet.outputs.subnetNsgId
-    subnetId: managementserverVnet.outputs.SubnetId
-    vmName: manamentServerVmName
   }
 }
 
 // Peering bothways web and management server (WORKS)
 module vnetPeering 'modules/vnetpeering.bicep' = {
   name: 'vnetPeering'
+  scope: resourceGroup(newRG.name)
   params: {
     vnet1Name: webserverVnet.name
     vnet2Name: managementserverVnet.name

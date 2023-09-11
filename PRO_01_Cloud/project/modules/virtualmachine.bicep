@@ -1,5 +1,5 @@
 @description('Location for all resources.')
-param location string 
+param virtualMachineLocation string 
 
 @description('Username for the Virtual Machine.')
 param adminUsername string
@@ -48,7 +48,7 @@ param certificatesPermissions array = [
 param availabilityZone string 
 
 @description('Unique DNS Name for the Public IP used to access the Virtual Machine.')
-param dnsLabelPrefix string = toLower('${vmName}-${uniqueString(resourceGroup().id)}')
+var dnsLabelPrefix = toLower('${vmName}-${uniqueString(resourceGroup().id)}')
 
 @description('The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version.')
 @allowed([
@@ -141,7 +141,7 @@ resource addLogin 'Microsoft.KeyVault/vaults/secrets@2023-02-01' = {
 
 resource networkInterface 'Microsoft.Network/networkInterfaces@2023-04-01' = {
   name: networkInterfaceName
-  location: location
+  location: virtualMachineLocation
   properties: {
     ipConfigurations: [
       {
@@ -168,7 +168,7 @@ resource networkInterface 'Microsoft.Network/networkInterfaces@2023-04-01' = {
 
 resource publicIPAddress 'Microsoft.Network/publicIPAddresses@2023-04-01' = {
   name: publicIPAddressName
-  location: location
+  location: virtualMachineLocation
   zones: [availabilityZone]
   sku: {
     name: 'Standard'
@@ -195,7 +195,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
   identity: {
     type:'SystemAssigned'
     }
-  location: location
+  location: virtualMachineLocation
   zones: [availabilityZone]
   properties: {
     hardwareProfile: {

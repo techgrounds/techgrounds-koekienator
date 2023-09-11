@@ -1,5 +1,5 @@
 @description('Specifies the name of the key vault.')
-param keyVaultName string = 'kv-${uniqueString(resourceGroup().id)}'
+param keyVaultName string
 
 @description('Specifies the Azure location where the key vault should be created.')
 param location string = resourceGroup().location
@@ -49,7 +49,7 @@ resource kv 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
   name: keyVaultName
   location: location
   properties: {
-    createMode: 'recover'
+    // createMode: 'recover'
     enabledForDeployment: enabledForDeployment
     enabledForDiskEncryption: enabledForDiskEncryption
     enabledForTemplateDeployment: enabledForTemplateDeployment
