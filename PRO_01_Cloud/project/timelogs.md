@@ -223,3 +223,33 @@ accessPolicies: [
 
 Look more often in the portal and how things work in the portal.
 Cloud have saved me a lot of time and frustration.
+
+---
+
+## Log [08/09/23]
+
+### Daily report
+
+Fixed security issues given by advisor, looking more on KV options
+
+### Obstacles
+
+In the Azure portal security issues regarding the KV kept popping up in the advisor.  
+KV needed to be restored manually.  
+
+### Solutions
+
+KV security issues were a trail of errors, easy to fix.  
+Stumbled on the solution for the deployment state of the KV from a Youtube snippet.
+The code below fixed it. Do want to see it's possible to determine the stat with an ? if statement.
+
+```bicep
+properties {
+    createMode: 'recover'
+}
+```
+
+### Learnings
+
+Pause Youtube video's to look at the code when the Youtuber goes by everything fast.
+You might find the thing you've been looking for.  
