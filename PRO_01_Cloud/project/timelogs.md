@@ -253,3 +253,71 @@ properties {
 
 Pause Youtube video's to look at the code when the Youtuber goes by everything fast.
 You might find the thing you've been looking for.  
+
+---
+
+## Log [11/09/23]
+
+### Daily report
+
+Added the creation of a new resource group for the deployment
+
+### Obstacles
+
+Had to change all the naming since `resourceGroup().id` didn't work anymore.
+Fair amount of errors, tried many ways of defining the names.
+
+### Solutions
+
+The code below works like a charm instead of the `resourceGroup().id`
+
+```bicep
+var resourceName = '${namePrefix}${uniqueString(newRG.name)}'
+```
+
+### Learnings
+
+Most errors came from the storage account name not being viable.
+Don't generate names over multiple files, keep it to your main file.
+
+---
+
+## Log [13/09/23]
+
+### Daily report
+
+made a powershell script to deploy two bicep files
+
+### Obstacles
+
+didn't know powershell that well
+didn't know most azure cli commands
+
+### Solutions
+
+Read about powershell and got little help from chatGPT to speed it up a bit.
+Removed some variables from files to make deployments smoother
+
+### Learnings
+
+`-mode incremental` helps a lot with deployments with multiple modules
+
+---
+
+## Log [14/09/23]
+
+### Daily report
+
+added userData to Vm's
+
+### Obstacles
+
+n/a
+
+### Solutions
+
+n/a
+
+### Learnings
+
+n/a
