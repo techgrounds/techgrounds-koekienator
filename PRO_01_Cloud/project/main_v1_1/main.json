@@ -1,0 +1,1744 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.20.4.51522",
+      "templateHash": "14566068307029164702"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "uksouth",
+      "allowedValues": [
+        "westeurope",
+        "uksouth"
+      ],
+      "metadata": {
+        "description": "The region where all resources will be deployed to"
+      }
+    },
+    "storageAccountSkuName": {
+      "type": "string",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS"
+      ],
+      "metadata": {
+        "description": "Set the SKU for the storage account: Standard_LRS or Standard_GRS"
+      }
+    },
+    "containerPostDeploymentScripts": {
+      "type": "string",
+      "metadata": {
+        "description": "The name for the PostDeploymentScripts storage"
+      }
+    },
+    "webServerNamePrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "The name prefix used for all webserver related resources"
+      }
+    },
+    "webServerVnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "The address for the webserver vnet"
+      }
+    },
+    "webServerSubnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "The address for the webserver subnet"
+      }
+    },
+    "webServerAdminLogin": {
+      "type": "string",
+      "metadata": {
+        "description": "The administrator login username for the Web server."
+      }
+    },
+    "webServerAdminLoginPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "SSH Key or password for the Web server. SSH key is recommended."
+      }
+    },
+    "managementServerNamePrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "The name prefix used for all management related resources"
+      }
+    },
+    "managementServerVnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "The address prefix for the management server vnet"
+      }
+    },
+    "managementServerSubnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "The address prefix for the management server subnet"
+      }
+    },
+    "managementServerAdminLoginPassword": {
+      "type": "securestring",
+      "defaultValue": "[newGuid()]",
+      "metadata": {
+        "description": "SSH Key or password for the Management server. SSH key is recommended."
+      }
+    },
+    "managementServerAdminLogin": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The administrator login username for the Management server."
+      }
+    },
+    "webServerKeysPermissions": {
+      "type": "array",
+      "metadata": {
+        "description": "Specifies the permissions to keys in the vault. Valid values are: all, encrypt, decrypt, wrapKey, unwrapKey, sign, verify, get, list, create, update, import, delete, backup, restore, recover, and purge."
+      }
+    },
+    "webServerSecretPermissions": {
+      "type": "array",
+      "metadata": {
+        "description": "Specifies the permissions to secrets in the vault. Valid values are: all, get, list, set, delete, backup, restore, recover, and purge."
+      }
+    },
+    "webServerCertificatesPermissions": {
+      "type": "array",
+      "metadata": {
+        "description": "Specifies the permissions to certificates in the vault. Valid values are: all, get, list ,update, create, import, delete, recover, backup, restore, purge"
+      }
+    },
+    "managementServerKeysPermissions": {
+      "type": "array",
+      "metadata": {
+        "description": "Specifies the permissions to keys in the vault. Valid values are: all, encrypt, decrypt, wrapKey, unwrapKey, sign, verify, get, list, create, update, import, delete, backup, restore, recover, and purge."
+      }
+    },
+    "managementServerSecretPermissions": {
+      "type": "array",
+      "metadata": {
+        "description": "Specifies the permissions to secrets in the vault. Valid values are: all, get, list, set, delete, backup, restore, recover, and purge."
+      }
+    },
+    "managementServerCertificatesPermissions": {
+      "type": "array",
+      "metadata": {
+        "description": "Specifies the permissions to certificates in the vault. Valid values are: all, get, list ,update, create, import, delete, recover, backup, restore, purge"
+      }
+    }
+  },
+  "variables": {
+    "storageAccountName": "[take(toLower(format('stg{0}', uniqueString(resourceGroup().id))), 24)]",
+    "webServerName": "[format('{0}-{1}', parameters('webServerNamePrefix'), uniqueString(resourceGroup().id))]",
+    "webServerVnetName": "[format('{0}-prd-vnet', parameters('webServerNamePrefix'))]",
+    "webServerSubnetName": "[format('{0}Subnet', parameters('webServerNamePrefix'))]",
+    "webServerNSGName": "[format('{0}-NSG', variables('webServerSubnetName'))]",
+    "webUserData": "IyEvYmluL2Jhc2gNCnN1ZG8gYXB0IHVwZGF0ZQ0Kc3VkbyBhcHQgaW5zdGFsbCBhcGFjaGUyIC15DQpzdWRvIHVmdyBhbGxvdyAnQXBhY2hlJw0Kc3VkbyBzeXN0ZW1jdGwgc3RhcnQgYXBhY2hlMg0Kc3VkbyBzeXN0ZW1jdGwgZW5hYmxlIGFwYWNoZTINCnN1ZG8gY2hvd24gLVIgJFVTRVI6JFVTRVIgL3Zhci93d3cNCmNkIC92YXIvd3d3L2h0bWwNCmVjaG8gJzwhRE9DVFlQRSBodG1sPicgPiBpbmRleC5odG1sDQplY2hvICc8aHRtbD4nID4+IGluZGV4Lmh0bWwNCmVjaG8gJzxoZWFkPicgPj4gaW5kZXguaHRtbA0KZWNobyAnPHRpdGxlPldlYlNlcnZlciB2YW4gS29lazwvdGl0bGU+JyA+PiBpbmRleC5odG1sDQplY2hvICc8bWV0YSBjaGFyc2V0PSJVVEYtOCI+JyA+PiBpbmRleC5odG1sDQplY2hvICc8L2hlYWQ+JyA+PiBpbmRleC5odG1sDQplY2hvICc8Ym9keT4nID4+IGluZGV4Lmh0bWwNCmVjaG8gJzxoMT5Zb3UgZ290IHRoZSB0aGUgbGFuZGluZyBwYWdlLCB3ZWxsIGRvbmUhPC9oMT4nID4+IGluZGV4Lmh0bWwNCmVjaG8gJzxoMz5UaGlzIGlzIGp1c3QgZm9yIHRlc3RpbmcgcHVycG9zZXM8L2gzPicgPj4gaW5kZXguaHRtbA0KZWNobyAnPC9ib2R5PicgPj4gaW5kZXguaHRtbA0KZWNobyAnPC9odG1sPicgPj4gaW5kZXguaHRtbA==",
+    "managementServerName": "[format('{0}-{1}', parameters('managementServerNamePrefix'), uniqueString(resourceGroup().id))]",
+    "managementServerVnetName": "[format('{0}-prd-vnet', parameters('managementServerNamePrefix'))]",
+    "managementServerSubnetName": "[format('{0}ServerSubnet', parameters('managementServerNamePrefix'))]",
+    "managementServerNSGName": "[format('{0}-NSG', variables('managementServerSubnetName'))]",
+    "managementUserData": "IyEvYmluL2Jhc2gNCnN1ZG8gYXB0LWdldCB1cGRhdGUgLXkNCnN1ZG8gYXB0LWdldCBpbnN0YWxsIGNhLWNlcnRpZmljYXRlcyBjdXJsIGFwdC10cmFuc3BvcnQtaHR0cHMgbHNiLXJlbGVhc2UgZ251cGcgLXkNCnN1ZG8gbWtkaXIgLXAgL2V0Yy9hcHQva2V5cmluZ3MNCmN1cmwgLXNMUyBodHRwczovL3BhY2thZ2VzLm1pY3Jvc29mdC5jb20va2V5cy9taWNyb3NvZnQuYXNjIHwNCiAgICBncGcgLS1kZWFybW9yIHwNCiAgICBzdWRvIHRlZSAvZXRjL2FwdC9rZXlyaW5ncy9taWNyb3NvZnQuZ3BnID4gL2Rldi9udWxsDQpzdWRvIGNobW9kIGdvK3IgL2V0Yy9hcHQva2V5cmluZ3MvbWljcm9zb2Z0LmdwZw0Kc3VkbyBhcHQtZ2V0IHVwZGF0ZQ0Kc3VkbyBhcHQtZ2V0IGluc3RhbGwgYXp1cmUtY2xpIC15DQpzdWRvIGFwdC1nZXQgdXBncmFkZSBhenVyZS1jbGkgLXk=",
+    "kvName": "[format('kv-{0}', uniqueString(resourceGroup().name))]",
+    "vaultName": "[format('recovery-{0}', uniqueString(resourceGroup().id))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[variables('kvName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "keyVaultName": {
+            "value": "[variables('kvName')]"
+          },
+          "createMode": {
+            "value": "default"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.20.4.51522",
+              "templateHash": "12554237579868946537"
+            }
+          },
+          "parameters": {
+            "keyVaultName": {
+              "type": "string",
+              "metadata": {
+                "description": "Specifies the name of the key vault."
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Specifies the Azure location where the key vault should be created."
+              }
+            },
+            "enabledForDeployment": {
+              "type": "bool",
+              "defaultValue": false,
+              "metadata": {
+                "description": "Specifies whether Azure Virtual Machines are permitted to retrieve certificates stored as secrets from the key vault."
+              }
+            },
+            "enabledForDiskEncryption": {
+              "type": "bool",
+              "defaultValue": false,
+              "metadata": {
+                "description": "Specifies whether Azure Disk Encryption is permitted to retrieve secrets from the vault and unwrap keys."
+              }
+            },
+            "enabledForTemplateDeployment": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Specifies whether Azure Resource Manager is permitted to retrieve secrets from the key vault."
+              }
+            },
+            "tenantId": {
+              "type": "string",
+              "defaultValue": "[subscription().tenantId]",
+              "metadata": {
+                "description": "Specifies the Azure Active Directory tenant ID that should be used for authenticating requests to the key vault. Get it by using Get-AzSubscription cmdlet."
+              }
+            },
+            "objectId": {
+              "type": "string",
+              "defaultValue": "a0c0cd07-ecb6-40bc-8a09-8a8b2986ccfe",
+              "metadata": {
+                "description": "Specifies the object ID of a user, service principal or security group in the Azure Active Directory tenant for the vault. The object ID must be unique for the list of access policies. Get it by using Get-AzADUser or Get-AzADServicePrincipal cmdlets."
+              }
+            },
+            "keysPermissions": {
+              "type": "array",
+              "defaultValue": [
+                "all"
+              ],
+              "metadata": {
+                "description": "Specifies the permissions to keys in the vault. Valid values are: all, encrypt, decrypt, wrapKey, unwrapKey, sign, verify, get, list, create, update, import, delete, backup, restore, recover, and purge."
+              }
+            },
+            "secretsPermissions": {
+              "type": "array",
+              "defaultValue": [
+                "all"
+              ],
+              "metadata": {
+                "description": "Specifies the permissions to secrets in the vault. Valid values are: all, get, list, set, delete, backup, restore, recover, and purge."
+              }
+            },
+            "skuName": {
+              "type": "string",
+              "defaultValue": "standard",
+              "allowedValues": [
+                "standard",
+                "premium"
+              ],
+              "metadata": {
+                "description": "Specifies whether the key vault is a standard vault or a premium vault."
+              }
+            },
+            "createMode": {
+              "type": "string",
+              "defaultValue": "default",
+              "allowedValues": [
+                "default",
+                "recover"
+              ],
+              "metadata": {
+                "description": "For a vault in recovery state select \"recover\", else \"default"
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.KeyVault/vaults",
+              "apiVersion": "2021-11-01-preview",
+              "name": "[parameters('keyVaultName')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "createMode": "[parameters('createMode')]",
+                "enabledForDeployment": "[parameters('enabledForDeployment')]",
+                "enabledForDiskEncryption": "[parameters('enabledForDiskEncryption')]",
+                "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
+                "tenantId": "[parameters('tenantId')]",
+                "enableSoftDelete": true,
+                "softDeleteRetentionInDays": 90,
+                "accessPolicies": [
+                  {
+                    "objectId": "[parameters('objectId')]",
+                    "tenantId": "[parameters('tenantId')]",
+                    "permissions": {
+                      "keys": "[parameters('keysPermissions')]",
+                      "secrets": "[parameters('secretsPermissions')]"
+                    }
+                  }
+                ],
+                "sku": {
+                  "name": "[parameters('skuName')]",
+                  "family": "A"
+                },
+                "networkAcls": {
+                  "defaultAction": "Allow",
+                  "bypass": "AzureServices"
+                }
+              }
+            }
+          ],
+          "outputs": {
+            "keyVaultName": {
+              "type": "string",
+              "value": "[parameters('keyVaultName')]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[variables('storageAccountName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "blobContainerName": {
+            "value": "[parameters('containerPostDeploymentScripts')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "storageAccountName": {
+            "value": "[variables('storageAccountName')]"
+          },
+          "storageAccountSkuName": {
+            "value": "[parameters('storageAccountSkuName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.20.4.51522",
+              "templateHash": "15166600105676241619"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "storageAccountName": {
+              "type": "string"
+            },
+            "storageAccountSkuName": {
+              "type": "string"
+            },
+            "blobContainerName": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2023-01-01",
+              "name": "[parameters('storageAccountName')]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "[parameters('storageAccountSkuName')]"
+              },
+              "kind": "StorageV2",
+              "properties": {
+                "accessTier": "Cool",
+                "supportsHttpsTrafficOnly": true
+              },
+              "metadata": {
+                "description": "The storage account for the blob container for post deployment scripts"
+              }
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+              "apiVersion": "2023-01-01",
+              "name": "[format('{0}/default/{1}', parameters('storageAccountName'), parameters('blobContainerName'))]",
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+              ],
+              "metadata": {
+                "description": "The blob container for post deployment scripts, only deploys IF storageaccount is availible"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[variables('webServerVnetName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "networkSecurityGroupName": {
+            "value": "[variables('webServerNSGName')]"
+          },
+          "subnetAddressPrefix": {
+            "value": "[parameters('webServerSubnetAddressPrefix')]"
+          },
+          "subnetName": {
+            "value": "[variables('webServerSubnetName')]"
+          },
+          "vnetAddressPrefix": {
+            "value": "[parameters('webServerVnetAddressPrefix')]"
+          },
+          "vnetNetworkName": {
+            "value": "[variables('webServerVnetName')]"
+          },
+          "allowedSSHIp": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('managementServerName')), '2022-09-01').outputs.nicPrivateIp.value]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.20.4.51522",
+              "templateHash": "2184138065899415756"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "vnetNetworkName": {
+              "type": "string"
+            },
+            "vnetAddressPrefix": {
+              "type": "string"
+            },
+            "subnetName": {
+              "type": "string"
+            },
+            "subnetAddressPrefix": {
+              "type": "string"
+            },
+            "networkSecurityGroupName": {
+              "type": "string"
+            },
+            "allowedSSHIp": {
+              "type": "string",
+              "defaultValue": "*"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/networkSecurityGroups",
+              "apiVersion": "2023-04-01",
+              "name": "[parameters('networkSecurityGroupName')]",
+              "location": "[parameters('location')]"
+            },
+            {
+              "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+              "apiVersion": "2023-04-01",
+              "name": "[format('{0}/{1}', parameters('networkSecurityGroupName'), 'AllowSSH')]",
+              "properties": {
+                "protocol": "Tcp",
+                "sourcePortRange": "*",
+                "destinationPortRange": "22",
+                "sourceAddressPrefix": "[parameters('allowedSSHIp')]",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 100,
+                "direction": "Inbound"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+              "apiVersion": "2023-04-01",
+              "name": "[format('{0}/{1}', parameters('networkSecurityGroupName'), 'AllowHttp')]",
+              "properties": {
+                "protocol": "Tcp",
+                "sourcePortRange": "*",
+                "destinationPortRange": "80",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 101,
+                "direction": "Inbound"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+              "apiVersion": "2023-04-01",
+              "name": "[format('{0}/{1}', parameters('networkSecurityGroupName'), 'DenyAllInbound')]",
+              "properties": {
+                "protocol": "*",
+                "sourcePortRange": "*",
+                "destinationPortRange": "*",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Deny",
+                "priority": 4096,
+                "direction": "Inbound"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks/subnets",
+              "apiVersion": "2023-04-01",
+              "name": "[format('{0}/{1}', parameters('vnetNetworkName'), parameters('subnetName'))]",
+              "properties": {
+                "addressPrefix": "[parameters('subnetAddressPrefix')]",
+                "networkSecurityGroup": {
+                  "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks",
+              "apiVersion": "2023-04-01",
+              "name": "[parameters('vnetNetworkName')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "addressSpace": {
+                  "addressPrefixes": [
+                    "[parameters('vnetAddressPrefix')]"
+                  ]
+                },
+                "subnets": [
+                  {
+                    "name": "[parameters('subnetName')]",
+                    "properties": {
+                      "addressPrefix": "[parameters('subnetAddressPrefix')]",
+                      "networkSecurityGroup": {
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+                      }
+                    },
+                    "type": "Microsoft.Network/virtualNetworks/subnets"
+                  }
+                ],
+                "enableDdosProtection": false
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "virtualNetworkId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+            },
+            "SubnetId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetName'))]"
+            },
+            "subnetNsgId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', variables('managementServerName'))]"
+      ],
+      "metadata": {
+        "description": "The module to define th-e Webserver vnet, including subnet and NSG, see \"modules/network.bicep\" for more detailed information."
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[variables('managementServerVnetName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "networkSecurityGroupName": {
+            "value": "[variables('managementServerNSGName')]"
+          },
+          "subnetAddressPrefix": {
+            "value": "[parameters('managementServerSubnetAddressPrefix')]"
+          },
+          "subnetName": {
+            "value": "[variables('managementServerSubnetName')]"
+          },
+          "vnetAddressPrefix": {
+            "value": "[parameters('managementServerVnetAddressPrefix')]"
+          },
+          "vnetNetworkName": {
+            "value": "[variables('managementServerVnetName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.20.4.51522",
+              "templateHash": "2184138065899415756"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "vnetNetworkName": {
+              "type": "string"
+            },
+            "vnetAddressPrefix": {
+              "type": "string"
+            },
+            "subnetName": {
+              "type": "string"
+            },
+            "subnetAddressPrefix": {
+              "type": "string"
+            },
+            "networkSecurityGroupName": {
+              "type": "string"
+            },
+            "allowedSSHIp": {
+              "type": "string",
+              "defaultValue": "*"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/networkSecurityGroups",
+              "apiVersion": "2023-04-01",
+              "name": "[parameters('networkSecurityGroupName')]",
+              "location": "[parameters('location')]"
+            },
+            {
+              "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+              "apiVersion": "2023-04-01",
+              "name": "[format('{0}/{1}', parameters('networkSecurityGroupName'), 'AllowSSH')]",
+              "properties": {
+                "protocol": "Tcp",
+                "sourcePortRange": "*",
+                "destinationPortRange": "22",
+                "sourceAddressPrefix": "[parameters('allowedSSHIp')]",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 100,
+                "direction": "Inbound"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+              "apiVersion": "2023-04-01",
+              "name": "[format('{0}/{1}', parameters('networkSecurityGroupName'), 'AllowHttp')]",
+              "properties": {
+                "protocol": "Tcp",
+                "sourcePortRange": "*",
+                "destinationPortRange": "80",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 101,
+                "direction": "Inbound"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+              "apiVersion": "2023-04-01",
+              "name": "[format('{0}/{1}', parameters('networkSecurityGroupName'), 'DenyAllInbound')]",
+              "properties": {
+                "protocol": "*",
+                "sourcePortRange": "*",
+                "destinationPortRange": "*",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Deny",
+                "priority": 4096,
+                "direction": "Inbound"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks/subnets",
+              "apiVersion": "2023-04-01",
+              "name": "[format('{0}/{1}', parameters('vnetNetworkName'), parameters('subnetName'))]",
+              "properties": {
+                "addressPrefix": "[parameters('subnetAddressPrefix')]",
+                "networkSecurityGroup": {
+                  "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks",
+              "apiVersion": "2023-04-01",
+              "name": "[parameters('vnetNetworkName')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "addressSpace": {
+                  "addressPrefixes": [
+                    "[parameters('vnetAddressPrefix')]"
+                  ]
+                },
+                "subnets": [
+                  {
+                    "name": "[parameters('subnetName')]",
+                    "properties": {
+                      "addressPrefix": "[parameters('subnetAddressPrefix')]",
+                      "networkSecurityGroup": {
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+                      }
+                    },
+                    "type": "Microsoft.Network/virtualNetworks/subnets"
+                  }
+                ],
+                "enableDdosProtection": false
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "virtualNetworkId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+            },
+            "SubnetId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetName'))]"
+            },
+            "subnetNsgId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[variables('webServerName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "virtualMachineLocation": {
+            "value": "[parameters('location')]"
+          },
+          "adminPasswordOrKey": {
+            "value": "[parameters('webServerAdminLoginPassword')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('webServerAdminLogin')]"
+          },
+          "availabilityZone": {
+            "value": "1"
+          },
+          "kvName": {
+            "value": "[variables('kvName')]"
+          },
+          "networkSecurityGroupId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('webServerVnetName')), '2022-09-01').outputs.subnetNsgId.value]"
+          },
+          "subnetId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('webServerVnetName')), '2022-09-01').outputs.SubnetId.value]"
+          },
+          "vmName": {
+            "value": "[variables('webServerName')]"
+          },
+          "userData": {
+            "value": "[variables('webUserData')]"
+          },
+          "keysPermissions": {
+            "value": "[parameters('webServerKeysPermissions')]"
+          },
+          "secretsPermissions": {
+            "value": "[parameters('webServerSecretPermissions')]"
+          },
+          "certificatesPermissions": {
+            "value": "[parameters('webServerCertificatesPermissions')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.20.4.51522",
+              "templateHash": "11514363452342356344"
+            }
+          },
+          "parameters": {
+            "virtualMachineLocation": {
+              "type": "string",
+              "metadata": {
+                "description": "Location for all resources."
+              }
+            },
+            "adminUsername": {
+              "type": "string",
+              "metadata": {
+                "description": "Username for the Virtual Machine."
+              }
+            },
+            "authenticationType": {
+              "type": "string",
+              "defaultValue": "password",
+              "allowedValues": [
+                "sshPublicKey",
+                "password"
+              ],
+              "metadata": {
+                "description": "Type of authentication to use on the Virtual Machine. SSH key is recommended."
+              }
+            },
+            "adminPasswordOrKey": {
+              "type": "securestring",
+              "metadata": {
+                "description": "SSH Key or password for the Virtual Machine. SSH key is recommended."
+              }
+            },
+            "kvName": {
+              "type": "string"
+            },
+            "userData": {
+              "type": "string",
+              "defaultValue": ""
+            },
+            "keysPermissions": {
+              "type": "array",
+              "defaultValue": [
+                "get",
+                "list",
+                "backup"
+              ],
+              "metadata": {
+                "description": "Specifies the permissions to keys in the vault. Valid values are: all, encrypt, decrypt, wrapKey, unwrapKey, sign, verify, get, list, create, update, import, delete, backup, restore, recover, and purge."
+              }
+            },
+            "secretsPermissions": {
+              "type": "array",
+              "defaultValue": [
+                "get",
+                "list",
+                "backup"
+              ],
+              "metadata": {
+                "description": "Specifies the permissions to secrets in the vault. Valid values are: all, get, list, set, delete, backup, restore, recover, and purge."
+              }
+            },
+            "certificatesPermissions": {
+              "type": "array",
+              "defaultValue": [
+                "get",
+                "list",
+                "backup"
+              ],
+              "metadata": {
+                "description": "Specifies the permissions to certificates in the vault. Valid values are: all, get, list ,update, create, import, delete, recover, backup, restore, purge"
+              }
+            },
+            "availabilityZone": {
+              "type": "string",
+              "allowedValues": [
+                "1",
+                "2"
+              ],
+              "metadata": {
+                "description": "Set the availabilityZone for the VM"
+              }
+            },
+            "ubuntuOSVersion": {
+              "type": "string",
+              "defaultValue": "Ubuntu-2004",
+              "allowedValues": [
+                "Ubuntu-2004"
+              ],
+              "metadata": {
+                "description": "The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version."
+              }
+            },
+            "vmName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of you Virtual Machine."
+              }
+            },
+            "vmSize": {
+              "type": "string",
+              "defaultValue": "Standard_B1ls",
+              "metadata": {
+                "description": "The size of the VM"
+              }
+            },
+            "subnetId": {
+              "type": "string",
+              "metadata": {
+                "description": "The subnet ID you want to deploy to"
+              }
+            },
+            "networkSecurityGroupId": {
+              "type": "string",
+              "metadata": {
+                "description": "The NSG ID you want to deploy to"
+              }
+            },
+            "securityType": {
+              "type": "string",
+              "defaultValue": "Standard",
+              "allowedValues": [
+                "Standard",
+                "TrustedLaunch"
+              ],
+              "metadata": {
+                "description": "Security Type of the Virtual Machine."
+              }
+            }
+          },
+          "variables": {
+            "dnsLabelPrefix": "[toLower(format('{0}-{1}', parameters('vmName'), uniqueString(resourceGroup().id)))]",
+            "imageReference": {
+              "Ubuntu-2004": {
+                "publisher": "canonical",
+                "offer": "0001-com-ubuntu-server-focal",
+                "sku": "20_04-lts-gen2",
+                "version": "latest"
+              }
+            },
+            "publicIPAddressName": "[format('{0}-PublicIP', parameters('vmName'))]",
+            "networkInterfaceName": "[format('{0}-Nic', parameters('vmName'))]",
+            "osDiskType": "Standard_LRS",
+            "linuxConfiguration": {
+              "disablePasswordAuthentication": true,
+              "ssh": {
+                "publicKeys": [
+                  {
+                    "path": "[format('/home/{0}/.ssh/authorized_keys', parameters('adminUsername'))]",
+                    "keyData": "[parameters('adminPasswordOrKey')]"
+                  }
+                ]
+              }
+            },
+            "securityProfileJson": {
+              "uefiSettings": {
+                "secureBootEnabled": true,
+                "vTpmEnabled": true
+              },
+              "securityType": "[parameters('securityType')]"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.KeyVault/vaults/accessPolicies",
+              "apiVersion": "2023-02-01",
+              "name": "[format('{0}/{1}', parameters('kvName'), 'add')]",
+              "properties": {
+                "accessPolicies": [
+                  {
+                    "applicationId": "[reference(resourceId('Microsoft.Compute/virtualMachines', parameters('vmName')), '2023-03-01', 'full').identity.principalId]",
+                    "objectId": "[reference(resourceId('Microsoft.Compute/virtualMachines', parameters('vmName')), '2023-03-01', 'full').identity.principalId]",
+                    "permissions": {
+                      "certificates": "[parameters('certificatesPermissions')]",
+                      "keys": "[parameters('keysPermissions')]",
+                      "secrets": "[parameters('secretsPermissions')]"
+                    },
+                    "tenantId": "[reference(resourceId('Microsoft.Compute/virtualMachines', parameters('vmName')), '2023-03-01', 'full').identity.tenantId]"
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/networkInterfaces",
+              "apiVersion": "2023-04-01",
+              "name": "[variables('networkInterfaceName')]",
+              "location": "[parameters('virtualMachineLocation')]",
+              "properties": {
+                "ipConfigurations": [
+                  {
+                    "name": "ipconfig1",
+                    "properties": {
+                      "subnet": {
+                        "id": "[parameters('subnetId')]"
+                      },
+                      "privateIPAllocationMethod": "Dynamic",
+                      "publicIPAddress": {
+                        "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]",
+                        "properties": {
+                          "deleteOption": "Delete"
+                        }
+                      }
+                    }
+                  }
+                ],
+                "networkSecurityGroup": {
+                  "id": "[parameters('networkSecurityGroupId')]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/publicIPAddresses",
+              "apiVersion": "2023-04-01",
+              "name": "[variables('publicIPAddressName')]",
+              "location": "[parameters('virtualMachineLocation')]",
+              "zones": [
+                "[parameters('availabilityZone')]"
+              ],
+              "sku": {
+                "name": "Standard"
+              },
+              "properties": {
+                "publicIPAllocationMethod": "Static",
+                "publicIPAddressVersion": "IPv4",
+                "deleteOption": "Delete",
+                "dnsSettings": {
+                  "domainNameLabel": "[variables('dnsLabelPrefix')]"
+                },
+                "idleTimeoutInMinutes": 4
+              }
+            },
+            {
+              "type": "Microsoft.Compute/virtualMachines",
+              "apiVersion": "2023-03-01",
+              "name": "[parameters('vmName')]",
+              "identity": {
+                "type": "SystemAssigned"
+              },
+              "location": "[parameters('virtualMachineLocation')]",
+              "zones": [
+                "[parameters('availabilityZone')]"
+              ],
+              "properties": {
+                "hardwareProfile": {
+                  "vmSize": "[parameters('vmSize')]"
+                },
+                "osProfile": {
+                  "computerName": "[parameters('vmName')]",
+                  "adminUsername": "[parameters('adminUsername')]",
+                  "adminPassword": "[parameters('adminPasswordOrKey')]",
+                  "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), null(), variables('linuxConfiguration'))]"
+                },
+                "storageProfile": {
+                  "osDisk": {
+                    "createOption": "FromImage",
+                    "managedDisk": {
+                      "storageAccountType": "[variables('osDiskType')]"
+                    },
+                    "deleteOption": "Delete"
+                  },
+                  "imageReference": "[variables('imageReference')[parameters('ubuntuOSVersion')]]"
+                },
+                "networkProfile": {
+                  "networkInterfaces": [
+                    {
+                      "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName'))]",
+                      "properties": {
+                        "deleteOption": "Delete"
+                      }
+                    }
+                  ]
+                },
+                "userData": "[parameters('userData')]",
+                "securityProfile": "[if(equals(parameters('securityType'), 'TrustedLaunch'), variables('securityProfileJson'), null())]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "vmId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]"
+            },
+            "nicPrivateIp": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName')), '2023-04-01').ipConfigurations[0].properties.privateIPAddress]"
+            },
+            "hostname": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName')), '2023-04-01').dnsSettings.fqdn]"
+            },
+            "publicSsh": {
+              "type": "string",
+              "value": "[format('ssh {0}@{1}', parameters('adminUsername'), reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName')), '2023-04-01').dnsSettings.fqdn)]"
+            },
+            "privateSsh": {
+              "type": "string",
+              "value": "[format('ssh {0}@{1}', parameters('adminUsername'), reference(resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName')), '2023-04-01').ipConfigurations[0].properties.privateIPAddress)]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', variables('kvName'))]",
+        "[resourceId('Microsoft.Resources/deployments', variables('webServerVnetName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[variables('managementServerName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "virtualMachineLocation": {
+            "value": "[parameters('location')]"
+          },
+          "adminPasswordOrKey": {
+            "value": "[parameters('managementServerAdminLoginPassword')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('managementServerAdminLogin')]"
+          },
+          "availabilityZone": {
+            "value": "2"
+          },
+          "kvName": {
+            "value": "[variables('kvName')]"
+          },
+          "networkSecurityGroupId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('managementServerVnetName')), '2022-09-01').outputs.subnetNsgId.value]"
+          },
+          "subnetId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('managementServerVnetName')), '2022-09-01').outputs.SubnetId.value]"
+          },
+          "vmName": {
+            "value": "[variables('managementServerName')]"
+          },
+          "userData": {
+            "value": "[variables('managementUserData')]"
+          },
+          "keysPermissions": {
+            "value": "[parameters('managementServerKeysPermissions')]"
+          },
+          "secretsPermissions": {
+            "value": "[parameters('managementServerSecretPermissions')]"
+          },
+          "certificatesPermissions": {
+            "value": "[parameters('managementServerCertificatesPermissions')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.20.4.51522",
+              "templateHash": "11514363452342356344"
+            }
+          },
+          "parameters": {
+            "virtualMachineLocation": {
+              "type": "string",
+              "metadata": {
+                "description": "Location for all resources."
+              }
+            },
+            "adminUsername": {
+              "type": "string",
+              "metadata": {
+                "description": "Username for the Virtual Machine."
+              }
+            },
+            "authenticationType": {
+              "type": "string",
+              "defaultValue": "password",
+              "allowedValues": [
+                "sshPublicKey",
+                "password"
+              ],
+              "metadata": {
+                "description": "Type of authentication to use on the Virtual Machine. SSH key is recommended."
+              }
+            },
+            "adminPasswordOrKey": {
+              "type": "securestring",
+              "metadata": {
+                "description": "SSH Key or password for the Virtual Machine. SSH key is recommended."
+              }
+            },
+            "kvName": {
+              "type": "string"
+            },
+            "userData": {
+              "type": "string",
+              "defaultValue": ""
+            },
+            "keysPermissions": {
+              "type": "array",
+              "defaultValue": [
+                "get",
+                "list",
+                "backup"
+              ],
+              "metadata": {
+                "description": "Specifies the permissions to keys in the vault. Valid values are: all, encrypt, decrypt, wrapKey, unwrapKey, sign, verify, get, list, create, update, import, delete, backup, restore, recover, and purge."
+              }
+            },
+            "secretsPermissions": {
+              "type": "array",
+              "defaultValue": [
+                "get",
+                "list",
+                "backup"
+              ],
+              "metadata": {
+                "description": "Specifies the permissions to secrets in the vault. Valid values are: all, get, list, set, delete, backup, restore, recover, and purge."
+              }
+            },
+            "certificatesPermissions": {
+              "type": "array",
+              "defaultValue": [
+                "get",
+                "list",
+                "backup"
+              ],
+              "metadata": {
+                "description": "Specifies the permissions to certificates in the vault. Valid values are: all, get, list ,update, create, import, delete, recover, backup, restore, purge"
+              }
+            },
+            "availabilityZone": {
+              "type": "string",
+              "allowedValues": [
+                "1",
+                "2"
+              ],
+              "metadata": {
+                "description": "Set the availabilityZone for the VM"
+              }
+            },
+            "ubuntuOSVersion": {
+              "type": "string",
+              "defaultValue": "Ubuntu-2004",
+              "allowedValues": [
+                "Ubuntu-2004"
+              ],
+              "metadata": {
+                "description": "The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version."
+              }
+            },
+            "vmName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of you Virtual Machine."
+              }
+            },
+            "vmSize": {
+              "type": "string",
+              "defaultValue": "Standard_B1ls",
+              "metadata": {
+                "description": "The size of the VM"
+              }
+            },
+            "subnetId": {
+              "type": "string",
+              "metadata": {
+                "description": "The subnet ID you want to deploy to"
+              }
+            },
+            "networkSecurityGroupId": {
+              "type": "string",
+              "metadata": {
+                "description": "The NSG ID you want to deploy to"
+              }
+            },
+            "securityType": {
+              "type": "string",
+              "defaultValue": "Standard",
+              "allowedValues": [
+                "Standard",
+                "TrustedLaunch"
+              ],
+              "metadata": {
+                "description": "Security Type of the Virtual Machine."
+              }
+            }
+          },
+          "variables": {
+            "dnsLabelPrefix": "[toLower(format('{0}-{1}', parameters('vmName'), uniqueString(resourceGroup().id)))]",
+            "imageReference": {
+              "Ubuntu-2004": {
+                "publisher": "canonical",
+                "offer": "0001-com-ubuntu-server-focal",
+                "sku": "20_04-lts-gen2",
+                "version": "latest"
+              }
+            },
+            "publicIPAddressName": "[format('{0}-PublicIP', parameters('vmName'))]",
+            "networkInterfaceName": "[format('{0}-Nic', parameters('vmName'))]",
+            "osDiskType": "Standard_LRS",
+            "linuxConfiguration": {
+              "disablePasswordAuthentication": true,
+              "ssh": {
+                "publicKeys": [
+                  {
+                    "path": "[format('/home/{0}/.ssh/authorized_keys', parameters('adminUsername'))]",
+                    "keyData": "[parameters('adminPasswordOrKey')]"
+                  }
+                ]
+              }
+            },
+            "securityProfileJson": {
+              "uefiSettings": {
+                "secureBootEnabled": true,
+                "vTpmEnabled": true
+              },
+              "securityType": "[parameters('securityType')]"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.KeyVault/vaults/accessPolicies",
+              "apiVersion": "2023-02-01",
+              "name": "[format('{0}/{1}', parameters('kvName'), 'add')]",
+              "properties": {
+                "accessPolicies": [
+                  {
+                    "applicationId": "[reference(resourceId('Microsoft.Compute/virtualMachines', parameters('vmName')), '2023-03-01', 'full').identity.principalId]",
+                    "objectId": "[reference(resourceId('Microsoft.Compute/virtualMachines', parameters('vmName')), '2023-03-01', 'full').identity.principalId]",
+                    "permissions": {
+                      "certificates": "[parameters('certificatesPermissions')]",
+                      "keys": "[parameters('keysPermissions')]",
+                      "secrets": "[parameters('secretsPermissions')]"
+                    },
+                    "tenantId": "[reference(resourceId('Microsoft.Compute/virtualMachines', parameters('vmName')), '2023-03-01', 'full').identity.tenantId]"
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/networkInterfaces",
+              "apiVersion": "2023-04-01",
+              "name": "[variables('networkInterfaceName')]",
+              "location": "[parameters('virtualMachineLocation')]",
+              "properties": {
+                "ipConfigurations": [
+                  {
+                    "name": "ipconfig1",
+                    "properties": {
+                      "subnet": {
+                        "id": "[parameters('subnetId')]"
+                      },
+                      "privateIPAllocationMethod": "Dynamic",
+                      "publicIPAddress": {
+                        "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]",
+                        "properties": {
+                          "deleteOption": "Delete"
+                        }
+                      }
+                    }
+                  }
+                ],
+                "networkSecurityGroup": {
+                  "id": "[parameters('networkSecurityGroupId')]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/publicIPAddresses",
+              "apiVersion": "2023-04-01",
+              "name": "[variables('publicIPAddressName')]",
+              "location": "[parameters('virtualMachineLocation')]",
+              "zones": [
+                "[parameters('availabilityZone')]"
+              ],
+              "sku": {
+                "name": "Standard"
+              },
+              "properties": {
+                "publicIPAllocationMethod": "Static",
+                "publicIPAddressVersion": "IPv4",
+                "deleteOption": "Delete",
+                "dnsSettings": {
+                  "domainNameLabel": "[variables('dnsLabelPrefix')]"
+                },
+                "idleTimeoutInMinutes": 4
+              }
+            },
+            {
+              "type": "Microsoft.Compute/virtualMachines",
+              "apiVersion": "2023-03-01",
+              "name": "[parameters('vmName')]",
+              "identity": {
+                "type": "SystemAssigned"
+              },
+              "location": "[parameters('virtualMachineLocation')]",
+              "zones": [
+                "[parameters('availabilityZone')]"
+              ],
+              "properties": {
+                "hardwareProfile": {
+                  "vmSize": "[parameters('vmSize')]"
+                },
+                "osProfile": {
+                  "computerName": "[parameters('vmName')]",
+                  "adminUsername": "[parameters('adminUsername')]",
+                  "adminPassword": "[parameters('adminPasswordOrKey')]",
+                  "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), null(), variables('linuxConfiguration'))]"
+                },
+                "storageProfile": {
+                  "osDisk": {
+                    "createOption": "FromImage",
+                    "managedDisk": {
+                      "storageAccountType": "[variables('osDiskType')]"
+                    },
+                    "deleteOption": "Delete"
+                  },
+                  "imageReference": "[variables('imageReference')[parameters('ubuntuOSVersion')]]"
+                },
+                "networkProfile": {
+                  "networkInterfaces": [
+                    {
+                      "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName'))]",
+                      "properties": {
+                        "deleteOption": "Delete"
+                      }
+                    }
+                  ]
+                },
+                "userData": "[parameters('userData')]",
+                "securityProfile": "[if(equals(parameters('securityType'), 'TrustedLaunch'), variables('securityProfileJson'), null())]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "vmId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]"
+            },
+            "nicPrivateIp": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName')), '2023-04-01').ipConfigurations[0].properties.privateIPAddress]"
+            },
+            "hostname": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName')), '2023-04-01').dnsSettings.fqdn]"
+            },
+            "publicSsh": {
+              "type": "string",
+              "value": "[format('ssh {0}@{1}', parameters('adminUsername'), reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName')), '2023-04-01').dnsSettings.fqdn)]"
+            },
+            "privateSsh": {
+              "type": "string",
+              "value": "[format('ssh {0}@{1}', parameters('adminUsername'), reference(resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName')), '2023-04-01').ipConfigurations[0].properties.privateIPAddress)]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', variables('kvName'))]",
+        "[resourceId('Microsoft.Resources/deployments', variables('managementServerVnetName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "vnetPeering",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "vnet1Name": {
+            "value": "[variables('webServerVnetName')]"
+          },
+          "vnet2Name": {
+            "value": "[variables('managementServerVnetName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.20.4.51522",
+              "templateHash": "3575439797561469601"
+            }
+          },
+          "parameters": {
+            "vnet1Name": {
+              "type": "string",
+              "metadata": {
+                "description": "Set the name of the main vnet for peering"
+              }
+            },
+            "vnet2Name": {
+              "type": "string",
+              "metadata": {
+                "description": "Set the name of the vnet you want to connect to, must be within same resource group"
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+              "apiVersion": "2021-02-01",
+              "name": "[format('{0}/vnet-peering-to-{1}', parameters('vnet1Name'), parameters('vnet2Name'))]",
+              "properties": {
+                "allowVirtualNetworkAccess": true,
+                "allowForwardedTraffic": false,
+                "allowGatewayTransit": false,
+                "useRemoteGateways": false,
+                "remoteVirtualNetwork": {
+                  "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/virtualNetworks', parameters('vnet2Name'))]"
+                }
+              },
+              "metadata": {
+                "description": "Connect two local vnets via peering, must be same resource group!"
+              }
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+              "apiVersion": "2021-02-01",
+              "name": "[format('{0}/vnet-peering-to-{1}', parameters('vnet2Name'), parameters('vnet1Name'))]",
+              "properties": {
+                "allowVirtualNetworkAccess": true,
+                "allowForwardedTraffic": false,
+                "allowGatewayTransit": false,
+                "useRemoteGateways": false,
+                "remoteVirtualNetwork": {
+                  "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/virtualNetworks', parameters('vnet1Name'))]"
+                }
+              },
+              "metadata": {
+                "description": "Reverse connection from peeringVnet1andVnet2"
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', variables('managementServerVnetName'))]",
+        "[resourceId('Microsoft.Resources/deployments', variables('webServerVnetName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "webVmBackups",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "vaultName": {
+            "value": "[variables('vaultName')]"
+          },
+          "vmName": {
+            "value": "[variables('webServerName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.20.4.51522",
+              "templateHash": "15143474038879250932"
+            }
+          },
+          "parameters": {
+            "vmName": {
+              "type": "string",
+              "metadata": {
+                "description": "Array of Azure virtual machines. e.g. [\"vm1\",\"vm2\",\"vm3\"]"
+              }
+            },
+            "vaultName": {
+              "type": "string",
+              "metadata": {
+                "description": "Name of the Recovery Services Vault"
+              }
+            },
+            "policyName": {
+              "type": "string",
+              "defaultValue": "dailyVmBackup",
+              "metadata": {
+                "description": "Backup policy to be used to backup VMs. Backup POlicy defines the schedule of the backup and how long to retain backup copies. By default every vault comes with a 'DefaultPolicy' which canbe used here."
+              }
+            },
+            "location": {
+              "type": "string",
+              "metadata": {
+                "description": "Location for all resources."
+              }
+            }
+          },
+          "variables": {
+            "backupFabric": "Azure",
+            "scheduleRunTimes": [
+              "2017-01-26T05:30:00Z"
+            ],
+            "v2VmType": "Microsoft.Compute/virtualMachines",
+            "v2VmContainer": "[format('iaasvmcontainer;iaasvmcontainerv2;{0}', resourceGroup().name)]",
+            "v2Vm": "[format('vm;iaasvmcontainerv2;{0}', resourceGroup().name)]"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.RecoveryServices/vaults",
+              "apiVersion": "2023-04-01",
+              "name": "[parameters('vaultName')]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "RS0",
+                "tier": "Standard"
+              },
+              "properties": {
+                "publicNetworkAccess": "Disabled"
+              }
+            },
+            {
+              "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
+              "apiVersion": "2023-04-01",
+              "name": "[format('{0}/{1}', parameters('vaultName'), parameters('policyName'))]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "backupManagementType": "AzureIaasVM",
+                "instantRpRetentionRangeInDays": 2,
+                "schedulePolicy": {
+                  "schedulePolicyType": "SimpleSchedulePolicy",
+                  "scheduleRunFrequency": "Daily",
+                  "scheduleRunTimes": "[variables('scheduleRunTimes')]"
+                },
+                "retentionPolicy": {
+                  "retentionPolicyType": "LongTermRetentionPolicy",
+                  "dailySchedule": {
+                    "retentionTimes": "[variables('scheduleRunTimes')]",
+                    "retentionDuration": {
+                      "count": 7,
+                      "durationType": "Days"
+                    }
+                  }
+                },
+                "timeZone": "Romance Standard Time"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults', parameters('vaultName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems",
+              "apiVersion": "2023-04-01",
+              "name": "[format('{0}/{1}/{2};{3}/{4};{5}', parameters('vaultName'), variables('backupFabric'), variables('v2VmContainer'), parameters('vmName'), variables('v2Vm'), parameters('vmName'))]",
+              "properties": {
+                "protectedItemType": "[variables('v2VmType')]",
+                "policyId": "[resourceId('Microsoft.RecoveryServices/vaults/backupPolicies', parameters('vaultName'), parameters('policyName'))]",
+                "sourceResourceId": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Compute/virtualMachines', parameters('vmName'))]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults/backupPolicies', parameters('vaultName'), parameters('policyName'))]"
+              ]
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', variables('webServerName'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "sshManagementServer": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('managementServerName')), '2022-09-01').outputs.publicSsh.value]"
+    },
+    "sshWebServer": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('webServerName')), '2022-09-01').outputs.privateSsh.value]"
+    },
+    "webSite": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('webServerName')), '2022-09-01').outputs.hostname.value]"
+    }
+  }
+}
