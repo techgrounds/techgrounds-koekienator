@@ -4,13 +4,12 @@ Dit is het document waar ik mijn v1.0 project documenteer.
 
 ## Index
 
-- User stories  
-- Design
-- Design choices
-- User manual
-- Time logs
+- 01: User stories  
+- 02: Design & choices
+- 03: User manual
+- 04: Time logs
 
-## User stories v1.0
+## 01: User stories v1.0
 
 |Als team willen wij duidelijk hebben wat de eisen zijn van de applicatie.|
 |---|
@@ -78,13 +77,192 @@ Dit is het document waar ik mijn v1.0 project documenteer.
 |Beschrijving: De klant wil zelf intern je architectuur testen voordat ze de code gaan gebruiken in productie. Zorg ervoor dat er configuratie beschikbaar is waarmee de klant een MVP kan deployen.|
 |Deliverable: Configuratie voor een MVP deployment|
 
-## Design v1.0
+## 02: Design & choices v1.0
 
-## Design choices v1.0
+### Diagram (Structure)
 
-## User manual v1.0
+![Current structure](../../00_includes/PRO_01/customer_current_structure.jpg)
 
-## Time logs v1.0
+We got the following infrastructure:
+
+- Subscription,
+  - Key vault
+  - Recovery Service
+  - Storage account
+    - blob storage
+  - VN1
+    - NSG
+    - VM (Web server)
+      - Two different availability zones
+  - VN2
+    - NSG
+    - VM (Management server)
+      - Two availability zones
+  - Peering between VN1 & VN2
+
+### Requirements v1.0
+
+- KeyVault (WORKING)
+  - KeyVault policies
+    - system assigned applications
+
+- Recovery Service (WORKING)
+  - Daily back up from the web sever
+  - Backups are stored for 7 days
+
+- StorageAccount (WORKING)
+  - Module blob storage (postDeploymentScripts)
+    - managementserver script to install AzCli (Work in progress)
+    - webserver script to set-up Apache (Working)
+
+- Peering (WORKING)
+  - vnet webserver to vnet managementserver
+
+- Network (WORKING)
+  - Vnet 'app-prd-vnet'
+    - Public IP
+    - Private IP (10.10.10.0/24)
+  - Vnet 'management-prd-vnet'
+    - Public IP
+    - Private IP (10.20.20.0/24)
+
+- Firewall (WORKING)
+  - NSG that only allows certain IP addresses for SSH connections
+  - NSG Rules module (Work in progress)
+
+- Web Server (WORKING)
+  - SSH connection only via management server
+  - Public IP (or public IP via Management Server?)
+  - Private IP (10.10.10.0/24), same for subnet
+  - Ubuntu Server 22.04 LTS Gen 2
+    - West europe only availability zone 1
+    - Standard_B1ls
+    - SSH login via management server (WORKS)
+    - Standard SSD
+    - Key management 'platform-managed key' (Work in progress, add in v1.1)
+    - Enable system assigned managed identity for KeyVault
+    - Enable backup (1 back up per day, keep back up for 7 days)
+    - userData via scripts
+
+- Management server (WORKING)
+  - SSH via Public IP, only trusted locations
+  - Public IP
+  - Private IP (10.20.20.0/24), same for subnet
+  - Ubuntu Server 22.04 LTS Gen 2
+    - West europe only availability zone 2
+    - Standard_B1ls
+    - SSH login trusted location (Add admin's IP to trusted IP's)
+    - Standard SSD
+    - Key management 'platform-managed key' (Work in progress, add in v1.1)
+    - Enable system assigned managed identity for KeyVault
+    - userData via scripts
+
+### Design choices
+
+Resources:  
+
+- Location 'UK South', this was the best option with low latency for multiple 'Availability zones'  
+- Web server, 'Ubuntu 22.04 LTS' this requires very little compute power and is supported till 2032.  
+- Management server, same as above.  
+- Firewall, NSG with security rules, as a stateful firewall this is sufficient to control the SSH connections from trusted sources.
+- KeyVault, use system assigned identities for applications, easy to manage what rights the servers got within the vault.  
+- Recovery Service, it's managed by Azure, requires little set up and is secure, encrypted back up data with user manged keys.
+
+Deployment:
+
+- Powershell script using Azure Powershell, this will automate some tasks instead of manually inputs to the terminal  
+- Pre-deployment bicep to create resources for the environment with a resource group and key vault  
+- Setting up secrets for the servers via the powershell script  
+- Setting up the environment via the powershell script  
+- Main-deployment bicep to set up the rest of the resources  
+
+Pricing Estimates:
+
+|Resource|Price(Estimation)|
+|---|---|
+|Webserver (Ubunut 22.04 LTS, b1ls)|$4.99/month|
+|Managementserver (Ubunut 22.04 LTS, b1ls)|$4.99/month|
+|StorageAccount (Hot, 1gb storage)|$1.71/month|
+|VnetPeering (Uk South <-> Uk South)|free|
+|Recovery Service (Webserver)|$5.82/month|
+|Key Vault| $0.03/month/10k operations|
+|---|---|
+|Total|$17.54/month|
+
+## 03: User manual v1.0
+
+Before you deploy, please go through the following steps!
+
+### Install Azure Powershell
+
+[Link to installation guide](https://learn.microsoft.com/en-us/powershell/azure/install-azps-windows?view=azps-10.3.0&tabs=powershell&pivots=windows-psgallery)
+
+01: Check if powershell 7.x.x or higher is installed
+`$PSVersionTable.PSVersion`
+
+02: Check if you have Az Powershell installed (if installed skip to step 6)
+`Get-Module -Name AzureRM -ListAvailable`
+
+03: Check execution policies
+`Get-ExecutionPolicy -List`
+
+04: Set execution policies (Requires Admin rights)
+`Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
+
+05: Installaltion
+`Install-Module -Name Az -Repository PSGallery -Force`
+
+06: Check for updates
+`Update-Module -Name Az -Force`
+
+### Login to Azure and go to the folder where the project is based
+
+We need to login to Azure
+
+```powershell
+Connect-AzAccount
+```
+
+Then set the file path to where the project is
+
+```powershell
+cd '<path/to/folder>'
+```
+
+### Change predeployment.bicep
+
+- We need to set a prefix for the RG name
+ `param rgNamePrefix string = 'Your Resource Group prefix'`
+
+### Change main.bicepparam
+
+- We need to set the two secrets in the param file:  
+    param webServerAdminLoginPassword = getSecret('subscriptionId', 'resourceGroup Name', 'keyvaultName', 'secretname')
+    param webServerAdminLoginPassword = getSecret('subscriptionId', 'resourceGroup Name', 'keyvaultName', 'secretname')
+
+- We can get the resource group name and KeyVault name with:  
+ `New-AzSubscriptionDeployment -whatif -templatefile .\predeployment.json -Location`
+
+- We can get the subscription id with:
+ `Get-AzSubscription -TenantId (Get-AzContext).Tenant`
+
+- Set a secret name
+ `You will get prompted to enter them when running the deployment script, this must be the same as you wrote in the param file`
+
+### Change kv.bicep
+
+- We need to set an Admin with all KeyVault rights
+ `param objectId string = 'Your object ID'`
+
+### Run the deployment file
+
+```powershell
+.\deployment_app.ps1
+```
+
+
+
+## 04: Time logs v1.0
 
 ### Log [21/08/23]
 
@@ -158,7 +336,7 @@ Virtual Machines got an option to select an availability zone.
 
 Created network.bicep and searched online for all requirements
 
-### Obstacles
+#### Obstacles
 
 A fair amount of errors not to be found online (within 30mins)
 
@@ -274,7 +452,7 @@ Need to work in smaller steps and figure out how it works.
 Took to big leaps with to little testing.  
 Should be able to get it working doing small steps at at time.  
 
-#### Log [05/09/23] Git Testing branch was empty after fixing something
+### Log [05/09/23] Git Testing branch was empty after fixing something
 
 Not sure what happened but the testing branch only had time logs.md and the rest was gone.
 Pushed all from local repository and it seems fine now?  
@@ -303,6 +481,8 @@ accessPolicies: [
       {
         applicationId: vm.identity.principalId
         objectId: vm.identity.principalId
+      }
+]
 ```
 
 #### Learnings
