@@ -43,5 +43,20 @@ Should have seen that the address suffix shouldn't be there!
 
 `'Microsoft.Network/virtualNetworks/subnets,management-prd-vnet,10.20.20.0/25'`
 
-## 
+## Container operation failure
+
+### Error in Json
+
+{
+    "status": "Failed",
+    "error": {
+        "code": "ContainerOperationFailure",
+        "message": "The specified resource does not exist.\nRequestId:606ab60a-001e-006b-4bcf-df1229000000\nTime:2023-09-05T08:06:10.3459683Z"
+    }
+}
+
+### Reason
+
+I've deployed the script well over 50 times, and this was the first time seeing this error.
+Might been Azure side error? Second time it just launched.
 
