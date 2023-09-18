@@ -67,16 +67,10 @@ try {
     ##############################
     ## Start the pre-deployment ##
     ##############################
-
-    # # Build the main deployment
-    # Write-Host "Building 'predeployment.json'"
-    # bicep build predeployment.bicep | out-null 
-    # Write-Host "Finished building 'predeployment.json'"
     
     # Deploy the pre-deployment deployment
     $sw1 = Start-Stopwatch
     Write-Host "started deploying 'predeployment.bicep'"
-    # $preDeployment = New-AzSubscriptionDeployment -templatefile .\predeployment.json -Location $location -OutVariable out
     $preDeployment = New-AzSubscriptionDeployment -templatefile .\predeployment.bicep -Location $location -OutVariable out
     $elapsedTime1 = Stop-Stopwatch -stopwatch $sw1
     Write-Host "finished deploying 'predeployment.bicep in $($elapsedTime1)'"
@@ -94,11 +88,6 @@ try {
     $setSecret2 = Set-AzKeyVaultSecret -VaultName $keyVault -Name $secretName2 -SecretValue $secretvalue2 
     Write-Host "Succesfully created keyvault $($keyVault) and posted the secrets"
 
-    # # Build the main deployment
-    # Write-Host "Building 'main.json'"
-    # bicep build main.bicep | Out-Null
-    # Write-Host "Finished building 'main.json'"
-
     ###############################
     ## start the main deployment ##
     ###############################
@@ -106,8 +95,8 @@ try {
     $sw2 = Start-Stopwatch 
     Write-Host "started deploying 'main.bicep'"
     $mainDeployment = new-azresourcegroupdeployment -TemplateFile .\main.bicep -TemplateParameterFile .\main.bicepparam -mode incremental
-    # $mainDeployment = new-azresourcegroupdeployment -TemplateFile .\main.json -TemplateParameterFile .\main.parameters.json -mode incremental
     $elapsedTime2 = Stop-Stopwatch -stopwatch $sw2
+
     # Get the hostname and ssh connection details from the deployment outputs
     $hostName = $mainDeployment.outputs["webSite"].value
     $ssh1 = $mainDeployment.outputs["sshManagementServer"].value
