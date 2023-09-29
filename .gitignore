@@ -7,6 +7,6 @@
 *.pfx
 
 # Block paths/files
-PRO_01_Cloud/project/main_v1_1/testemplates
+PRO_01_Cloud/project/main_v1_1/testtemplates
 sprints/
 spellingscheck.md
