@@ -3,8 +3,10 @@
 *.doc
 *.docx
 *.gdoc
+*.pem
+*.pfx
 
 # Block paths/files
-PRO_01_Cloud/project/old_templates
+PRO_01_Cloud/project/main_v1_1/testemplates
 sprints/
 spellingscheck.md
