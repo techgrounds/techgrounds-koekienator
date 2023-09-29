@@ -19,53 +19,45 @@ param storageAccountSkuName string
 
 // Deployment Scripts Blob Container params
 @description('The name for the PostDeploymentScripts storage')
-param containerPostDeploymentScripts string 
+param blobContainerName string 
 
 // Webserver params
-@description('The name prefix used for all webserver related resources')
 param webServerNamePrefix string 
-
-@description('The address for the webserver vnet')
-param webServerVnetAddressPrefix string 
-
-@description('The address for the webserver subnet')
-param webServerSubnetAddressPrefix string 
-
-@description('The administrator login username for the Web server.')
+param webserverVnetName string 
+param webserverVnetAddressPrefix string 
+param subnetVmssAdressPrefix string 
+param subnetAppGwAdressPrefix string 
+// param webSslCertificateName string 
 param webServerAdminLogin string 
-
-@description('SSH Key or password for the Web server. SSH key is recommended.')
 @secure()
-param webServerAdminLoginPassword string
+param webServerKey string
 
 // Webserver variables
-var webServerName = '${webServerNamePrefix}-${uniqueString(resourceGroup().id)}'
-var webServerVnetName  = '${webServerNamePrefix}-prd-vnet'
-var webServerSubnetName = '${webServerNamePrefix}Subnet'
-var webServerNSGName = '${webServerSubnetName}-NSG'
-var webServerAllowedSSHIp = managementserverVM.outputs.nicPrivateIp
+var webServerName = webServerNamePrefix
+var webserverVmssName = '${webServerName}Vmss'
+var webserverSubnetVmssName = '${webserverVmssName}Subnet'
+var webserverAppGatewayName = '${webServerName}AppGateWay'
+var webserverSubnetAppGwName = '${webserverAppGatewayName}Subnet'
+var webserverBackendPoolName = '${webserverVmssName}BackendPool'
+var webserverTrustedIp = managementserverVM.outputs.nicPrivateIp
 var webUserData = loadFileAsBase64('customData/installApacheUbuntu.sh')
 
 // Managementserver params
-@description('The name prefix used for all management related resources')
+@description('Windows computer name cannot be more than 15 characters long, be entirely numeric, or special characters.')
+@minLength(3)
+@maxLength(15)
+param managementServerName string
 param managementServerNamePrefix string 
-
-@description('The address prefix for the management server vnet')
-param managementServerVnetAddressPrefix string 
-
-@description('The address prefix for the management server subnet')
-param managementServerSubnetAddressPrefix string 
-
-@description('SSH Key or password for the Management server. SSH key is recommended.')
+param managementerverVnetName string 
+param managementserverVnetAddressPrefix string 
+param managementserverTrustedIp string
+param subnetManagementAdressPrefix string 
 @secure()
 param managementServerAdminLoginPassword string = newGuid()
 
 // Managementservers variables
-var managementServerName = '${managementServerNamePrefix}-${uniqueString(resourceGroup().id)}'
-var managementServerVnetName  = '${managementServerNamePrefix}-prd-vnet'
-var managementServerSubnetName = '${managementServerNamePrefix}ServerSubnet'
-var managementServerNSGName = '${managementServerSubnetName}-NSG'
-var managementUserData = loadFileAsBase64('customData/installAzCli.sh')
+var managementSubnetName = '${managementServerNamePrefix}Subnet'
+// var managementUserData = loadFileAsBase64('customData/installAzWindows.ps1')
 
 @description('The administrator login username for the Management server.')
 @secure()
@@ -91,115 +83,150 @@ param managementServerSecretPermissions array
 @description('Specifies the permissions to certificates in the vault. Valid values are: all, get, list ,update, create, import, delete, recover, backup, restore, purge')
 param managementServerCertificatesPermissions array
 
-// KV / Secrets params
+// KV var
 @description('Specifies the name of the key vault.')
 var kvName = 'kv-${uniqueString(resourceGroup().name)}'
 
-var vaultName = 'recovery-${uniqueString(resourceGroup().id)}'
-
 module kv 'modules/kv.bicep' = {
-  name: kvName
+  name: 'keyVault'
   params: {
     location: location
     keyVaultName: kvName
-    createMode: 'default'
+    createMode:  'default'
   }
 }
 
 // storage account (WORKING)
 module storageAccount 'modules/storage.bicep' = {
-  name: storageAccountName
+  name: 'storage'
   params: {
-    blobContainerName: containerPostDeploymentScripts
     location: location
+
+    // Storage Params
     storageAccountName: storageAccountName
     storageAccountSkuName: storageAccountSkuName
+
+    // Blob container params
+    blobContainerName: blobContainerName
   }
 }
 
-// Webserver virtual network (WORKS, subnet, nsg included)
-@description('The module to define th-e Webserver vnet, including subnet and NSG, see "modules/network.bicep" for more detailed information.')
-module webserverVnet 'modules/network.bicep' = {
-  name: webServerVnetName
+module webserverVnet 'modules/networkLoop.bicep' = {
+  name: 'webAppVnet'
   params: {
     location: location
-    networkSecurityGroupName: webServerNSGName
-    subnetAddressPrefix: webServerSubnetAddressPrefix
-    subnetName: webServerSubnetName
-    vnetAddressPrefix: webServerVnetAddressPrefix
-    vnetNetworkName: webServerVnetName
-    allowedSSHIp: webServerAllowedSSHIp
+    // Vnet
+    vnetNetworkName: webserverVnetName
+    vnetAddressPrefix: webserverVnetAddressPrefix
+    // Subnets
+    numberOfSubnets: 2
+    subnetAddressPrefix: [subnetVmssAdressPrefix, subnetAppGwAdressPrefix]
+    subnetName: [webserverSubnetVmssName, webserverSubnetAppGwName]
   }
 }
 
-module managementserverVnet 'modules/network.bicep' = {
-  name: managementServerVnetName
+module managementserverVnet 'modules/networkLoop.bicep' = {
+  name: 'managementVnet'
   params: {
     location: location
-    networkSecurityGroupName: managementServerNSGName
-    subnetAddressPrefix: managementServerSubnetAddressPrefix
-    subnetName: managementServerSubnetName
-    vnetAddressPrefix: managementServerVnetAddressPrefix
-    vnetNetworkName: managementServerVnetName
+
+    // Vnet
+    vnetNetworkName: managementerverVnetName
+    vnetAddressPrefix: managementserverVnetAddressPrefix
+
+    // Subnets
+    numberOfSubnets: 1
+    subnetAddressPrefix: [subnetManagementAdressPrefix]
+    subnetName: [managementSubnetName]
   }
 }
 
-module webserverVM 'modules/virtualmachine.bicep' = {
-  name: webServerName
+module webserverAppGateway 'modules/appGatewayV2.bicep' = {
+  dependsOn: [
+    webserverVnet
+  ]
+  name: 'appGateway'
   params: {
-    virtualMachineLocation: location
-    adminPasswordOrKey: webServerAdminLoginPassword
-    adminUsername: webServerAdminLogin
-    availabilityZone: '1'
-    kvName: kv.name
-    networkSecurityGroupId: webserverVnet.outputs.subnetNsgId
-    subnetId: webserverVnet.outputs.SubnetId
-    vmName: webServerName
+    location: location
+
+    // appGateway params
+    applicationGatewayName: webserverAppGatewayName
+    myBackendPool: webserverBackendPoolName
+
+    // Network params
+    subnetId: webserverVnet.outputs.subnet[1].id
+    nsgName: webserverVnet.outputs.nsg[1].name
+  }
+}
+
+module webserverVmss 'modules/VmScaleSetv2.bicep' = {
+  dependsOn: [
+    webserverVnet
+    webserverAppGateway
+  ]
+  name: 'webServer'
+  params: {
+    location: location
+
+    // Vmss Params
+    vmssName: webserverVmssName
+    adminKey: webServerKey
+    adminUsername: webServerAdminLogin  
     userData: webUserData
+
+    // KeyVault Params
+    kvName: kv.outputs.keyVaultName
     keysPermissions: webServerKeysPermissions
     secretsPermissions: webServerSecretPermissions
     certificatesPermissions: webServerCertificatesPermissions
+
+    // Network Params
+    subnetId: webserverVnet.outputs.subnet[0].id
+    nsgName: webserverVnet.outputs.nsg[0].name
+    trustedIpAddress: webserverTrustedIp
+    appGatwayIp: webserverAppGateway.outputs.appGatwayIp
+    backendpoolId: webserverAppGateway.outputs.backendpoolId
   }
 }
 
-module managementserverVM 'modules/virtualmachine.bicep' = {
-  name: managementServerName
+module managementserverVM 'modules/windowsServerVm.bicep' = {
+  dependsOn: [
+    managementserverVnet
+  ]
+  name: 'managementServer'
   params: {
-    virtualMachineLocation: location
+    location: location
+
+    // Management Server params
+    vmName: managementServerName
     adminPasswordOrKey: managementServerAdminLoginPassword
     adminUsername: managementServerAdminLogin
     availabilityZone: '2'
-    kvName: kv.name
-    networkSecurityGroupId: managementserverVnet.outputs.subnetNsgId
-    subnetId: managementserverVnet.outputs.SubnetId
-    vmName: managementServerName
-    userData: managementUserData
+    // userData: managementUserData
+
+    // KeyVault Params
+    kvName: kv.outputs.keyVaultName
     keysPermissions: managementServerKeysPermissions
     secretsPermissions: managementServerSecretPermissions
     certificatesPermissions: managementServerCertificatesPermissions
+
+    // Network Params
+    subnetId: managementserverVnet.outputs.subnet[0].id
+    nsgName: managementserverVnet.outputs.nsg[0].name
+    trustedIp: managementserverTrustedIp
   }
 }
 
 // Peering bothways web and management server (WORKS)
 module vnetPeering 'modules/vnetpeering.bicep' = {
+  dependsOn: [
+    webserverVnet
+    managementserverVnet
+  ]
   name: 'vnetPeering'
   params: {
-    vnet1Name: webserverVnet.name
-    vnet2Name: managementserverVnet.name
+    vnet1Name: webserverVnet.outputs.vnetName
+    vnet2Name: managementserverVnet.outputs.vnetName
   }
 }
-
-module backupPolicies 'modules/backupPolicy.bicep' = {
-  name: 'webVmBackups'
-  params: {
-    location: location
-    vaultName: vaultName
-    vmName: webserverVM.name
-    // vmId: webserverVM.outputs.vmId
-  }
-}
-
-output sshManagementServer string = managementserverVM.outputs.publicSsh
-output sshWebServer string = webserverVM.outputs.privateSsh
-output webSite string = webserverVM.outputs.hostname
 

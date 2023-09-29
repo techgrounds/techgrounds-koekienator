@@ -54,15 +54,21 @@ try {
     $location = 'uksouth'
 
     # Define secret names and generate random passwords
-    $secretName1 = 'webAdmin1234'
-    # $secretName1 = Read-Host 'Enter the secretname, must start with a letter'
-    $randomPassword1 = Get-RandomPassword
-    $secretValue1 = ConvertTo-SecureString $randomPassword1 -AsPlainText -Force
+    $secretName1 = 'webGet12345'
+    # $secretName1 = Read-Host 'Enter the secretname for webserver, must start with a letter'
+    # $secretValue1 = Read-Host 'Enter the keyfile path\to\location\keyfile.pub'
+    $newKey = .\keyGen.ps1
+    $secretKeylocation = "C:\Users\marce\My Drive\Documenten\Koek\Techgrounds\Cloud11\techgrounds-koekienator\PRO_01_Cloud\project\main_v1_1\keys\webhost.pub"
+    $privateKeyContent = Get-Content -Path $secretKeylocation
+    $secretValue1 = ConvertTo-SecureString -String $privateKeyContent -AsPlainText -Force
 
-    $secretName2 = 'mngmntAdmin1234'
-    # $secretName2 = Read-Host 'Enter the secretname, must start with a letter'
+
+    $secretName2 = 'mngmntGet12345'
+    # $secretName2 = Read-Host 'Enter the secretname for managementserver, must start with a letter'
     $randomPassword2 = Get-RandomPassword
     $secretValue2 = ConvertTo-SecureString $randomPassword2 -AsPlainText -Force
+
+    $newCert = .\createCert.ps1
     
     ##############################
     ## Start the pre-deployment ##
@@ -87,11 +93,16 @@ try {
 
     #Set the newRG as default resource group for deployments
     $setNewRGSet = Set-AzDefault -ResourceGroupName $resourceGroup
-    Write-Host "Succesfully created the resource group $($resourceGroup) and set it as default"
 
     # Create the new secrets for the keyvault
-    $setSecret1 = Set-AzKeyVaultSecret -VaultName $keyVault -Name $secretName1 -SecretValue $secretvalue1 
-    $setSecret2 = Set-AzKeyVaultSecret -VaultName $keyVault -Name $secretName2 -SecretValue $secretvalue2 
+    $setSecret1 = Set-AzKeyVaultSecret -VaultName $keyVault -Name $secretName1 -SecretValue $secretvalue1
+    $setSecret2 = Set-AzKeyVaultSecret -VaultName $keyVault -Name $secretName2 -SecretValue $secretvalue2
+    $setSecret3 = Import-AzKeyVaultCertificate -VaultName $keyVault -Name "importWebCert" -FilePath "cert/webcert.pfx"
+    
+    $setSecret1
+    $setSecret2
+    $setSecret3
+    Write-Host "Succesfully created the resource group $($resourceGroup) and set it as default"
     Write-Host "Succesfully created keyvault $($keyVault) and posted the secrets"
 
     # # Build the main deployment
@@ -109,12 +120,15 @@ try {
     # $mainDeployment = new-azresourcegroupdeployment -TemplateFile .\main.json -TemplateParameterFile .\main.parameters.json -mode incremental
     $elapsedTime2 = Stop-Stopwatch -stopwatch $sw2
     # Get the hostname and ssh connection details from the deployment outputs
-    $hostName = $mainDeployment.outputs["webSite"].value
-    $ssh1 = $mainDeployment.outputs["sshManagementServer"].value
-    $ssh2 = $mainDeployment.outputs["sshWebServer"].value
-    Write-Host "Go to the webServers webpage: $($hostName)"
-    Write-Host "Connect to mngmntServer: $($ssh1)"
-    Write-Host "Connect to webServer: $($ssh2)"
+
+    $mainDeployment
+
+    # $hostName = $mainDeployment.outputs["webSite"].value
+    # $ssh1 = $mainDeployment.outputs["sshManagementServer"].value
+    # $ssh2 = $mainDeployment.outputs["sshWebServer"].value
+    # Write-Host "Go to the webServers webpage: $($hostName)"
+    # Write-Host "Connect to mngmntServer: $($ssh1)"
+    # Write-Host "Connect to webServer: $($ssh2)"
     Write-Host "finished deploying 'main.bicep' in $($elapsedTime2)"
 }
 catch {

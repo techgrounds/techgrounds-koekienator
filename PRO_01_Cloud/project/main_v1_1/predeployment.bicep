@@ -1,5 +1,5 @@
 param location string = 'uksouth'
-param rgNamePrefix string = 'koekGroup'
+param rgNamePrefix string = 'testOmgeving'
 
 var rgName = '${rgNamePrefix}${uniqueString(subscription().id)}'
 var kvName = 'kv-${uniqueString(newRG.name)}'

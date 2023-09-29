@@ -5,7 +5,7 @@ param keyVaultName string
 param location string = resourceGroup().location
 
 @description('Specifies whether Azure Virtual Machines are permitted to retrieve certificates stored as secrets from the key vault.')
-param enabledForDeployment bool = false
+param enabledForDeployment bool = true
 
 @description('Specifies whether Azure Disk Encryption is permitted to retrieve secrets from the vault and unwrap keys.')
 param enabledForDiskEncryption bool = false
@@ -28,6 +28,10 @@ param keysPermissions array = [
 param secretsPermissions array = [
   'all'
 ]
+@description('Specifies the permissions to certificates in the vault. Valid values are: all, get, list ,update, create, import, delete, recover, backup, restore, purge')
+param certificatesPermissions array = [
+  'all'
+]
 
 @description('Specifies whether the key vault is a standard vault or a premium vault.')
 @allowed([
@@ -43,6 +47,8 @@ param skuName string = 'standard'
 ])
 param createMode string = 'default'
 
+param KvTrustedIp string = 'ADD IP HERE'
+
 resource kv 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
   name: keyVaultName
   location: location
@@ -53,7 +59,20 @@ resource kv 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
     enabledForTemplateDeployment: enabledForTemplateDeployment
     tenantId: tenantId
     enableSoftDelete: true
-    softDeleteRetentionInDays: 90
+    softDeleteRetentionInDays: 7
+    sku: {
+      name: skuName
+      family: 'A'
+    }
+    networkAcls: {
+      defaultAction: 'Deny'
+      bypass: 'AzureServices'
+      ipRules: [
+        {
+          value: KvTrustedIp
+        }
+      ]
+    }
     accessPolicies: [
       {
         objectId: objectId
@@ -61,23 +80,12 @@ resource kv 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
         permissions: {
           keys: keysPermissions
           secrets: secretsPermissions
+          certificates: certificatesPermissions
         }
       }
     ]
-    sku: {
-      name: skuName
-      family: 'A'
-    }
-    networkAcls: {
-      defaultAction: 'Allow'
-      bypass: 'AzureServices'
-      // ipRules: [
-      //   {
-      //     value: 
-      //   }
-      // ]
-    }
   }
 }
 
 output keyVaultName string = kv.name
+output kvUri string = kv.properties.vaultUri

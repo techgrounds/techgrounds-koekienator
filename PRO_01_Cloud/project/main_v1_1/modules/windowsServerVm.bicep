@@ -1,15 +1,15 @@
 @description('Location for all resources.')
-param virtualMachineLocation string 
+param location string 
 
 @description('Username for the Virtual Machine.')
 param adminUsername string
 
-@description('Type of authentication to use on the Virtual Machine. SSH key is recommended.')
-@allowed([
-  'sshPublicKey'
-  'password'
-])
-param authenticationType string = 'password'
+// @description('Type of authentication to use on the Virtual Machine. SSH key is recommended.')
+// @allowed([
+//   'sshPublicKey'
+//   'password'
+// ])
+// // param authenticationType string = 'sshPublicKey'
 
 @description('SSH Key or password for the Virtual Machine. SSH key is recommended.')
 @secure()
@@ -17,28 +17,14 @@ param adminPasswordOrKey string
 
 param kvName string
 
-param userData string = ''
+// param userData string
 
 @description('Specifies the permissions to keys in the vault. Valid values are: all, encrypt, decrypt, wrapKey, unwrapKey, sign, verify, get, list, create, update, import, delete, backup, restore, recover, and purge.')
-param keysPermissions array = [
-  'get'
-  'list'
-  'backup'
-]
-
+param keysPermissions array 
 @description('Specifies the permissions to secrets in the vault. Valid values are: all, get, list, set, delete, backup, restore, recover, and purge.')
-param secretsPermissions array = [
-  'get'
-  'list'
-  'backup'
-]
-
+param secretsPermissions array 
 @description('Specifies the permissions to certificates in the vault. Valid values are: all, get, list ,update, create, import, delete, recover, backup, restore, purge')
-param certificatesPermissions array = [
-  'get'
-  'list'
-  'backup'
-]
+param certificatesPermissions array 
 
 @description('Set the availabilityZone for the VM')
 @allowed([
@@ -52,41 +38,44 @@ var dnsLabelPrefix = toLower('${vmName}-${uniqueString(resourceGroup().id)}')
 
 @description('The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version.')
 @allowed([
-  'Ubuntu-2004'
-  'Ubuntu-2204'
+  '2019-Datacenter'
+  '2022-Datacenter'
 ])
-param ubuntuOSVersion string = 'Ubuntu-2204'
+param windowsOSVersion string = '2022-Datacenter'
 
 @description('The name of you Virtual Machine.')
 param vmName string
 
 @description('The size of the VM')
-param vmSize string = 'Standard_B1ls'
+param vmSize string = 'Standard_B2s'
 
 @description('The subnet ID you want to deploy to')
 param subnetId string 
 
-@description('The NSG ID you want to deploy to')
-param networkSecurityGroupId string
+// @description('The NSG ID you want to deploy to')
+// param networkSecurityGroupId string
+
+param trustedIp string
+param nsgName string
 
 @description('Security Type of the Virtual Machine.')
 @allowed([
   'Standard'
   'TrustedLaunch'
 ])
-param securityType string = 'Standard'
+param securityType string = 'TrustedLaunch'
 
 var imageReference = {
-  'Ubuntu-2004': {
-    publisher: 'canonical'
-    offer: '0001-com-ubuntu-server-focal'
-    sku: '20_04-lts-gen2'
+  '2019-Datacenter': {
+    publisher: 'MicrosoftWindowsServer'
+    offer: 'WindowsServer'
+    sku: '2019-Datacenter-g2'
     version: 'latest'
   }
-  'Ubuntu-2204': {
-    publisher: 'Canonical'
-    offer: '0001-com-ubuntu-server-jammy'
-    sku: '22_04-lts-gen2'
+  '2022-Datacenter': {
+    publisher: 'MicrosoftWindowsServer'
+    offer: 'WindowsServer'
+    sku: '2022-Datacenter-g2'
     version: 'latest'
   }
 }
@@ -94,18 +83,6 @@ var imageReference = {
 var publicIPAddressName = '${vmName}-PublicIP'
 var networkInterfaceName = '${vmName}-Nic'
 var osDiskType = 'Standard_LRS'
-
-var linuxConfiguration = {
-  disablePasswordAuthentication: true
-  ssh: {
-    publicKeys: [
-      {
-        path: '/home/${adminUsername}/.ssh/authorized_keys'
-        keyData: adminPasswordOrKey
-      }
-    ]
-  }
-}
 
 var securityProfileJson = {
   uefiSettings: {
@@ -117,6 +94,26 @@ var securityProfileJson = {
 
 resource kv 'Microsoft.KeyVault/vaults@2023-02-01' existing = {
   name: kvName
+}
+
+resource nsg 'Microsoft.Network/networkSecurityGroups@2023-04-01' existing = {
+  name: nsgName
+}
+
+resource SshRule 'Microsoft.Network/networkSecurityGroups/securityRules@2023-04-01' = {
+  parent: nsg
+  name: 'AllowRDP'
+  properties: {
+    description: 'Allows for RPD connection from trusted IP addresses'
+    protocol: 'Tcp'
+    sourcePortRange: '*'
+    destinationPortRange: '3389'
+    sourceAddressPrefix: trustedIp
+    destinationAddressPrefix: '*'
+    access: 'Allow'
+    priority: 100
+    direction: 'Inbound'
+  }     
 }
 
 resource kvAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2023-02-01' = {
@@ -140,7 +137,7 @@ resource kvAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2023-02-01' = 
 
 resource networkInterface 'Microsoft.Network/networkInterfaces@2023-04-01' = {
   name: networkInterfaceName
-  location: virtualMachineLocation
+  location: location
   properties: {
     ipConfigurations: [
       {
@@ -159,7 +156,7 @@ resource networkInterface 'Microsoft.Network/networkInterfaces@2023-04-01' = {
         }
       }] 
       networkSecurityGroup: {
-        id: networkSecurityGroupId
+        id: nsg.id
       }
   }
 }
@@ -167,7 +164,7 @@ resource networkInterface 'Microsoft.Network/networkInterfaces@2023-04-01' = {
 
 resource publicIPAddress 'Microsoft.Network/publicIPAddresses@2023-04-01' = {
   name: publicIPAddressName
-  location: virtualMachineLocation
+  location: location
   zones: [availabilityZone]
   sku: {
     name: 'Standard'
@@ -190,11 +187,11 @@ resource publicIPAddress 'Microsoft.Network/publicIPAddresses@2023-04-01' = {
 
 
 resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
-  name: vmName
+  name: 'management'
   identity: {
     type:'SystemAssigned'
     }
-  location: virtualMachineLocation
+  location: location
   zones: [availabilityZone]
   properties: {
     hardwareProfile: {
@@ -204,7 +201,6 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
       computerName: vmName
       adminUsername: adminUsername
       adminPassword: adminPasswordOrKey
-      linuxConfiguration: ((authenticationType == 'password') ? null : linuxConfiguration)
     }
     storageProfile: {
       osDisk: {
@@ -214,7 +210,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
         }
         deleteOption: 'Delete'
       }
-      imageReference: imageReference[ubuntuOSVersion]
+      imageReference: imageReference[windowsOSVersion]
     }
     networkProfile: {
       networkInterfaces: [
@@ -226,14 +222,16 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
         }
       ]
     }
-    userData: userData
+    // userData: userData
     securityProfile: ((securityType == 'TrustedLaunch') ? securityProfileJson : null)
   }
 }
 
 output vmId string = vm.id
+output vmName string = vm.name
+output nicPublicIp string = publicIPAddress.properties.ipAddress
 output nicPrivateIp string = networkInterface.properties.ipConfigurations[0].properties.privateIPAddress
-output hostname string = publicIPAddress.properties.dnsSettings.fqdn
-output publicSsh string = 'ssh ${adminUsername}@${publicIPAddress.properties.dnsSettings.fqdn}'
-output privateSsh string = 'ssh ${adminUsername}@${networkInterface.properties.ipConfigurations[0].properties.privateIPAddress}'
+// output hostname string = publicIPAddress.properties.dnsSettings.fqdn
+// output publicSsh string = 'ssh -i <path/to/key.pem> ${adminUsername}@${publicIPAddress.properties.dnsSettings.fqdn}'
+// output privateSsh string = 'ssh ${adminUsername}@${networkInterface.properties.ipConfigurations[0].properties.privateIPAddress}'
 
